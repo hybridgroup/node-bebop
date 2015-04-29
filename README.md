@@ -2,7 +2,7 @@
 
 Control your Parrot Bebop drone using JavaScript!
 
-This module allows you to control, receive nav data, and receive video data from the Bebop Wifi drone from Parrot.
+This module allows you to control, receive nav data, and receive video data from the [Parrot Bebop](http://www.parrot.com/products/bebop-drone/) WiFi controlled drone.
 
 The implementation attempts to use the same interface as the [node-ar-drone](https://github.com/felixge/node-ar-drone) node module from [@felixge](https://github.com/felixge/), so it can be mostly NodeCopter compatible.
 
