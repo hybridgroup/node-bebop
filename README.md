@@ -31,10 +31,73 @@ drone.connect(function() {
 });
 
 ```
+### API
+
+### createClient()
+
+Returns a `new Bebop`
+
+### connect(callback)
+
+Connects to the drone and executes the callback when the drone is ready to fly
+
+#### takeOff()
+
+Tell the drone to lift off the ground.
+
+#### land()
+
+Land the drone.
+
+#### stop()
+
+Tell the drone to hove in place.
+
+#### emergency()
+
+Tell the drone to drop like a stone.
+
+#### up(val)
+
+Cause the drone to increase in altitude at 0-100 speed
+
+#### down(val)
+
+Cause the drone to decrease in altitude at 0-100 speed
+
+#### right(val)
+
+Cause the drone to move to the right at 0-100 speed
+
+#### left(val)
+
+Cause the drone to move to the left at 0-100 speed
+
+#### clockwise(val)
+
+Cause the drone to spin in a clockwise direction at 0-100 speed
+
+#### counterClockwise(val)
+
+Cause the drone to spin in a counter clockwise direction at 0-100 speed
+
+
+
+
+### Events
+
+#### video
+
+Emits one h.264 video frame
+
+#### ready
+
+Emitted when the drone has successfully connected
+
 
 ## Release History
 
-None yet...
+0.1.0 Initial release
 
 ## License
 
