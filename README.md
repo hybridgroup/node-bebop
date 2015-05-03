@@ -137,7 +137,7 @@ Emmited when the drone encounters an emergency condition.
 
 ## Release History
 
-0.2.0 Add flip commands, implement ack processes, emit flying state events
+0.2.0 Add flip commands, implement ack processes, emit flying state and battery events
 
 0.1.0 Initial release
 
