@@ -1,12 +1,17 @@
 {
   "name": "node-bebop",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "library for the parrot bebop",
   "main": "lib/bebop.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/hybridgroup/node-bebop.git"
   },
+  "keywords": [
+    "parrot",
+    "bebop",
+    "drone"
+  ],
   "author": "Adrian Zankich <adrian@hybridgroup.com>",
   "license": "MIT",
   "bugs": {
