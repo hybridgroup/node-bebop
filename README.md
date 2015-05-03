@@ -41,13 +41,13 @@ Returns a `new Bebop`
 
 Connects to the drone and executes the callback when the drone is ready to fly
 
-#### takeOff()
+#### takeOff(callback)
 
-Tell the drone to lift off the ground.
+Tell the drone to lift off the ground. Executes the callback when the drone is in the air.
 
-#### land()
+#### land(callback)
 
-Land the drone.
+Land the drone. Executes the callback when the drone is on the ground.
 
 #### stop()
 
@@ -81,7 +81,21 @@ Cause the drone to spin in a clockwise direction at 0-100 speed
 
 Cause the drone to spin in a counter clockwise direction at 0-100 speed
 
+#### frontFlip()
 
+Tell the drone to do a front flip
+
+#### backFlip()
+
+Tell the drone to do a back flip
+
+#### rightFlip()
+
+Tell the drone to do a flip to the right 
+
+#### rightFlip()
+
+Tell the drone to do a flip to the left
 
 
 ### Events
@@ -94,8 +108,33 @@ Emits one h.264 video frame
 
 Emitted when the drone has successfully connected
 
+#### flying
+
+Emmited when the drone is flying in the air.
+
+#### hovering
+
+Emmited when the drone is hovering in the air.
+
+#### landed
+
+Emmited when the drone has landed on the ground.
+
+#### landing
+
+Emmited when the drone is in the process of landing.
+
+#### takingOff
+
+Emmited when the drone is in the process of taking off.
+
+#### emergency
+
+Emmited when the drone encounters an emergency condition.
 
 ## Release History
+
+0.2.0 Add flip commands, implement ack processes, emit flying state events
 
 0.1.0 Initial release
 
