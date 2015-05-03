@@ -99,6 +99,9 @@ Tell the drone to do a flip to the left
 
 
 ### Events
+#### battery
+
+Emits battery level percentage
 
 #### video
 
