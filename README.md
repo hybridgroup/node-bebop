@@ -93,7 +93,7 @@ Tell the drone to do a back flip
 
 Tell the drone to do a flip to the right 
 
-#### rightFlip()
+#### leftFlip()
 
 Tell the drone to do a flip to the left
 
