@@ -2,7 +2,10 @@
   "name": "node-bebop",
   "version": "0.2.0",
   "description": "library for the parrot bebop",
-  "main": "lib/bebop.js",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/hybridgroup/node-bebop.git"
@@ -17,5 +20,10 @@
   "bugs": {
     "url": "https://github.com/hybridgroup/node-bebop/issues"
   },
-  "homepage": "https://github.com/hybridgroup/node-bebop"
+  "homepage": "https://github.com/hybridgroup/node-bebop",
+  "devDependencies": {
+    "mocha": "^2.2.5",
+    "chai": "^2.3.0",
+    "sinon": "^1.14.1"
+  }
 }
