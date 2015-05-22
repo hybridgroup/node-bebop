@@ -1,4 +1,5 @@
 # node-bebop
+[![Build Status](https://travis-ci.org/hybridgroup/node-bebop.svg?branch=master)](https://travis-ci.org/hybridgroup/node-bebop)  
 
 Control your Parrot Bebop drone using JavaScript!
 
