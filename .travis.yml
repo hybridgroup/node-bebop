@@ -6,3 +6,8 @@ node_js:
   - 'iojs'
 before_install:
   - "mkdir -p ~/.npm"
+before_script:
+  - npm install -g istanbul codeclimate-test-reporter
+script:
+  - istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- -R spec
+  - CODECLIMATE_REPO_TOKEN=cdedf6138cfcd8a16492f5180f36a32789247baada76a55615a252fb04e916d5 codeclimate < coverage/lcov.info
