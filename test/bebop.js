@@ -1,9 +1,11 @@
+"use strict";
+
 var bebop = require("../"),
     expect = require("chai").expect,
     assert = require("chai").assert,
     sinon = require("sinon");
 
-describe('Bebop', function(){
+describe("Bebop", function() {
   var drone;
 
   beforeEach(function() {
@@ -11,15 +13,15 @@ describe('Bebop', function(){
   });
 
   it("#createClient", function() {
-    assert.typeOf(drone, 'object');
+    assert.typeOf(drone, "object");
   });
 
-  describe('packet receiver and parser', function() {
+  describe("packet receiver and parser", function() {
     beforeEach(function() {
-      sinon.spy(drone, '_writePacket');
+      sinon.spy(drone, "_writePacket");
     });
 
-    it('should create an ACK for packets which request an ACK', function() {
+    it("should create an ACK for packets which request an ACK", function() {
       var size = 7,
           packetBuf = new Buffer(size),
           type = bebop.constants.ARNETWORKAL_FRAME_TYPE_DATA_WITH_ACK,
@@ -39,7 +41,7 @@ describe('Bebop', function(){
       expect(frameBuf.readUInt8(7)).to.equal(seq);
     });
 
-    describe('ACK for video frames', function() {
+    describe("ACK for video frames", function() {
       var packetBuf;
 
       beforeEach(function() {
@@ -66,7 +68,7 @@ describe('Bebop', function(){
         packetBuf.writeUInt8(frame, 12);
       });
 
-      it('should set the proper ack type and id', function() {
+      it("should set the proper ack type and id", function() {
         drone._packetReceiver(packetBuf);
 
         var frameBuf = drone._writePacket.getCall(0).args[0];
@@ -75,7 +77,7 @@ describe('Bebop', function(){
         expect(frameBuf.readUInt8(1)).to.equal(bebop.constants.BD_NET_CD_VIDEO_ACK_ID);
       });
 
-      it('should flip a lowPacketsAck bit', function() {
+      it("should flip a lowPacketsAck bit", function() {
         var fragmentNumber = 0;
 
         packetBuf.writeUInt16LE(fragmentNumber, 10);
@@ -86,7 +88,7 @@ describe('Bebop', function(){
         expect(frameBuf.readUInt8(17)).to.equal(1);
       });
 
-      it('should flip a highPacketsAck bit', function() {
+      it("should flip a highPacketsAck bit", function() {
         var fragmentNumber = 64;
 
         packetBuf.writeUInt16LE(fragmentNumber, 10);
@@ -98,7 +100,7 @@ describe('Bebop', function(){
       });
     });
 
-    it('should pong the pings', function() {
+    it("should pong the pings", function() {
       var size = 15,
           packetBuf = new Buffer(size),
           type = bebop.constants.ARNETWORKAL_FRAME_TYPE_DATA,
@@ -118,16 +120,16 @@ describe('Bebop', function(){
       expect(frameBuf.readUInt8(1)).to.equal(bebop.constants.ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_PONG);
     });
 
-    describe('events', function() {
-      it('should report battery', function() {
+    describe("events", function() {
+      it("should report battery", function() {
         var size = 12,
             packetBuf = new Buffer(size),
             type = bebop.constants.ARNETWORKAL_FRAME_TYPE_DATA,
-            id = bebop.constants.BD_NET_DC_EVENT_ID;
-            seq = 10;
-            commandProject = bebop.constants.ARCOMMANDS_ID_PROJECT_COMMON;
-            commandClass = bebop.constants.ARCOMMANDS_ID_COMMON_CLASS_COMMONSTATE;
-            commandId = bebop.constants.ARCOMMANDS_ID_COMMON_COMMONSTATE_CMD_BATTERYSTATECHANGED;
+            id = bebop.constants.BD_NET_DC_EVENT_ID,
+            seq = 10,
+            commandProject = bebop.constants.ARCOMMANDS_ID_PROJECT_COMMON,
+            commandClass = bebop.constants.ARCOMMANDS_ID_COMMON_CLASS_COMMONSTATE,
+            commandId = bebop.constants.ARCOMMANDS_ID_COMMON_COMMONSTATE_CMD_BATTERYSTATECHANGED,
             level = 90;
 
         packetBuf.writeUInt8(type, 0);
@@ -143,16 +145,17 @@ describe('Bebop', function(){
 
         expect(drone.navData.battery).to.equal(level);
       });
-      describe('piloting state', function() {
+      describe("piloting state", function() {
         var packetBuf;
         beforeEach(function() {
           var size = 15,
               type = bebop.constants.ARNETWORKAL_FRAME_TYPE_DATA,
-              id = bebop.constants.BD_NET_DC_EVENT_ID;
-              seq = 10;
-              commandProject = bebop.constants.ARCOMMANDS_ID_PROJECT_ARDRONE3;
-              commandClass = bebop.constants.ARCOMMANDS_ID_ARDRONE3_CLASS_PILOTINGSTATE;
+              id = bebop.constants.BD_NET_DC_EVENT_ID,
+              seq = 10,
+              commandProject = bebop.constants.ARCOMMANDS_ID_PROJECT_ARDRONE3,
+              commandClass = bebop.constants.ARCOMMANDS_ID_ARDRONE3_CLASS_PILOTINGSTATE,
               commandId = bebop.constants.ARCOMMANDS_ID_ARDRONE3_PILOTINGSTATE_CMD_FLYINGSTATECHANGED;
+
           packetBuf = new Buffer(size);
 
           packetBuf.writeUInt8(type, 0);
@@ -165,48 +168,48 @@ describe('Bebop', function(){
 
         });
 
-        it('should report landed', function() {
+        it("should report landed", function() {
           packetBuf.writeUInt32LE(bebop.constants.ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_LANDED, 11);
           drone._packetReceiver(packetBuf);
-        expect(drone.navData.flyingState.landed).to.equal(true);
+          expect(drone.navData.flyingState.landed).to.equal(true);
         });
 
-        it('should report taking off', function() {
+        it("should report taking off", function() {
           packetBuf.writeUInt32LE(bebop.constants.ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_TAKINGOFF, 11);
           drone._packetReceiver(packetBuf);
-        expect(drone.navData.flyingState.takingOff).to.equal(true);
+          expect(drone.navData.flyingState.takingOff).to.equal(true);
         });
 
-        it('should report hovering', function() {
+        it("should report hovering", function() {
           packetBuf.writeUInt32LE(bebop.constants.ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_HOVERING, 11);
           drone._packetReceiver(packetBuf);
-        expect(drone.navData.flyingState.hovering).to.equal(true);
+          expect(drone.navData.flyingState.hovering).to.equal(true);
         });
 
-        it('should report flying', function() {
+        it("should report flying", function() {
           packetBuf.writeUInt32LE(bebop.constants.ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_FLYING, 11);
           drone._packetReceiver(packetBuf);
-        expect(drone.navData.flyingState.flying).to.equal(true);
+          expect(drone.navData.flyingState.flying).to.equal(true);
         });
 
-        it('should report landing', function() {
+        it("should report landing", function() {
           packetBuf.writeUInt32LE(bebop.constants.ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_LANDING, 11);
           drone._packetReceiver(packetBuf);
-        expect(drone.navData.flyingState.landing).to.equal(true);
+          expect(drone.navData.flyingState.landing).to.equal(true);
         });
 
-        it('should report emergency', function() {
+        it("should report emergency", function() {
           packetBuf.writeUInt32LE(bebop.constants.ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_EMERGENCY, 11);
           drone._packetReceiver(packetBuf);
-        expect(drone.navData.flyingState.emergency).to.equal(true);
+          expect(drone.navData.flyingState.emergency).to.equal(true);
         });
-      })
+      });
     });
   });
 
-  describe('network frame generator', function() {
-    it('should increase seq number', function() {
-      sinon.spy(drone, '_writePacket');
+  describe("network frame generator", function() {
+    it("should increase seq number", function() {
+      sinon.spy(drone, "_writePacket");
 
       drone.takeOff();
       drone.takeOff();
@@ -221,19 +224,19 @@ describe('Bebop', function(){
     });
   });
 
-  describe('pcmd functions', function() {
-    describe('pitch validator', function() {
-      it('should not allow values greater than 100', function() {
+  describe("pcmd functions", function() {
+    describe("pitch validator", function() {
+      it("should not allow values greater than 100", function() {
         drone.up(120);
         expect(drone._pcmd.gaz).to.equal(100);
       });
 
-      it('should not allow values less than 0', function() {
+      it("should not allow values less than 0", function() {
         drone.up(-30);
         expect(drone._pcmd.gaz).to.equal(0);
       });
 
-      it('should trim floating point values', function() {
+      it("should trim floating point values", function() {
         drone.up(50.1282393);
         expect(drone._pcmd.gaz).to.equal(50);
       });
@@ -252,7 +255,7 @@ describe('Bebop', function(){
 
     describe("pitch", function() {
       it("#front", function() {
-        sinon.spy(drone, 'forward');
+        sinon.spy(drone, "forward");
         drone.front();
         expect(drone.forward.calledOnce).to.equal(true);
       });
@@ -263,7 +266,7 @@ describe('Bebop', function(){
       });
 
       it("#back", function() {
-        sinon.spy(drone, 'backward');
+        sinon.spy(drone, "backward");
         drone.back();
         expect(drone.backward.calledOnce).to.equal(true);
       });
@@ -310,7 +313,7 @@ describe('Bebop', function(){
 
     describe("#_generatePCMD", function() {
       beforeEach(function() {
-        sinon.spy(drone, '_networkFrameGenerator');
+        sinon.spy(drone, "_networkFrameGenerator");
       });
 
       it("should generate pcmd command", function() {
@@ -332,7 +335,7 @@ describe('Bebop', function(){
           pitch: 9,
           yaw: 80,
           gaz: 30
-        }
+        };
 
         drone._generatePCMD(pcmd);
 
@@ -350,10 +353,10 @@ describe('Bebop', function(){
 
   describe("commands", function() {
     beforeEach(function() {
-      sinon.spy(drone, '_networkFrameGenerator');
+      sinon.spy(drone, "_networkFrameGenerator");
     });
 
-    describe('flip commands', function() {
+    describe("flip commands", function() {
       var verify = function(buf) {
         expect(buf.readUInt8(0)).to.equal(bebop.constants.ARCOMMANDS_ID_PROJECT_ARDRONE3);
         expect(buf.readUInt8(1)).to.equal(bebop.constants.ARCOMMANDS_ID_ARDRONE3_CLASS_ANIMATIONS);
@@ -401,7 +404,7 @@ describe('Bebop', function(){
       };
 
       it("#takeoff", function() {
-        sinon.spy(drone, 'takeOff');
+        sinon.spy(drone, "takeOff");
         drone.takeoff();
         expect(drone.takeOff.calledOnce).to.equal(true);
       });
@@ -423,7 +426,7 @@ describe('Bebop', function(){
       });
 
       it("#calibrate", function() {
-        sinon.spy(drone, 'flatTrim');
+        sinon.spy(drone, "flatTrim");
         drone.calibrate();
         expect(drone.flatTrim.calledOnce).to.equal(true);
       });
@@ -456,8 +459,9 @@ describe('Bebop', function(){
         drone.generateAllStates();
         var buf = drone._networkFrameGenerator.getCall(0).args[0];
         expect(drone._networkFrameGenerator.calledOnce).to.equal(true);
+        verify(buf);
         expect(buf.readUInt16LE(2)).to.equal(bebop.constants.ARCOMMANDS_ID_COMMON_COMMON_CMD_ALLSTATES);
       });
     });
   });
-})
+});

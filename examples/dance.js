@@ -1,4 +1,6 @@
-var bebop = require('../.');
+"use strict";
+
+var bebop = require("../.");
 
 var drone = bebop.createClient();
 
