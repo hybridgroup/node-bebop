@@ -39,6 +39,14 @@ drone.connect(function() {
 
 Returns a `new Bebop`
 
+### getVideoStream()
+
+Returns a stream of h.264 frames
+
+### getMjpegStream()
+
+Returns a stream of mjpeg images
+
 ### connect(callback)
 
 Connects to the drone and executes the callback when the drone is ready to fly

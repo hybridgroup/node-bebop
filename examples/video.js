@@ -1,22 +1,12 @@
 "use strict";
-var bebop = require("../.");
-var fs = require("fs");
 
-var drone = bebop.createClient();
+var bebop = require("../."),
+    fs = require("fs");
 
-fs.writeFile("./video.h264", function(err) {
-  if (err) {
-    throw err;
-  }
-});
+var output = fs.createWriteStream("./video.h264"),
+    drone = bebop.createClient(),
+    video = drone.getVideoStream();
 
-drone.connect(function() {
-  drone.on("video", function(data) {
-    // you can watch this video with ffplay or mplayer
-    fs.appendFile("./video.h264", data, function(err) {
-      if (err) {
-        throw err;
-      }
-    });
-  });
-});
+video.pipe(output);
+
+drone.connect();

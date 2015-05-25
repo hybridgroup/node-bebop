@@ -1,5 +1,7 @@
 "use strict";
 
+process.env.NODE_ENV = "test";
+
 var bebop = require("../"),
     expect = require("chai").expect,
     assert = require("chai").assert,
@@ -14,6 +16,34 @@ describe("Bebop", function() {
 
   it("#createClient", function() {
     assert.typeOf(drone, "object");
+  });
+
+  it("#getVideoStream", function() {
+    var output;
+
+    var stream = drone.getVideoStream();
+
+    stream.on("data", function(buf) {
+      output = buf;
+    });
+
+    drone.emit("video", new Buffer([0xff]));
+
+    expect(output[0]).to.equal(0xff);
+  });
+
+  it("#getMjpegStream", function() {
+    var output;
+
+    var stream = drone.getMjpegStream();
+
+    stream.on("data", function(buf) {
+      output = buf;
+    });
+
+    drone.emit("video", new Buffer([0xff]));
+
+    expect(output[0]).to.equal(0xff);
   });
 
   describe("packet receiver and parser", function() {
