@@ -39,17 +39,29 @@ drone.connect(function() {
 
 Returns a `new Bebop`
 
+### connect(callback)
+
+Connects to the drone and executes the callback when the drone is ready to fly.
+
 ### getVideoStream()
 
-Returns a stream of h.264 frames
+Returns a stream of h.264 frames.
 
 ### getMjpegStream()
 
-Returns a stream of mjpeg images
+Returns a stream of mjpeg images.
 
-### connect(callback)
+### takePicture()
 
-Connects to the drone and executes the callback when the drone is ready to fly
+Takes a picture and saves the image to the internal storage.
+
+### startRecording()
+
+Starts recording video to the internal storage.
+
+### stopRecording()
+
+Stops a previously started recording and saves to internal storage.
 
 #### takeOff(callback)
 
@@ -82,6 +94,14 @@ Cause the drone to move to the right at 0-100 speed
 #### left(val)
 
 Cause the drone to move to the left at 0-100 speed
+
+#### forward(val)
+
+Cause the drone to move forward at 0-100 speed
+
+#### backward(val)
+
+Cause the drone to move backward at 0-100 speed
 
 #### clockwise(val)
 
