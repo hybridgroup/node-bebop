@@ -1,6 +1,6 @@
 {
   "name": "node-bebop",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "library for the parrot bebop",
   "main": "lib/index.js",
   "scripts": {
