@@ -15,7 +15,7 @@
     "bebop",
     "drone"
   ],
-  "author": "Adrian Zankich <adrian@hybridgroup.com>",
+  "author": "The Hybrid Group <cylonjs@hybridgroup.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/hybridgroup/node-bebop/issues"
