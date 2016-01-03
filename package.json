@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "fluent-ffmpeg": "^2.0.1",
+    "storotype": "^0.1.17",
     "through": "^2.3.7"
   }
 }
