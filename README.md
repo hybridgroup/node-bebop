@@ -128,15 +128,15 @@ Tell the drone to do a flip to the right
 Tell the drone to do a flip to the left
 
 
-#### Piloting.FlatTrim()
+#### Piloting.flatTrim()
 
 Do a flat trim
 
-#### Piloting.TakeOff()
+#### Piloting.takeOff()
 
 Ask the drone to take off
 
-#### Piloting.PCMD(obj)
+#### Piloting.pcmd(obj)
 
 Ask the drone to move around.
 
@@ -147,21 +147,21 @@ Ask the drone to move around.
 * **gaz** Gaz consign for the drone [-100;100]
 * **psi** [NOT USED] - Magnetic north heading of the controlling device (deg) [-180;180]
 
-#### Piloting.Landing()
+#### Piloting.landing()
 
 Ask the drone to land
 
-#### Piloting.Emergency()
+#### Piloting.emergency()
 
 Put drone in emergency user state
 
-#### Piloting.NavigateHome(start)
+#### Piloting.navigateHome(start)
 
 Ask the drone to fly to home
 
 * **start** 1 to start the navigate home, 0 to stop it
 
-#### Piloting.AutoTakeOffMode(state)
+#### Piloting.autoTakeOffMode(state)
 
 [NOT USED] Set Drone3 in automatic take off mode
 
@@ -176,77 +176,87 @@ Draft: this command is not implemented yet by the firmware Move the drone to a r
 * **dZ** Wanted displacement along the down axis [m]
 * **dPsi** Wanted rotation of heading  [rad]
 
-#### Animations.Flip(direction)
+#### Animations.flip(direction)
 
 Make a flip
 
 * **direction** Direction for the flip
 
-#### Camera.Orientation(obj)
+#### Camera.orientation(obj)
 
 Ask the drone to move camera.
 
 * **tilt** Tilt camera consign for the drone (in degree) The value is saturated by the drone. Saturation value is sent by thre drone through CameraSettingsChanged command.
 * **pan** Pan camera consign for the drone (in degree) The value is saturated by the drone. Saturation value is sent by thre drone through CameraSettingsChanged command.
 
-#### MediaRecord.Picture(mass_storage_id)
+#### MediaRecord.picture(mass_storage_id)
 
 @deprecated Take picture
 
 * **mass_storage_id** Mass storage id to take picture
 
-#### MediaRecord.Video(obj)
+#### MediaRecord.video(obj)
 
 @deprecated Video record
 
 * **record** Command to record video
 * **mass_storage_id** Mass storage id to record
 
-#### MediaRecord.PictureV2()
+#### MediaRecord.pictureV2()
 
 Take picture
 
-#### MediaRecord.VideoV2(record)
+#### MediaRecord.videoV2(record)
 
 Video record
 
 * **record** Command to record video
 
-#### Network.WifiScan(band)
+#### PilotingEvent.moveByEnd(obj)
+
+Draft: this command is not implemented yet by the firmware End of relative displacement of the drone The frame is horizontal and relative to the current drone orientation: - X is front - Y is right - Z is down
+
+* **dX** Distance traveled along the front axis [m]
+* **dY** Distance traveled along the right axis [m]
+* **dZ** Distance traveled along the down axis [m]
+* **dPsi** Applied angle on heading  [rad]
+* **error** Error to explain the event
+
+#### Network.wifiScan(band)
 
 Launches wifi network scan
 
 * **band** The band(s) : 2.4 Ghz, 5 Ghz, or both
 
-#### Network.WifiAuthChannel()
+#### Network.wifiAuthChannel()
 
 Controller inquire the list of authorized wifi channels.
 
-#### PilotingSettings.MaxAltitude(current)
+#### PilotingSettings.maxAltitude(current)
 
 Set Max Altitude
 
 * **current** Current altitude max in m
 
-#### PilotingSettings.MaxTilt(current)
+#### PilotingSettings.maxTilt(current)
 
 Set Max Tilt
 
 * **current** Current tilt max in degree
 
-#### PilotingSettings.AbsolutControl(on)
+#### PilotingSettings.absolutControl(on)
 
 [NOT USED] Enable/Disable absolut control
 
 * **on** 1 to enable, 0 to disable
 
-#### PilotingSettings.MaxDistance(value)
+#### PilotingSettings.maxDistance(value)
 
 Set the distance max of the drone
 
 * **value** Current max distance in meter
 
-#### PilotingSettings.NoFlyOverMaxDistance(shouldNotFlyOver)
+#### PilotingSettings.noFlyOverMaxDistance(shouldNotFlyOver)
 
 Indication about how the product handle flying over the max distance limitation
 
@@ -282,31 +292,61 @@ Draft: this command is not implemented yet by the firmware Set the maximum yaw r
 
 * **value** maximum yaw rotation speed [rad/s]
 
-#### SpeedSettings.MaxVerticalSpeed(current)
+#### PilotingSettingsState.autonomousFlightMaxHorizontalSpeed(value)
+
+Draft: this command is not implemented yet by the firmware Maximum horizontal speed used by the autonomous flight
+
+* **value** maximum horizontal speed [m/s]
+
+#### PilotingSettingsState.autonomousFlightMaxVerticalSpeed(value)
+
+Draft: this command is not implemented yet by the firmware Maximum vertical speed used by the autonomous flight
+
+* **value** maximum vertical speed [m/s]
+
+#### PilotingSettingsState.autonomousFlightMaxHorizontalAcceleration(value)
+
+Draft: this command is not implemented yet by the firmware Maximum horizontal acceleration used by the autonomous flight
+
+* **value** maximum horizontal acceleration [m/s2]
+
+#### PilotingSettingsState.autonomousFlightMaxVerticalAcceleration(value)
+
+Draft: this command is not implemented yet by the firmware Maximum vertical acceleration used by the autonomous flight
+
+* **value** maximum vertical acceleration [m/s2]
+
+#### PilotingSettingsState.autonomousFlightMaxRotationSpeed(value)
+
+Draft: this command is not implemented yet by the firmware Maximum yaw rotation speed used by the autonomous flight
+
+* **value** maximum yaw rotation speed [rad/s]
+
+#### SpeedSettings.maxVerticalSpeed(current)
 
 Set Max Vertical speed
 
 * **current** Current max vertical speed in m/s
 
-#### SpeedSettings.MaxRotationSpeed(current)
+#### SpeedSettings.maxRotationSpeed(current)
 
 Set Max Rotation speed
 
 * **current** Current max rotation speed in degree/s
 
-#### SpeedSettings.HullProtection(present)
+#### SpeedSettings.hullProtection(present)
 
 Presence of hull protection
 
 * **present** 1 if present, 0 if not present
 
-#### SpeedSettings.Outdoor(outdoor)
+#### SpeedSettings.outdoor(outdoor)
 
 Outdoor property
 
 * **outdoor** 1 if outdoor flight, 0 if indoor flight
 
-#### NetworkSettings.WifiSelection(obj)
+#### NetworkSettings.wifiSelection(obj)
 
 Auto-select channel of choosen band
 
@@ -314,51 +354,57 @@ Auto-select channel of choosen band
 * **band** The allowed band(s) : 2.4 Ghz, 5 Ghz, or all
 * **channel** The channel (not used in auto mode)
 
-#### PictureSettings.PictureFormatSelection(type)
+#### SettingsState.p7id(serialID)
+
+Product P7ID
+
+* **serialID** Product P7ID
+
+#### PictureSettings.pictureFormatSelection(type)
 
 The format of the photo
 
 * **type** The type of photo format
 
-#### PictureSettings.AutoWhiteBalanceSelection(type)
+#### PictureSettings.autoWhiteBalanceSelection(type)
 
 AutoWhiteBalance mode
 
 * **type** The type auto white balance
 
-#### PictureSettings.ExpositionSelection(value)
+#### PictureSettings.expositionSelection(value)
 
 The exposition of the image
 
 * **value** Exposition value (bounds given by ExpositionChanged arg min and max, by default [-3:3])
 
-#### PictureSettings.SaturationSelection(value)
+#### PictureSettings.saturationSelection(value)
 
 The saturation of the image
 
 * **value** Saturation value (bounds given by SaturationChanged arg min and max, by default [-100:100])
 
-#### PictureSettings.TimelapseSelection(obj)
+#### PictureSettings.timelapseSelection(obj)
 
 Picture taken periodically
 
 * **enabled** 1 if timelapse is enabled, 0 otherwise
 * **interval** interval in seconds for taking pictures
 
-#### PictureSettings.VideoAutorecordSelection(obj)
+#### PictureSettings.videoAutorecordSelection(obj)
 
 Video autorecord
 
 * **enabled** 1 if video autorecord is enabled, 0 otherwise
 * **mass_storage_id** Mass storage id to take video
 
-#### MediaStreaming.VideoEnable(enable)
+#### MediaStreaming.videoEnable(enable)
 
 Enable/disable video streaming.
 
 * **enable** 1 to enable, 0 to disable.
 
-#### GPSSettings.SetHome(obj)
+#### GPSSettings.setHome(obj)
 
 Set home location
 
@@ -366,11 +412,11 @@ Set home location
 * **longitude** Home longitude in decimal degrees
 * **altitude** Home altitude in meters
 
-#### GPSSettings.ResetHome()
+#### GPSSettings.resetHome()
 
 Reset home location and let the drone make its own home
 
-#### GPSSettings.SendControllerGPS(obj)
+#### GPSSettings.sendControllerGPS(obj)
 
 send controller GPS location
 
@@ -380,17 +426,31 @@ send controller GPS location
 * **horizontalAccuracy** Horizontal Accuracy in meter ; equal -1 if no horizontal Accuracy
 * **verticalAccuracy** Vertical Accuracy in meter ; equal -1 if no vertical Accuracy
 
-#### GPSSettings.HomeType(type)
+#### GPSSettings.homeType(type)
 
 Set user preference for the type of the home position. Note that this is only a preference
 
 * **type** The type of the home position
 
-#### GPSSettings.ReturnHomeDelay(delay)
+#### GPSSettings.returnHomeDelay(delay)
 
 Set the delay after which the drone will automatically try to return home
 
 * **delay** Delay in second
+
+#### CameraState.orientation(obj)
+
+Camera orientation
+
+* **tilt** Tilt camera consign for the drone [-100;100]
+* **pan** Pan camera consign for the drone [-100;100]
+
+#### CameraState.defaultCameraOrientation(obj)
+
+Orientation of the camera center. This is the value to send when we want to center the camera.
+
+* **tilt** Tilt value (in degree)
+* **pan** Pan value (in degree)
 
 #### Antiflickering.electricFrequency(frequency)
 
@@ -404,103 +464,166 @@ Set the anti flickering mode
 
 * **mode** Mode of the anti flickering functionnality
 
-#### Network.Disconnect()
+#### PROState.features(features)
+
+Features enabled
+
+* **features** 		  Bitfield representing enabled features. 		  Currently supported bits are: 		  - 0 : 720p streaming 		  - 1 : No interface on SkyController HDMI
+
+#### Network.disconnect()
 
 Signals the remote that the host will disconnect and close its libARNetwork instance (and all threads that use libARNetwork)
 
-#### Settings.AllSettings()
+#### NetworkEvent.disconnection(cause)
+
+Signals the remote that the host will disconnect and close its libARNetwork instance (and all threads that use libARNetwork)
+
+* **cause** Cause of the disconnection of the product
+
+#### Settings.allSettings()
 
 Get all product settings, the product must send all settings
 
-#### Settings.Reset()
+#### Settings.reset()
 
 Reset all settings
 
-#### Settings.ProductName(name)
+#### Settings.productName(name)
 
 Set Product name
 
 * **name** Product name
 
-#### Settings.Country(code)
+#### Settings.country(code)
 
 Set current Country of controller
 
 * **code** Country code with ISO 3166 format
 
-#### Settings.AutoCountry(automatic)
+#### Settings.autoCountry(automatic)
 
 Set Auto Country Settings
 
 * **automatic** Boolean : 0 : Manual / 1 : Auto
 
-#### Common.AllStates()
+#### Common.allStates()
 
 Get all product states.
 
-#### Common.CurrentDate(date)
+#### Common.currentDate(date)
 
 Set current date of controller
 
 * **date** Date with ISO-8601 format
 
-#### Common.CurrentTime(time)
+#### Common.currentTime(time)
 
 Set current time of controller
 
 * **time** Time with ISO-8601 format
 
-#### Common.Reboot()
+#### Common.reboot()
 
 Command to ask reboot to product
 
-#### OverHeat.SwitchOff()
+#### CommonState.productModel(model)
+
+Inform of the product model. This is used to customize the UI depending on the connected product.
+
+* **model** The Model of the product.
+
+#### CommonState.countryListKnown(obj)
+
+List of the countries known by the device
+
+* **listFlags** List entry attribute Bitfield. 0x01: First: indicate it's the first element of the list.  0x02: Last:  indicate it's the last element of the list. 0x04: Empty: indicate the list is empty (implies First/Last). All other arguments should be ignored.
+* **countryCodes** Following of country code with ISO 3166 format, separated by ";". Be careful of the command size allowed by the network used. If necessary, split the list in several commands.
+
+#### OverHeat.switchOff()
 
 @deprecated Switch off the drone when a overheat appeared
 
-#### OverHeat.Ventilate()
+#### OverHeat.ventilate()
 
 @deprecated Ventilate the drone when a overheat appeared
 
-#### WifiSettings.OutdoorSetting(outdoor)
+#### WifiSettings.outdoorSetting(outdoor)
 
 Send to product if it should use its outdoor wifi config, or indoor
 
 * **outdoor** 1 if it should use outdoor wifi settings, 0 otherwise
 
-#### Mavlink.Start(obj)
+#### Mavlink.start(obj)
 
 Start the flight plan
 
 * **filepath** flight plan file path from the mavlink ftp root
 * **type** type of the played mavlink file
 
-#### Mavlink.Pause()
+#### Mavlink.pause()
 
 Pause the flightplan (can be restarted with a start)
 
-#### Mavlink.Stop()
+#### Mavlink.stop()
 
 Stop the flightplan
 
-#### Calibration.MagnetoCalibration(calibrate)
+#### Calibration.magnetoCalibration(calibrate)
 
 Sent when a calibration of the magnetometer is asked or is aborted
 
 * **calibrate** 1 if the calibration should be started, 0 if it should be aborted
 
-#### GPS.ControllerPositionForRun(obj)
+#### CalibrationState.magnetoCalibrationRequiredState(required)
+
+Status of the calibration requirement
+
+* **required** 1 if calibration is required, 0 if current calibration is still valid
+
+#### GPS.controllerPositionForRun(obj)
 
 Set the controller position for a run. This command is used by all non gps products. Watch out, this command cannot be used with BLE products
 
 * **latitude** Controller latitude in decimal degrees
 * **longitude** Controller longitude in decimal degrees
 
-#### Audio.ControllerReadyForStreaming(ready)
+#### FlightPlanEvent.startingErrorEvent()
+
+Event of flight plan start error
+
+#### FlightPlanEvent.speedBridleEvent()
+
+Bridle speed of the drone
+
+#### ARLibsVersionsState.controllerLibARCommandsVersion(version)
+
+Controller libARCommands version
+
+* **version** version of libARCommands ("1.2.3.4"format)
+
+#### ARLibsVersionsState.skyControllerLibARCommandsVersion(version)
+
+SkyController libARCommands version
+
+* **version** version of libARCommands ("1.2.3.4"format)
+
+#### ARLibsVersionsState.deviceLibARCommandsVersion(version)
+
+Device libARCommands version
+
+* **version** version of libARCommands ("1.2.3.4"format)
+
+#### Audio.controllerReadyForStreaming(ready)
 
 Tell the firmware whether the controller is ready to start audio streaming.
 
 * **ready** Bit field for TX and RX ready. bit 0 is 1 if controller is ready and wants to receive sound (Drone TX) bit 1 is 1 if controller is ready and wants to send sound (Drone RX)
+
+#### AudioState.audioStreamingRunning(running)
+
+Notify the controller whether the audio streaming is running.
+
+* **running** Bit field for TX and RX running bit 0 is 1 if Drone TX is running bit 1 is 1 if Drone RX is running
 
 #### Headlights.intensity(obj)
 
@@ -509,33 +632,56 @@ Set instensity of lighting LEDs.
 * **left** Set the left LED intensity value (0 through 255).
 * **right** Set the right LED intensity value (0 through 255).
 
-#### Animations.StartAnimation(anim)
+#### Animations.startAnimation(anim)
 
 Start a paramaterless animation.
 
 * **anim** Animation to start.
 
-#### Animations.StopAnimation(anim)
+#### Animations.stopAnimation(anim)
 
 Stop a running animation.
 
 * **anim** Animation to stop.
 
-#### Animations.StopAllAnimations()
+#### Animations.stopAllAnimations()
 
 Stop all running animations.
 
-#### Accessory.Config(accessory)
+#### AnimationsState.list(obj)
+
+List of animations state.
+
+* **anim** Animation type.
+* **state** State of the animation
+* **error** Error to explain the state
+
+#### Accessory.config(accessory)
 
 Set the current accessory configuration.
 
 * **accessory** Accessory configuration to set.
 
-#### Charger.SetMaxChargeRate(rate)
+#### AccessoryState.accessoryConfigModificationEnabled(enabled)
+
+Possibility to modify the accessory configuration.
+
+* **enabled** 1 if the modification of the accessory Config is enabled, 0 otherwise
+
+#### Charger.setMaxChargeRate(rate)
 
 @deprecated Set the maximum charge rate allowed to charge a battery.
 
 * **rate** The new maximum charge rate.
+
+#### ChargerState.chargingInfo(obj)
+
+Information of the charge.
+
+* **phase** The current charging phase.
+* **rate** The charge rate. If phase is DISCHARGING, refers to the last charge.
+* **intensity** The charging intensity, in dA. (12dA = 1,2A) ; If phase is DISCHARGING, refers to the last charge. Equals to 0 if not known.
+* **fullChargingTime** The full charging time estimated, in minute. If phase is DISCHARGING, refers to the last charge. Equals to 0 if not known.
 
 
 ### Events
