@@ -737,10 +737,6 @@ Motor flights status
 
 Motor status about last error
 
-#### P7ID
-
-Product P7ID
-
 #### PictureFormatChanged
 
 The format of the photo
