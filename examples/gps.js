@@ -10,5 +10,5 @@ drone.connect(function() {
 
   drone.on("PositionChanged", function(data) {
     console.log(data);
-  })
+  });
 });
