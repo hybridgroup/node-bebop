@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha",
-    "updateCommands": "node updateCommands.js"
+    "updateCommands": "node bin/updateCommands.js"
   },
   "repository": {
     "type": "git",
