@@ -121,7 +121,7 @@ Tell the drone to do a back flip
 
 #### rightFlip()
 
-Tell the drone to do a flip to the right 
+Tell the drone to do a flip to the right
 
 #### leftFlip()
 
@@ -1170,4 +1170,4 @@ Information of the charge.
 
 ## License
 
-Copyright (c) 2015 The Hybrid Group. Licensed under the MIT license.
+Copyright (c) 2015-2016 The Hybrid Group. Licensed under the MIT license.
