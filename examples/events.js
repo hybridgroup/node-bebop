@@ -33,4 +33,7 @@ drone.connect(function() {
     console.log("landing");
   });
 
+  drone.on("unknown", function(data) {
+    console.log("unknown", data);
+  });
 });
