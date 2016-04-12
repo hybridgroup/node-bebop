@@ -4,13 +4,8 @@ var bebop = require("../.");
 
 var drone = bebop.createClient();
 
-drone.connect(function () {
-  drone.MediaStreaming.videoEnable(1);
-  drone.Piloting.takeOff();
-
-  setTimeout(function () {
-    drone.Piloting.landing();
-  }, 5000);
+drone.connect(function() {
+  drone.Mavlink.start("internal_000/flightplans/flightplan.mavlink", 0);
 
   drone.on("navData", function (data) {
     console.log("Alt changed: " + data);
@@ -18,7 +13,6 @@ drone.connect(function () {
 
   drone.on("ready", function () {
     console.log("ready");
-    console.log(drone.navData);
   });
 
   drone.on("battery", function (data) {

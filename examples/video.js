@@ -10,3 +10,4 @@ var output = fs.createWriteStream("./video.h264"),
 video.pipe(output);
 
 drone.connect();
+drone.MediaStreaming.videoEnable(1);
