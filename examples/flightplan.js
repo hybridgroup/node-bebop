@@ -7,6 +7,14 @@ var drone = bebop.createClient();
 drone.connect(function() {
   drone.Mavlink.start("internal_000/flightplans/flightplan.mavlink", 0);
 
+  drone.on("MavlinkPlayErrorStateChanged", function(data){
+    console.log(data);
+  });
+
+  drone.on("MavlinkFilePlayingStateChanged",function(data){
+    console.log(data);
+  });
+
   drone.on("navData", function (data) {
     console.log("Alt changed: " + data);
   });
@@ -29,7 +37,6 @@ drone.connect(function() {
 
   drone.on("hovering", function () {
     console.log("hovering");
-    drone.level();
   });
 
   drone.on("FlyingStateChanged", function () {
