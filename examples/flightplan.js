@@ -7,11 +7,11 @@ var drone = bebop.createClient();
 drone.connect(function() {
   drone.Mavlink.start("internal_000/flightplans/flightplan.mavlink", 0);
 
-  drone.on("MavlinkPlayErrorStateChanged", function(data){
+  drone.on("MavlinkPlayErrorStateChanged", function(data) {
     console.log(data);
   });
 
-  drone.on("MavlinkFilePlayingStateChanged",function(data){
+  drone.on("MavlinkFilePlayingStateChanged", function(data) {
     console.log(data);
   });
 
