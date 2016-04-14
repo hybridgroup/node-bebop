@@ -4,19 +4,33 @@ var bebop = require("../.");
 
 var drone = bebop.createClient();
 
+var alreadyFlying = false;
+
 drone.connect(function() {
-  drone.Mavlink.start("internal_000/flightplans/flightplan.mavlink", 0);
+  drone.WifiSettings.outdoorSetting(1);
+
+  drone.on("GPSFixStateChanged", function(data) {
+    console.log("GPSFixStateChanged", data);
+  });
 
   drone.on("MavlinkPlayErrorStateChanged", function(data) {
-    console.log(data);
+    console.log("MavlinkPlayErrorStateChanged", data);
   });
 
   drone.on("MavlinkFilePlayingStateChanged", function(data) {
-    console.log(data);
+    console.log("MavlinkFilePlayingStateChanged", data);
   });
 
-  drone.on("navData", function (data) {
-    console.log("Alt changed: " + data);
+  drone.on("AvailabilityStateChanged", function(data) {
+    console.log("AvailabilityStateChanged", data);
+    if (data.AvailabilityState === 1 && !alreadyFlying) {
+      alreadyFlying = true;
+      drone.Mavlink.start("/data/ftp/internal_000/flightplans/flightPlan.mavlink", 0);
+    }
+  });
+
+  drone.on("ComponentStateListChanged", function(data) {
+    console.log("ComponentStateListChanged", data);
   });
 
   drone.on("ready", function () {
@@ -37,6 +51,7 @@ drone.connect(function() {
 
   drone.on("hovering", function () {
     console.log("hovering");
+    //drone.Mavlink.start("/data/ftp/internal_000/flightplans/flightPlan.mavlink", 0);
   });
 
   drone.on("FlyingStateChanged", function () {
@@ -45,10 +60,6 @@ drone.connect(function() {
 
   drone.on("BatteryStateChanged", function () {
     console.log("BatteryStateChanged");
-  });
-
-  drone.on("takingOff", function() {
-    console.log("takingOff");
   });
 
   drone.on("flying", function() {
