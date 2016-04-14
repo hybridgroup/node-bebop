@@ -7,8 +7,6 @@ var drone = bebop.createClient();
 var alreadyFlying = false;
 
 drone.connect(function() {
-  drone.WifiSettings.outdoorSetting(1);
-
   drone.on("GPSFixStateChanged", function(data) {
     console.log("GPSFixStateChanged", data);
   });
@@ -51,7 +49,6 @@ drone.connect(function() {
 
   drone.on("hovering", function () {
     console.log("hovering");
-    //drone.Mavlink.start("/data/ftp/internal_000/flightplans/flightPlan.mavlink", 0);
   });
 
   drone.on("FlyingStateChanged", function () {
