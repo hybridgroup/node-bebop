@@ -23,8 +23,7 @@ drone.connect(function() {
     console.log("AvailabilityStateChanged", data);
     if (data.AvailabilityState === 1 && !alreadyFlying) {
       alreadyFlying = true;
-      console.log("This is where we would try to call Mavlink.start()");
-      //drone.Mavlink.start("/data/ftp/internal_000/flightplans/flightPlan.mavlink", 0);
+      drone.Mavlink.start("/data/ftp/internal_000/flightplans/flightPlan.mavlink", 0);
     }
   });
 
@@ -32,24 +31,32 @@ drone.connect(function() {
     console.log("ComponentStateListChanged", data);
   });
 
-  drone.on("ready", function() {
+  drone.on("ready", function () {
     console.log("ready");
   });
 
-  drone.on("battery", function(data) {
+  drone.on("battery", function (data) {
     console.log(data);
   });
 
-  drone.on("landed", function() {
+  drone.on("landed", function () {
     console.log("landed");
   });
 
-  drone.on("takingOff", function() {
+  drone.on("takingOff", function () {
     console.log("takingOff");
   });
 
-  drone.on("hovering", function() {
+  drone.on("hovering", function () {
     console.log("hovering");
+  });
+
+  drone.on("FlyingStateChanged", function () {
+    console.log("FlyingStateChanged");
+  });
+
+  drone.on("BatteryStateChanged", function () {
+    console.log("BatteryStateChanged");
   });
 
   drone.on("flying", function() {

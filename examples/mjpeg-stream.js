@@ -8,8 +8,9 @@ var drone = bebop.createClient(),
     buf = null,
     w = new cv.NamedWindow("Video", 0);
 
-drone.connect();
-
+drone.connect(function() {
+  drone.MediaStreaming.videoEnable(1);
+});
 
 mjpg.on("data", function(data) {
   buf = data;

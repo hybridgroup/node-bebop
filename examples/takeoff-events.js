@@ -5,10 +5,11 @@ var bebop = require("../.");
 var drone = bebop.createClient();
 
 drone.connect(function () {
-  drone.takeOff();
+  drone.MediaStreaming.videoEnable(1);
+  drone.Piloting.takeOff();
 
   setTimeout(function () {
-    drone.land();
+    drone.Piloting.landing();
   }, 5000);
 
   drone.on("navData", function (data) {
