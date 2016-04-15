@@ -33,7 +33,8 @@ drone.connect(function() {
 });
 
 ```
-### API
+
+## NodeCopter-compatible API
 
 ### createClient()
 
@@ -126,6 +127,8 @@ Tell the drone to do a flip to the right
 #### leftFlip()
 
 Tell the drone to do a flip to the left
+
+## Full API
 
 The `node-bebop` module supports both the above NodeCopter-compatible interface, as well as the full Parrot 3.x API command and events set. For info on the full API, please check out the docs directory.
 
