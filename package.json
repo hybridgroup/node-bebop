@@ -1,6 +1,6 @@
 {
   "name": "node-bebop",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Node.js JavaScript library for the Parrot Bebop",
   "main": "lib/index.js",
   "scripts": {
@@ -17,7 +17,9 @@
   "keywords": [
     "parrot",
     "bebop",
-    "drone"
+    "drone",
+    "bebop1",
+    "bebop2"
   ],
   "author": "The Hybrid Group <cylonjs@hybridgroup.com>",
   "license": "MIT",
