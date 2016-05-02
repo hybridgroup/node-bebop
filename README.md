@@ -130,9 +130,13 @@ Tell the drone to do a flip to the left
 
 ## Full API
 
-The `node-bebop` module supports both the above NodeCopter-compatible interface, as well as the full Parrot 3.x API command and events set. For info on the full API, please check out the docs directory.
+The `node-bebop` module supports both the above NodeCopter-compatible interface, as well as the full Parrot 3.x API command and events set. For info on the full API, please check out the docs directory here:
+
+https://github.com/hybridgroup/node-bebop/blob/master/docs/
 
 ## Release History
+
+0.6.0 Update for new 3.2.x drone firmware
 
 0.5.0 Refactor Bebop command builder
 
