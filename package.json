@@ -1,19 +1,25 @@
 {
   "name": "node-bebop",
-  "version": "0.3.0",
-  "description": "library for the parrot bebop",
+  "version": "0.6.0",
+  "description": "Node.js JavaScript library for the Parrot Bebop",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "updateCommands": "node bin/updateCommands.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/hybridgroup/node-bebop.git"
   },
+  "bin": {
+    "update-bebop-commands": "./bin/updateCommands.js"
+  },
   "keywords": [
     "parrot",
     "bebop",
-    "drone"
+    "drone",
+    "bebop1",
+    "bebop2"
   ],
   "author": "The Hybrid Group <cylonjs@hybridgroup.com>",
   "license": "MIT",
@@ -22,15 +28,19 @@
   },
   "homepage": "https://github.com/hybridgroup/node-bebop",
   "devDependencies": {
-    "mocha": "^2.2.5",
     "chai": "^2.3.0",
-    "sinon": "^1.14.1",
     "grunt": "^0.4.5",
     "grunt-eslint": "^13.0.0",
-    "grunt-simple-mocha": "^0.4.0"
+    "grunt-simple-mocha": "^0.4.0",
+    "mocha": "^2.2.5",
+    "promise": "^7.1.1",
+    "request": "^2.69.0",
+    "sinon": "^1.14.1",
+    "xml2json": "^0.9.0"
   },
   "dependencies": {
     "fluent-ffmpeg": "^2.0.1",
+    "storotype": "^0.1.17",
     "through": "^2.3.7"
   }
 }

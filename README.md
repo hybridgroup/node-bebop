@@ -33,7 +33,8 @@ drone.connect(function() {
 });
 
 ```
-### API
+
+## NodeCopter-compatible API
 
 ### createClient()
 
@@ -121,51 +122,25 @@ Tell the drone to do a back flip
 
 #### rightFlip()
 
-Tell the drone to do a flip to the right 
+Tell the drone to do a flip to the right
 
 #### leftFlip()
 
 Tell the drone to do a flip to the left
 
+## Full API
 
-### Events
-#### battery
+The `node-bebop` module supports both the above NodeCopter-compatible interface, as well as the full Parrot 3.x API command and events set. For info on the full API, please check out the docs directory here:
 
-Emits battery level percentage
-
-#### video
-
-Emits one h.264 video frame
-
-#### ready
-
-Emitted when the drone has successfully connected
-
-#### flying
-
-Emmited when the drone is flying in the air.
-
-#### hovering
-
-Emmited when the drone is hovering in the air.
-
-#### landed
-
-Emmited when the drone has landed on the ground.
-
-#### landing
-
-Emmited when the drone is in the process of landing.
-
-#### takingOff
-
-Emmited when the drone is in the process of taking off.
-
-#### emergency
-
-Emmited when the drone encounters an emergency condition.
+https://github.com/hybridgroup/node-bebop/blob/master/docs/
 
 ## Release History
+
+0.6.0 Update for new 3.2.x drone firmware
+
+0.5.0 Refactor Bebop command builder
+
+0.4.0 Initial support for full Bebop command set
 
 0.3.0 Add getVideoStream, getMjpegStream, picture taking and video recording methods
 
@@ -175,4 +150,4 @@ Emmited when the drone encounters an emergency condition.
 
 ## License
 
-Copyright (c) 2015 The Hybrid Group. Licensed under the MIT license.
+Copyright (c) 2015-2016 The Hybrid Group. Licensed under the MIT license.

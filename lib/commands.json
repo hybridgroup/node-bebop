@@ -1,0 +1,4213 @@
+[
+  {
+    "name": "ardrone3",
+    "id": "1",
+    "class": [
+      {
+        "name": "Piloting",
+        "id": "0",
+        "cmd": [
+          {
+            "name": "FlatTrim",
+            "id": "0",
+            "$t": "Do a flat trim"
+          },
+          {
+            "name": "TakeOff",
+            "id": "1",
+            "$t": "Ask the drone to take off"
+          },
+          {
+            "name": "PCMD",
+            "id": "2",
+            "buffer": "NON_ACK",
+            "arg": [
+              {
+                "name": "flag",
+                "type": "u8",
+                "$t": "Boolean flag to activate roll/pitch movement"
+              },
+              {
+                "name": "roll",
+                "type": "i8",
+                "$t": "Roll consign for the drone [-100;100]"
+              },
+              {
+                "name": "pitch",
+                "type": "i8",
+                "$t": "Pitch consign for the drone [-100;100]"
+              },
+              {
+                "name": "yaw",
+                "type": "i8",
+                "$t": "Yaw consign for the drone [-100;100]"
+              },
+              {
+                "name": "gaz",
+                "type": "i8",
+                "$t": "Gaz consign for the drone [-100;100]"
+              },
+              {
+                "name": "timestampAndSeqNum",
+                "type": "u32",
+                "$t": "Command timestamp in milliseconds &#40;low 24 bits&#41; + command sequence number [0;255] &#40;high 8 bits&#41;."
+              }
+            ]
+          },
+          {
+            "name": "Landing",
+            "id": "3",
+            "$t": "Ask the drone to land"
+          },
+          {
+            "name": "Emergency",
+            "id": "4",
+            "buffer": "HIGH_PRIO",
+            "timeout": "RETRY",
+            "$t": "Put drone in emergency user state"
+          },
+          {
+            "name": "NavigateHome",
+            "id": "5",
+            "arg": {
+              "name": "start",
+              "type": "u8",
+              "$t": "1 to start the navigate home, 0 to stop it"
+            }
+          },
+          {
+            "name": "AutoTakeOffMode",
+            "id": "6",
+            "arg": {
+              "name": "state",
+              "type": "u8",
+              "$t": "State of automatic take off mode &#40;1 for autotake off enabled&#41;"
+            }
+          },
+          {
+            "name": "moveBy",
+            "id": "7",
+            "arg": [
+              {
+                "name": "dX",
+                "type": "float",
+                "$t": "Wanted displacement along the front axis [m]"
+              },
+              {
+                "name": "dY",
+                "type": "float",
+                "$t": "Wanted displacement along the right axis [m]"
+              },
+              {
+                "name": "dZ",
+                "type": "float",
+                "$t": "Wanted displacement along the down axis [m]"
+              },
+              {
+                "name": "dPsi",
+                "type": "float",
+                "$t": "Wanted rotation of heading  [rad]"
+              }
+            ]
+          },
+          {
+            "name": "UserTakeOff",
+            "id": "8",
+            "arg": {
+              "name": "state",
+              "type": "u8",
+              "$t": "State of user take off mode\n                - 1 to enter in user take off.\n                - 0 to exit from user take off."
+            }
+          },
+          {
+            "name": "Circle",
+            "id": "9",
+            "arg": {
+              "name": "direction",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "CW",
+                  "$t": "Circling ClockWise"
+                },
+                {
+                  "name": "CCW",
+                  "$t": "Circling Counter ClockWise"
+                },
+                {
+                  "name": "default",
+                  "$t": "Use drone default Circling direction set by CirclingDirection cmd"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Animations",
+        "id": "5",
+        "cmd": {
+          "name": "Flip",
+          "id": "0",
+          "arg": {
+            "name": "direction",
+            "type": "enum",
+            "enum": [
+              {
+                "name": "front",
+                "$t": "Flip direction front"
+              },
+              {
+                "name": "back",
+                "$t": "Flip direction back"
+              },
+              {
+                "name": "right",
+                "$t": "Flip direction right"
+              },
+              {
+                "name": "left",
+                "$t": "Flip direction left"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Camera",
+        "id": "1",
+        "cmd": {
+          "name": "Orientation",
+          "id": "0",
+          "arg": [
+            {
+              "name": "tilt",
+              "type": "i8",
+              "$t": "Tilt camera consign for the drone &#40;in degree&#41;\n                The value is saturated by the drone.\n                Saturation value is sent by thre drone through CameraSettingsChanged command."
+            },
+            {
+              "name": "pan",
+              "type": "i8",
+              "$t": "Pan camera consign for the drone &#40;in degree&#41;\n                The value is saturated by the drone.\n                Saturation value is sent by thre drone through CameraSettingsChanged command."
+            }
+          ]
+        }
+      },
+      {
+        "name": "MediaRecord",
+        "id": "7",
+        "cmd": [
+          {
+            "name": "Picture",
+            "id": "0",
+            "arg": {
+              "name": "mass_storage_id",
+              "type": "u8",
+              "$t": "Mass storage id to take picture"
+            }
+          },
+          {
+            "name": "Video",
+            "id": "1",
+            "arg": [
+              {
+                "name": "record",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "stop",
+                    "$t": "Stop the video recording"
+                  },
+                  {
+                    "name": "start",
+                    "$t": "Start the video recording"
+                  }
+                ]
+              },
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage id to record"
+              }
+            ]
+          },
+          {
+            "name": "PictureV2",
+            "id": "2",
+            "$t": "Take picture"
+          },
+          {
+            "name": "VideoV2",
+            "id": "3",
+            "arg": {
+              "name": "record",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "stop",
+                  "$t": "Stop the video recording"
+                },
+                {
+                  "name": "start",
+                  "$t": "Start the video recording"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "MediaRecordState",
+        "id": "8",
+        "cmd": [
+          {
+            "name": "PictureStateChanged",
+            "id": "0",
+            "arg": [
+              {
+                "name": "state",
+                "type": "u8",
+                "$t": "1 if picture has been taken, 0 otherwise"
+              },
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage id where the picture was recorded"
+              }
+            ]
+          },
+          {
+            "name": "VideoStateChanged",
+            "id": "1",
+            "arg": [
+              {
+                "name": "state",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "stopped",
+                    "$t": "Video was stopped"
+                  },
+                  {
+                    "name": "started",
+                    "$t": "Video was started"
+                  },
+                  {
+                    "name": "failed",
+                    "$t": "Video was failed"
+                  },
+                  {
+                    "name": "autostopped",
+                    "$t": "Video was auto stopped"
+                  }
+                ]
+              },
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage id where the video was recorded"
+              }
+            ]
+          },
+          {
+            "name": "PictureStateChangedV2",
+            "id": "2",
+            "arg": [
+              {
+                "name": "state",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "ready",
+                    "$t": "The picture recording is ready"
+                  },
+                  {
+                    "name": "busy",
+                    "$t": "The picture recording is busy"
+                  },
+                  {
+                    "name": "notAvailable",
+                    "$t": "The picture recording is not available"
+                  }
+                ]
+              },
+              {
+                "name": "error",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "ok",
+                    "$t": "No Error"
+                  },
+                  {
+                    "name": "unknown",
+                    "$t": "Unknown generic error"
+                  },
+                  {
+                    "name": "camera_ko",
+                    "$t": "Picture camera is out of order"
+                  },
+                  {
+                    "name": "memoryFull",
+                    "$t": "Memory full ; cannot save one additional picture"
+                  },
+                  {
+                    "name": "lowBattery",
+                    "$t": "Battery is too low to start/keep recording."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "VideoStateChangedV2",
+            "id": "3",
+            "arg": [
+              {
+                "name": "state",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "stopped",
+                    "$t": "Video is stopped"
+                  },
+                  {
+                    "name": "started",
+                    "$t": "Video is started"
+                  },
+                  {
+                    "name": "notAvailable",
+                    "$t": "The video recording is not available"
+                  }
+                ]
+              },
+              {
+                "name": "error",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "ok",
+                    "$t": "No Error"
+                  },
+                  {
+                    "name": "unknown",
+                    "$t": "Unknown generic error"
+                  },
+                  {
+                    "name": "camera_ko",
+                    "$t": "Video camera is out of order"
+                  },
+                  {
+                    "name": "memoryFull",
+                    "$t": "Memory full ; cannot save one additional video"
+                  },
+                  {
+                    "name": "lowBattery",
+                    "$t": "Battery is too low to start/keep recording."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "MediaRecordEvent",
+        "id": "3",
+        "cmd": [
+          {
+            "name": "PictureEventChanged",
+            "id": "0",
+            "notification": "TRUE",
+            "arg": [
+              {
+                "name": "event",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "taken",
+                    "$t": "Picture taken and saved"
+                  },
+                  {
+                    "name": "failed",
+                    "$t": "Picture failed"
+                  }
+                ]
+              },
+              {
+                "name": "error",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "ok",
+                    "$t": "No Error"
+                  },
+                  {
+                    "name": "unknown",
+                    "$t": "Unknown generic error ; only when state is failed"
+                  },
+                  {
+                    "name": "busy",
+                    "$t": "Picture recording is busy ; only when state is failed"
+                  },
+                  {
+                    "name": "notAvailable",
+                    "$t": "Picture recording not available ; only when state is failed"
+                  },
+                  {
+                    "name": "memoryFull",
+                    "$t": "Memory full ; only when state is failed"
+                  },
+                  {
+                    "name": "lowBattery",
+                    "$t": "Battery is too low to record."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "VideoEventChanged",
+            "id": "1",
+            "notification": "TRUE",
+            "arg": [
+              {
+                "name": "event",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "start",
+                    "$t": "Video start"
+                  },
+                  {
+                    "name": "stop",
+                    "$t": "Video stop and saved"
+                  },
+                  {
+                    "name": "failed",
+                    "$t": "Video failed"
+                  }
+                ]
+              },
+              {
+                "name": "error",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "ok",
+                    "$t": "No Error"
+                  },
+                  {
+                    "name": "unknown",
+                    "$t": "Unknown generic error ; only when state is failed"
+                  },
+                  {
+                    "name": "busy",
+                    "$t": "Video recording is busy ; only when state is failed"
+                  },
+                  {
+                    "name": "notAvailable",
+                    "$t": "Video recording not available ; only when state is failed"
+                  },
+                  {
+                    "name": "memoryFull",
+                    "$t": "Memory full"
+                  },
+                  {
+                    "name": "lowBattery",
+                    "$t": "Battery is too low to record."
+                  },
+                  {
+                    "name": "autoStopped",
+                    "$t": "Video was auto stopped"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "PilotingState",
+        "id": "4",
+        "cmd": [
+          {
+            "name": "FlatTrimChanged",
+            "id": "0",
+            "$t": "Drone acknowledges that flat trim was correctly processed"
+          },
+          {
+            "name": "FlyingStateChanged",
+            "id": "1",
+            "arg": {
+              "name": "state",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "landed",
+                  "$t": "Landed state"
+                },
+                {
+                  "name": "takingoff",
+                  "$t": "Taking off state"
+                },
+                {
+                  "name": "hovering",
+                  "$t": "Hovering / Circling &#40;for fixed wings&#41; state"
+                },
+                {
+                  "name": "flying",
+                  "$t": "Flying state"
+                },
+                {
+                  "name": "landing",
+                  "$t": "Landing state"
+                },
+                {
+                  "name": "emergency",
+                  "$t": "Emergency state"
+                },
+                {
+                  "name": "usertakeoff",
+                  "$t": "User take off state. Waiting for user action to take off."
+                }
+              ]
+            }
+          },
+          {
+            "name": "AlertStateChanged",
+            "id": "2",
+            "arg": {
+              "name": "state",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "none",
+                  "$t": "No alert"
+                },
+                {
+                  "name": "user",
+                  "$t": "User emergency alert"
+                },
+                {
+                  "name": "cut_out",
+                  "$t": "Cut out alert"
+                },
+                {
+                  "name": "critical_battery",
+                  "$t": "Critical battery alert"
+                },
+                {
+                  "name": "low_battery",
+                  "$t": "Low battery alert"
+                },
+                {
+                  "name": "too_much_angle",
+                  "$t": "The angle of the drone is too high"
+                }
+              ]
+            }
+          },
+          {
+            "name": "NavigateHomeStateChanged",
+            "id": "3",
+            "arg": [
+              {
+                "name": "state",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "available",
+                    "$t": "Navigate home is available"
+                  },
+                  {
+                    "name": "inProgress",
+                    "$t": "Navigate home is in progress"
+                  },
+                  {
+                    "name": "unavailable",
+                    "$t": "Navigate home is not available"
+                  },
+                  {
+                    "name": "pending",
+                    "$t": "Navigate home has been received, but its process is pending"
+                  }
+                ]
+              },
+              {
+                "name": "reason",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "userRequest",
+                    "$t": "User requested a navigate home &#40;available-&gt;inProgress&#41;"
+                  },
+                  {
+                    "name": "connectionLost",
+                    "$t": "Connection between controller and product lost &#40;available-&gt;inProgress&#41;"
+                  },
+                  {
+                    "name": "lowBattery",
+                    "$t": "Low battery occurred &#40;available-&gt;inProgress&#41;"
+                  },
+                  {
+                    "name": "finished",
+                    "$t": "Navigate home is finished &#40;inProgress-&gt;available&#41;"
+                  },
+                  {
+                    "name": "stopped",
+                    "$t": "Navigate home has been stopped &#40;inProgress-&gt;available&#41;"
+                  },
+                  {
+                    "name": "disabled",
+                    "$t": "Navigate home disabled by product &#40;inProgress-&gt;unavailable or available-&gt;unavailable&#41;"
+                  },
+                  {
+                    "name": "enabled",
+                    "$t": "Navigate home enabled by product &#40;unavailable-&gt;available&#41;"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "PositionChanged",
+            "id": "4",
+            "arg": [
+              {
+                "name": "latitude",
+                "type": "double",
+                "$t": "Latitude position in decimal degrees &#40;500.0 if not available&#41;"
+              },
+              {
+                "name": "longitude",
+                "type": "double",
+                "$t": "Longitude position in decimal degrees &#40;500.0 if not available&#41;"
+              },
+              {
+                "name": "altitude",
+                "type": "double",
+                "$t": "Altitude in meters &#40;from GPS&#41;"
+              }
+            ]
+          },
+          {
+            "name": "SpeedChanged",
+            "id": "5",
+            "arg": [
+              {
+                "name": "speedX",
+                "type": "float",
+                "$t": "Speed on the x axis &#40;when drone moves forward, speed is &gt; 0&#41; &#40;in m/s&#41;"
+              },
+              {
+                "name": "speedY",
+                "type": "float",
+                "$t": "Speed on the y axis &#40;when drone moves to right, speed is &gt; 0&#41; &#40;in m/s&#41;"
+              },
+              {
+                "name": "speedZ",
+                "type": "float",
+                "$t": "Speed on the z axis &#40;when drone moves down, speed is &gt; 0&#41; &#40;in m/s&#41;"
+              }
+            ]
+          },
+          {
+            "name": "AttitudeChanged",
+            "id": "6",
+            "arg": [
+              {
+                "name": "roll",
+                "type": "float",
+                "$t": "roll value &#40;in radian&#41;"
+              },
+              {
+                "name": "pitch",
+                "type": "float",
+                "$t": "Pitch value &#40;in radian&#41;"
+              },
+              {
+                "name": "yaw",
+                "type": "float",
+                "$t": "Yaw value &#40;in radian&#41;"
+              }
+            ]
+          },
+          {
+            "name": "AutoTakeOffModeChanged",
+            "id": "7",
+            "arg": {
+              "name": "state",
+              "type": "u8",
+              "$t": "State of automatic take off mode &#40;1 if enabled&#41;"
+            }
+          },
+          {
+            "name": "AltitudeChanged",
+            "id": "8",
+            "arg": {
+              "name": "altitude",
+              "type": "double",
+              "$t": "Altitude in meters"
+            }
+          }
+        ]
+      },
+      {
+        "name": "PilotingEvent",
+        "id": "34",
+        "cmd": {
+          "name": "moveByEnd",
+          "id": "0",
+          "notification": "TRUE",
+          "arg": [
+            {
+              "name": "dX",
+              "type": "float",
+              "$t": "Distance traveled along the front axis [m]"
+            },
+            {
+              "name": "dY",
+              "type": "float",
+              "$t": "Distance traveled along the right axis [m]"
+            },
+            {
+              "name": "dZ",
+              "type": "float",
+              "$t": "Distance traveled along the down axis [m]"
+            },
+            {
+              "name": "dPsi",
+              "type": "float",
+              "$t": "Applied angle on heading  [rad]"
+            },
+            {
+              "name": "error",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "ok",
+                  "$t": "No Error ; The relative displacement"
+                },
+                {
+                  "name": "unknown",
+                  "$t": "Unknown generic error"
+                },
+                {
+                  "name": "busy",
+                  "$t": "The Device is busy ; command moveBy ignored"
+                },
+                {
+                  "name": "notAvailable",
+                  "$t": "Command moveBy is not available ; command moveBy ignored"
+                },
+                {
+                  "name": "interrupted",
+                  "$t": "Command moveBy interrupted"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "Network",
+        "id": "13",
+        "cmd": [
+          {
+            "name": "WifiScan",
+            "id": "0",
+            "arg": {
+              "name": "band",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "2_4ghz",
+                  "$t": "2.4 GHz band"
+                },
+                {
+                  "name": "5ghz",
+                  "$t": "5 GHz band"
+                },
+                {
+                  "name": "all",
+                  "$t": "Both 2.4 and 5 GHz bands"
+                }
+              ]
+            }
+          },
+          {
+            "name": "WifiAuthChannel",
+            "id": "1",
+            "$t": "Controller inquire the list of authorized wifi channels."
+          }
+        ]
+      },
+      {
+        "name": "NetworkState",
+        "id": "14",
+        "cmd": [
+          {
+            "name": "WifiScanListChanged",
+            "id": "0",
+            "type": "MAP_ITEM",
+            "arg": [
+              {
+                "name": "ssid",
+                "type": "string",
+                "$t": "SSID of the AP"
+              },
+              {
+                "name": "rssi",
+                "type": "i16",
+                "$t": "RSSI of the AP in dbm &#40;negative value&#41;"
+              },
+              {
+                "name": "band",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "2_4ghz",
+                    "$t": "2.4 GHz band"
+                  },
+                  {
+                    "name": "5ghz",
+                    "$t": "5 GHz band"
+                  }
+                ]
+              },
+              {
+                "name": "channel",
+                "type": "u8",
+                "$t": "Channel of the AP"
+              }
+            ]
+          },
+          {
+            "name": "AllWifiScanChanged",
+            "id": "1",
+            "$t": "State sent when all scanning result sent"
+          },
+          {
+            "name": "WifiAuthChannelListChanged",
+            "id": "2",
+            "type": "LIST_ITEM",
+            "arg": [
+              {
+                "name": "band",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "2_4ghz",
+                    "$t": "2.4 GHz band"
+                  },
+                  {
+                    "name": "5ghz",
+                    "$t": "5 GHz band"
+                  }
+                ]
+              },
+              {
+                "name": "channel",
+                "type": "u8",
+                "$t": "The authorized channel."
+              },
+              {
+                "name": "in_or_out",
+                "type": "u8",
+                "$t": "Bit 0 is 1 if channel is authorized outside &#40;0 otherwise&#41; ; Bit 1 is 1 if channel is authorized inside &#40;0 otherwise&#41;"
+              }
+            ]
+          },
+          {
+            "name": "AllWifiAuthChannelChanged",
+            "id": "3",
+            "$t": "Notify the end of the list of Authorized wifi Channel."
+          }
+        ]
+      },
+      {
+        "name": "PilotingSettings",
+        "id": "2",
+        "cmd": [
+          {
+            "name": "MaxAltitude",
+            "id": "0",
+            "arg": {
+              "name": "current",
+              "type": "float",
+              "$t": "Current altitude max in m"
+            }
+          },
+          {
+            "name": "MaxTilt",
+            "id": "1",
+            "arg": {
+              "name": "current",
+              "type": "float",
+              "$t": "Current tilt max in degree"
+            }
+          },
+          {
+            "name": "AbsolutControl",
+            "id": "2",
+            "arg": {
+              "name": "on",
+              "type": "u8",
+              "$t": "1 to enable, 0 to disable"
+            }
+          },
+          {
+            "name": "MaxDistance",
+            "id": "3",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "Current max distance in meter"
+            }
+          },
+          {
+            "name": "NoFlyOverMaxDistance",
+            "id": "4",
+            "arg": {
+              "name": "shouldNotFlyOver",
+              "type": "u8",
+              "$t": "1 if the drone can&apos;t fly further than max distance, 0 if no limitation on the drone should be done"
+            }
+          },
+          {
+            "name": "setAutonomousFlightMaxHorizontalSpeed",
+            "id": "5",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum horizontal speed [m/s]"
+            }
+          },
+          {
+            "name": "setAutonomousFlightMaxVerticalSpeed",
+            "id": "6",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum vertical speed [m/s]"
+            }
+          },
+          {
+            "name": "setAutonomousFlightMaxHorizontalAcceleration",
+            "id": "7",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum horizontal acceleration [m/s2]"
+            }
+          },
+          {
+            "name": "setAutonomousFlightMaxVerticalAcceleration",
+            "id": "8",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum vertical acceleration [m/s2]"
+            }
+          },
+          {
+            "name": "setAutonomousFlightMaxRotationSpeed",
+            "id": "9",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum yaw rotation speed [rad/s]"
+            }
+          },
+          {
+            "name": "BankedTurn",
+            "id": "10",
+            "arg": {
+              "name": "value",
+              "type": "u8",
+              "$t": "1 to enable, 0 to disable"
+            }
+          },
+          {
+            "name": "MinAltitude",
+            "id": "11",
+            "arg": {
+              "name": "current",
+              "type": "float",
+              "$t": "Current altitude min in m"
+            }
+          },
+          {
+            "name": "CirclingDirection",
+            "id": "12",
+            "arg": {
+              "name": "value",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "CW",
+                  "$t": "Circling ClockWise"
+                },
+                {
+                  "name": "CCW",
+                  "$t": "Circling Counter ClockWise"
+                }
+              ]
+            }
+          },
+          {
+            "name": "CirclingRadius",
+            "id": "13",
+            "arg": {
+              "name": "value",
+              "type": "u16",
+              "$t": "The circling radius in meter"
+            }
+          },
+          {
+            "name": "CirclingAltitude",
+            "id": "14",
+            "arg": {
+              "name": "value",
+              "type": "u16",
+              "$t": "The circling altitude in meter"
+            }
+          },
+          {
+            "name": "PitchMode",
+            "id": "15",
+            "arg": {
+              "name": "value",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "NORMAL",
+                  "$t": "Positive pitch values will make the drone lower its nose.\n                    Negative pitch values will make the drone raise its nose."
+                },
+                {
+                  "name": "INVERTED",
+                  "$t": "Pitch commands are inverted.\n                    Positive pitch values will make the drone raise its nose.\n                    Negative pitch values will make the drone lower its nose."
+                }
+              ]
+            }
+          },
+          {
+            "name": "LandingMode",
+            "id": "16",
+            "arg": {
+              "name": "value",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "LINEAR",
+                  "$t": "Linear landing."
+                },
+                {
+                  "name": "SPIRALE",
+                  "$t": "Spirale landing."
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "PilotingSettingsState",
+        "id": "6",
+        "cmd": [
+          {
+            "name": "MaxAltitudeChanged",
+            "id": "0",
+            "arg": [
+              {
+                "name": "current",
+                "type": "float",
+                "$t": "Current altitude max"
+              },
+              {
+                "name": "min",
+                "type": "float",
+                "$t": "Range min of altitude"
+              },
+              {
+                "name": "max",
+                "type": "float",
+                "$t": "Range max of altitude"
+              }
+            ]
+          },
+          {
+            "name": "MaxTiltChanged",
+            "id": "1",
+            "arg": [
+              {
+                "name": "current",
+                "type": "float",
+                "$t": "Current max tilt"
+              },
+              {
+                "name": "min",
+                "type": "float",
+                "$t": "Range min of tilt"
+              },
+              {
+                "name": "max",
+                "type": "float",
+                "$t": "Range max of tilt"
+              }
+            ]
+          },
+          {
+            "name": "AbsolutControlChanged",
+            "id": "2",
+            "arg": {
+              "name": "on",
+              "type": "u8",
+              "$t": "1 if enabled, 0 if disabled"
+            }
+          },
+          {
+            "name": "MaxDistanceChanged",
+            "id": "3",
+            "arg": [
+              {
+                "name": "current",
+                "type": "float",
+                "$t": "Current max distance in meter"
+              },
+              {
+                "name": "min",
+                "type": "float",
+                "$t": "Minimal possible max distance"
+              },
+              {
+                "name": "max",
+                "type": "float",
+                "$t": "Maximal possible max distance"
+              }
+            ]
+          },
+          {
+            "name": "NoFlyOverMaxDistanceChanged",
+            "id": "4",
+            "arg": {
+              "name": "shouldNotFlyOver",
+              "type": "u8",
+              "$t": "1 if the drone won&apos;t fly further than max distance, 0 if no limitation on the drone will be done"
+            }
+          },
+          {
+            "name": "AutonomousFlightMaxHorizontalSpeed",
+            "id": "5",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum horizontal speed [m/s]"
+            }
+          },
+          {
+            "name": "AutonomousFlightMaxVerticalSpeed",
+            "id": "6",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum vertical speed [m/s]"
+            }
+          },
+          {
+            "name": "AutonomousFlightMaxHorizontalAcceleration",
+            "id": "7",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum horizontal acceleration [m/s2]"
+            }
+          },
+          {
+            "name": "AutonomousFlightMaxVerticalAcceleration",
+            "id": "8",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum vertical acceleration [m/s2]"
+            }
+          },
+          {
+            "name": "AutonomousFlightMaxRotationSpeed",
+            "id": "9",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "maximum yaw rotation speed [rad/s]"
+            }
+          },
+          {
+            "name": "BankedTurnChanged",
+            "id": "10",
+            "arg": {
+              "name": "state",
+              "type": "u8",
+              "$t": "1 if enabled, 0 if disabled"
+            }
+          },
+          {
+            "name": "MinAltitudeChanged",
+            "id": "11",
+            "arg": [
+              {
+                "name": "current",
+                "type": "float",
+                "$t": "Current altitude min"
+              },
+              {
+                "name": "min",
+                "type": "float",
+                "$t": "Range min of altitude min"
+              },
+              {
+                "name": "max",
+                "type": "float",
+                "$t": "Range max of altitude min"
+              }
+            ]
+          },
+          {
+            "name": "CirclingDirectionChanged",
+            "id": "12",
+            "arg": {
+              "name": "value",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "CW",
+                  "$t": "Circling ClockWise"
+                },
+                {
+                  "name": "CCW",
+                  "$t": "Circling Counter ClockWise"
+                }
+              ]
+            }
+          },
+          {
+            "name": "CirclingRadiusChanged",
+            "id": "13",
+            "arg": [
+              {
+                "name": "current",
+                "type": "u16",
+                "$t": "The current circling radius in meter"
+              },
+              {
+                "name": "min",
+                "type": "u16",
+                "$t": "Range min of circling radius in meter"
+              },
+              {
+                "name": "max",
+                "type": "u16",
+                "$t": "Range max of circling radius in meter"
+              }
+            ]
+          },
+          {
+            "name": "CirclingAltitudeChanged",
+            "id": "14",
+            "arg": [
+              {
+                "name": "current",
+                "type": "u16",
+                "$t": "The current circling altitude in meter"
+              },
+              {
+                "name": "min",
+                "type": "u16",
+                "$t": "Range min of circling altitude in meter"
+              },
+              {
+                "name": "max",
+                "type": "u16",
+                "$t": "Range max of circling altitude in meter"
+              }
+            ]
+          },
+          {
+            "name": "PitchModeChanged",
+            "id": "15",
+            "arg": {
+              "name": "value",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "NORMAL",
+                  "$t": "Positive pitch values will make the drone lower its nose.\n                   Negative pitch values will make the drone raise its nose."
+                },
+                {
+                  "name": "INVERTED",
+                  "$t": "Pitch commands are inverted.\n                   Positive pitch values will make the drone raise its nose.\n                   Negative pitch values will make the drone lower its nose."
+                }
+              ]
+            }
+          },
+          {
+            "name": "LandingModeChanged",
+            "id": "16",
+            "arg": {
+              "name": "value",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "LINEAR",
+                  "$t": "Linear landing."
+                },
+                {
+                  "name": "SPIRALE",
+                  "$t": "Spirale landing."
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "SpeedSettings",
+        "id": "11",
+        "cmd": [
+          {
+            "name": "MaxVerticalSpeed",
+            "id": "0",
+            "arg": {
+              "name": "current",
+              "type": "float",
+              "$t": "Current max vertical speed in m/s"
+            }
+          },
+          {
+            "name": "MaxRotationSpeed",
+            "id": "1",
+            "arg": {
+              "name": "current",
+              "type": "float",
+              "$t": "Current max yaw rotation speed in degree/s"
+            }
+          },
+          {
+            "name": "HullProtection",
+            "id": "2",
+            "arg": {
+              "name": "present",
+              "type": "u8",
+              "$t": "1 if present, 0 if not present"
+            }
+          },
+          {
+            "name": "Outdoor",
+            "id": "3",
+            "arg": {
+              "name": "outdoor",
+              "type": "u8",
+              "$t": "1 if outdoor flight, 0 if indoor flight"
+            }
+          },
+          {
+            "name": "MaxPitchRollRotationSpeed",
+            "id": "4",
+            "arg": {
+              "name": "current",
+              "type": "float",
+              "$t": "Current max pitch/roll rotation speed in degree/s"
+            }
+          }
+        ]
+      },
+      {
+        "name": "SpeedSettingsState",
+        "id": "12",
+        "cmd": [
+          {
+            "name": "MaxVerticalSpeedChanged",
+            "id": "0",
+            "arg": [
+              {
+                "name": "current",
+                "type": "float",
+                "$t": "Current max vertical speed in m/s"
+              },
+              {
+                "name": "min",
+                "type": "float",
+                "$t": "Range min of vertical speed"
+              },
+              {
+                "name": "max",
+                "type": "float",
+                "$t": "Range max of vertical speed"
+              }
+            ]
+          },
+          {
+            "name": "MaxRotationSpeedChanged",
+            "id": "1",
+            "arg": [
+              {
+                "name": "current",
+                "type": "float",
+                "$t": "Current max yaw rotation speed in degree/s"
+              },
+              {
+                "name": "min",
+                "type": "float",
+                "$t": "Range min of yaw rotation speed"
+              },
+              {
+                "name": "max",
+                "type": "float",
+                "$t": "Range max of yaw rotation speed"
+              }
+            ]
+          },
+          {
+            "name": "HullProtectionChanged",
+            "id": "2",
+            "arg": {
+              "name": "present",
+              "type": "u8",
+              "$t": "1 if present, 0 if not present"
+            }
+          },
+          {
+            "name": "OutdoorChanged",
+            "id": "3",
+            "arg": {
+              "name": "outdoor",
+              "type": "u8",
+              "$t": "1 if outdoor flight, 0 if indoor flight"
+            }
+          },
+          {
+            "name": "MaxPitchRollRotationSpeedChanged",
+            "id": "4",
+            "arg": [
+              {
+                "name": "current",
+                "type": "float",
+                "$t": "Current max pitch/roll rotation speed in degree/s"
+              },
+              {
+                "name": "min",
+                "type": "float",
+                "$t": "Range min of pitch/roll rotation speed"
+              },
+              {
+                "name": "max",
+                "type": "float",
+                "$t": "Range max of pitch/roll rotation speed"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "NetworkSettings",
+        "id": "9",
+        "cmd": [
+          {
+            "name": "WifiSelection",
+            "id": "0",
+            "arg": [
+              {
+                "name": "type",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "auto",
+                    "$t": "Auto selection"
+                  },
+                  {
+                    "name": "manual",
+                    "$t": "Manual selection"
+                  }
+                ]
+              },
+              {
+                "name": "band",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "2_4ghz",
+                    "$t": "2.4 GHz band"
+                  },
+                  {
+                    "name": "5ghz",
+                    "$t": "5 GHz band"
+                  },
+                  {
+                    "name": "all",
+                    "$t": "Both 2.4 and 5 GHz bands"
+                  }
+                ]
+              },
+              {
+                "name": "channel",
+                "type": "u8",
+                "$t": "The channel &#40;not used in auto mode&#41;"
+              }
+            ]
+          },
+          {
+            "name": "wifiSecurity",
+            "id": "1",
+            "arg": [
+              {
+                "name": "type",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "open",
+                    "$t": "Wifi is not protected by any security &#40;default&#41;"
+                  },
+                  {
+                    "name": "wpa2",
+                    "$t": "Wifi is protected by wpa2"
+                  }
+                ]
+              },
+              {
+                "name": "key",
+                "type": "string",
+                "$t": "The key to secure the network &#40;empty if type is open&#41;"
+              },
+              {
+                "name": "keyType",
+                "type": "enum",
+                "enum": {
+                  "name": "plain",
+                  "$t": "Key is plain text, not encrypted"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "NetworkSettingsState",
+        "id": "10",
+        "cmd": [
+          {
+            "name": "WifiSelectionChanged",
+            "id": "0",
+            "arg": [
+              {
+                "name": "type",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "auto_all",
+                    "$t": "Auto selection"
+                  },
+                  {
+                    "name": "auto_2_4ghz",
+                    "$t": "Auto selection 2.4ghz"
+                  },
+                  {
+                    "name": "auto_5ghz",
+                    "$t": "Auto selection 5 ghz"
+                  },
+                  {
+                    "name": "manual",
+                    "$t": "Manual selection"
+                  }
+                ]
+              },
+              {
+                "name": "band",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "2_4ghz",
+                    "$t": "2.4 GHz band"
+                  },
+                  {
+                    "name": "5ghz",
+                    "$t": "5 GHz band"
+                  },
+                  {
+                    "name": "all",
+                    "$t": "Both 2.4 and 5 GHz bands"
+                  }
+                ]
+              },
+              {
+                "name": "channel",
+                "type": "u8",
+                "$t": "The channel &#40;depends of the band&#41;"
+              }
+            ]
+          },
+          {
+            "name": "wifiSecurityChanged",
+            "id": "1",
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "open",
+                  "$t": "Wifi is not protected by any security &#40;default&#41;"
+                },
+                {
+                  "name": "wpa2",
+                  "$t": "Wifi is protected by wpa2"
+                }
+              ]
+            }
+          },
+          {
+            "name": "wifiSecurity",
+            "id": "2",
+            "arg": [
+              {
+                "name": "type",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "open",
+                    "$t": "Wifi is not protected by any security &#40;default&#41;"
+                  },
+                  {
+                    "name": "wpa2",
+                    "$t": "Wifi is protected by wpa2"
+                  }
+                ]
+              },
+              {
+                "name": "key",
+                "type": "string",
+                "$t": "The key used to secure the network &#40;empty if type is open&#41;"
+              },
+              {
+                "name": "keyType",
+                "type": "enum",
+                "enum": {
+                  "name": "plain",
+                  "$t": "Key is plain text, not encrypted"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "SettingsState",
+        "id": "16",
+        "cmd": [
+          {
+            "name": "ProductMotorVersionListChanged",
+            "id": "0",
+            "type": "MAP_ITEM",
+            "arg": [
+              {
+                "name": "motor_number",
+                "type": "u8",
+                "$t": "Product Motor number"
+              },
+              {
+                "name": "type",
+                "type": "string",
+                "$t": "Product Motor type"
+              },
+              {
+                "name": "software",
+                "type": "string",
+                "$t": "Product Motors software version"
+              },
+              {
+                "name": "hardware",
+                "type": "string",
+                "$t": "Product Motors hardware version"
+              }
+            ]
+          },
+          {
+            "name": "ProductGPSVersionChanged",
+            "id": "1",
+            "arg": [
+              {
+                "name": "software",
+                "type": "string",
+                "$t": "Product GPS software version"
+              },
+              {
+                "name": "hardware",
+                "type": "string",
+                "$t": "Product GPS hardware version"
+              }
+            ]
+          },
+          {
+            "name": "MotorErrorStateChanged",
+            "id": "2",
+            "arg": [
+              {
+                "name": "motorIds",
+                "type": "u8",
+                "$t": "Bit field for concerned motor. If bit 0 = 1, motor 1 is affected by this error. Same with bit 1, 2 and 3."
+              },
+              {
+                "name": "motorError",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "noError",
+                    "$t": "No error detected"
+                  },
+                  {
+                    "name": "errorEEPRom",
+                    "$t": "EEPROM access failure"
+                  },
+                  {
+                    "name": "errorMotorStalled",
+                    "$t": "Motor stalled"
+                  },
+                  {
+                    "name": "errorPropellerSecurity",
+                    "$t": "Propeller cutout security triggered"
+                  },
+                  {
+                    "name": "errorCommLost",
+                    "$t": "Communication with motor failed by timeout"
+                  },
+                  {
+                    "name": "errorRCEmergencyStop",
+                    "$t": "RC emergency stop"
+                  },
+                  {
+                    "name": "errorRealTime",
+                    "$t": "Motor controler scheduler real-time out of bounds"
+                  },
+                  {
+                    "name": "errorMotorSetting",
+                    "$t": "One or several incorrect values in motor settings"
+                  },
+                  {
+                    "name": "errorTemperature",
+                    "$t": "Too hot or too cold Cypress temperature"
+                  },
+                  {
+                    "name": "errorBatteryVoltage",
+                    "$t": "Battery voltage out of bounds"
+                  },
+                  {
+                    "name": "errorLipoCells",
+                    "$t": "Incorrect number of LIPO cells"
+                  },
+                  {
+                    "name": "errorMOSFET",
+                    "$t": "Defectuous MOSFET or broken motor phases"
+                  },
+                  {
+                    "name": "errorBootloader",
+                    "$t": "Not use for BLDC but useful for HAL"
+                  },
+                  {
+                    "name": "errorAssert",
+                    "$t": "Error Made by BLDC_ASSERT&#40;&#41;"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "MotorSoftwareVersionChanged",
+            "id": "3",
+            "arg": {
+              "name": "version",
+              "type": "string",
+              "$t": "name of the version : dot separated fields &#40;major version - minor version - firmware type - nb motors handled&#41;. Firmware types : Release, Debug, Alpha, Test-bench"
+            }
+          },
+          {
+            "name": "MotorFlightsStatusChanged",
+            "id": "4",
+            "arg": [
+              {
+                "name": "nbFlights",
+                "type": "u16",
+                "$t": "total number of flights"
+              },
+              {
+                "name": "lastFlightDuration",
+                "type": "u16",
+                "$t": "Duration of the last flight &#40;in seconds&#41;"
+              },
+              {
+                "name": "totalFlightDuration",
+                "type": "u32",
+                "$t": "Duration of all flights &#40;in seconds&#41;"
+              }
+            ]
+          },
+          {
+            "name": "MotorErrorLastErrorChanged",
+            "id": "5",
+            "arg": {
+              "name": "motorError",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "noError",
+                  "$t": "No error detected"
+                },
+                {
+                  "name": "errorEEPRom",
+                  "$t": "EEPROM access failure"
+                },
+                {
+                  "name": "errorMotorStalled",
+                  "$t": "Motor stalled"
+                },
+                {
+                  "name": "errorPropellerSecurity",
+                  "$t": "Propeller cutout security triggered"
+                },
+                {
+                  "name": "errorCommLost",
+                  "$t": "Communication with motor failed by timeout"
+                },
+                {
+                  "name": "errorRCEmergencyStop",
+                  "$t": "RC emergency stop"
+                },
+                {
+                  "name": "errorRealTime",
+                  "$t": "Motor controler scheduler real-time out of bounds"
+                },
+                {
+                  "name": "errorMotorSetting",
+                  "$t": "One or several incorrect values in motor settings"
+                },
+                {
+                  "name": "errorBatteryVoltage",
+                  "$t": "Battery voltage out of bounds"
+                },
+                {
+                  "name": "errorLipoCells",
+                  "$t": "Incorrect number of LIPO cells"
+                },
+                {
+                  "name": "errorMOSFET",
+                  "$t": "Defectuous MOSFET or broken motor phases"
+                },
+                {
+                  "name": "errorTemperature",
+                  "$t": "Too hot or too cold Cypress temperature"
+                },
+                {
+                  "name": "errorBootloader",
+                  "$t": "Not use for BLDC but useful for HAL"
+                },
+                {
+                  "name": "errorAssert",
+                  "$t": "Error Made by BLDC_ASSERT&#40;&#41;"
+                }
+              ]
+            }
+          },
+          {
+            "name": "P7ID",
+            "id": "6",
+            "arg": {
+              "name": "serialID",
+              "type": "string",
+              "$t": "Product P7ID"
+            }
+          }
+        ]
+      },
+      {
+        "name": "PictureSettings",
+        "id": "19",
+        "cmd": [
+          {
+            "name": "PictureFormatSelection",
+            "id": "0",
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "raw",
+                  "$t": "Take raw image"
+                },
+                {
+                  "name": "jpeg",
+                  "$t": "Take a 4:3 jpeg photo"
+                },
+                {
+                  "name": "snapshot",
+                  "$t": "Take a 16:9 snapshot from camera"
+                },
+                {
+                  "name": "jpeg_fisheye",
+                  "$t": "Take jpeg fisheye image only"
+                }
+              ]
+            }
+          },
+          {
+            "name": "AutoWhiteBalanceSelection",
+            "id": "1",
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "auto",
+                  "$t": "Auto guess of best white balance params"
+                },
+                {
+                  "name": "tungsten",
+                  "$t": "Tungsten white balance"
+                },
+                {
+                  "name": "daylight",
+                  "$t": "Daylight white balance"
+                },
+                {
+                  "name": "cloudy",
+                  "$t": "Cloudy white balance"
+                },
+                {
+                  "name": "cool_white",
+                  "$t": "White balance for a flash"
+                }
+              ]
+            }
+          },
+          {
+            "name": "ExpositionSelection",
+            "id": "2",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "Exposition value &#40;bounds given by ExpositionChanged arg min and max, by default [-3:3]&#41;"
+            }
+          },
+          {
+            "name": "SaturationSelection",
+            "id": "3",
+            "arg": {
+              "name": "value",
+              "type": "float",
+              "$t": "Saturation value &#40;bounds given by SaturationChanged arg min and max, by default [-100:100]&#41;"
+            }
+          },
+          {
+            "name": "TimelapseSelection",
+            "id": "4",
+            "arg": [
+              {
+                "name": "enabled",
+                "type": "u8",
+                "$t": "1 if timelapse is enabled, 0 otherwise"
+              },
+              {
+                "name": "interval",
+                "type": "float",
+                "$t": "interval in seconds for taking pictures"
+              }
+            ]
+          },
+          {
+            "name": "VideoAutorecordSelection",
+            "id": "5",
+            "arg": [
+              {
+                "name": "enabled",
+                "type": "u8",
+                "$t": "1 if video autorecord is enabled, 0 otherwise"
+              },
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage id to take video"
+              }
+            ]
+          },
+          {
+            "name": "VideoStabilizationMode",
+            "id": "6",
+            "arg": {
+              "name": "mode",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "roll_pitch",
+                  "$t": "Video flat on roll and pitch"
+                },
+                {
+                  "name": "pitch",
+                  "$t": "Video flat on pitch only"
+                },
+                {
+                  "name": "roll",
+                  "$t": "Video flat on roll only"
+                },
+                {
+                  "name": "none",
+                  "$t": "Video follows drone angles"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "PictureSettingsState",
+        "id": "20",
+        "cmd": [
+          {
+            "name": "PictureFormatChanged",
+            "id": "0",
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "raw",
+                  "$t": "Take raw image"
+                },
+                {
+                  "name": "jpeg",
+                  "$t": "Take a 4:3 jpeg photo"
+                },
+                {
+                  "name": "snapshot",
+                  "$t": "Take a 16:9 snapshot from camera"
+                },
+                {
+                  "name": "jpeg_fisheye",
+                  "$t": "Take jpeg fisheye image only"
+                }
+              ]
+            }
+          },
+          {
+            "name": "AutoWhiteBalanceChanged",
+            "id": "1",
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "auto",
+                  "$t": "Auto guess of best white balance params"
+                },
+                {
+                  "name": "tungsten",
+                  "$t": "Tungsten white balance"
+                },
+                {
+                  "name": "daylight",
+                  "$t": "Daylight white balance"
+                },
+                {
+                  "name": "cloudy",
+                  "$t": "Cloudy white balance"
+                },
+                {
+                  "name": "cool_white",
+                  "$t": "White balance for a flash"
+                }
+              ]
+            }
+          },
+          {
+            "name": "ExpositionChanged",
+            "id": "2",
+            "arg": [
+              {
+                "name": "value",
+                "type": "float",
+                "$t": "Exposition value"
+              },
+              {
+                "name": "min",
+                "type": "float",
+                "$t": "Min exposition value"
+              },
+              {
+                "name": "max",
+                "type": "float",
+                "$t": "Max exposition value"
+              }
+            ]
+          },
+          {
+            "name": "SaturationChanged",
+            "id": "3",
+            "arg": [
+              {
+                "name": "value",
+                "type": "float",
+                "$t": "Saturation value"
+              },
+              {
+                "name": "min",
+                "type": "float",
+                "$t": "Min saturation value"
+              },
+              {
+                "name": "max",
+                "type": "float",
+                "$t": "Max saturation value"
+              }
+            ]
+          },
+          {
+            "name": "TimelapseChanged",
+            "id": "4",
+            "arg": [
+              {
+                "name": "enabled",
+                "type": "u8",
+                "$t": "1 if timelapse is enabled, 0 otherwise"
+              },
+              {
+                "name": "interval",
+                "type": "float",
+                "$t": "interval in seconds for taking pictures"
+              },
+              {
+                "name": "minInterval",
+                "type": "float",
+                "$t": "Minimal interval for taking pictures"
+              },
+              {
+                "name": "maxInterval",
+                "type": "float",
+                "$t": "Maximal interval for taking pictures"
+              }
+            ]
+          },
+          {
+            "name": "VideoAutorecordChanged",
+            "id": "5",
+            "arg": [
+              {
+                "name": "enabled",
+                "type": "u8",
+                "$t": "1 if video autorecord is enabled, 0 otherwise"
+              },
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage id for the taken video"
+              }
+            ]
+          },
+          {
+            "name": "VideoStabilizationModeChanged",
+            "id": "6",
+            "arg": {
+              "name": "mode",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "roll_pitch",
+                  "$t": "Video flat on roll and pitch"
+                },
+                {
+                  "name": "pitch",
+                  "$t": "Video flat on pitch only"
+                },
+                {
+                  "name": "roll",
+                  "$t": "Video flat on roll only"
+                },
+                {
+                  "name": "none",
+                  "$t": "Video follows drone angles"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "MediaStreaming",
+        "id": "21",
+        "cmd": {
+          "name": "VideoEnable",
+          "id": "0",
+          "arg": {
+            "name": "enable",
+            "type": "u8",
+            "$t": "1 to enable, 0 to disable."
+          }
+        }
+      },
+      {
+        "name": "MediaStreamingState",
+        "id": "22",
+        "cmd": {
+          "name": "VideoEnableChanged",
+          "id": "0",
+          "arg": {
+            "name": "enabled",
+            "type": "enum",
+            "enum": [
+              {
+                "name": "enabled",
+                "$t": "Video streaming is enabled."
+              },
+              {
+                "name": "disabled",
+                "$t": "Video streaming is disabled."
+              },
+              {
+                "name": "error",
+                "$t": "Video streaming failed to start."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "GPSSettings",
+        "id": "23",
+        "cmd": [
+          {
+            "name": "SetHome",
+            "id": "0",
+            "arg": [
+              {
+                "name": "latitude",
+                "type": "double",
+                "$t": "Home latitude in decimal degrees"
+              },
+              {
+                "name": "longitude",
+                "type": "double",
+                "$t": "Home longitude in decimal degrees"
+              },
+              {
+                "name": "altitude",
+                "type": "double",
+                "$t": "Home altitude in meters"
+              }
+            ]
+          },
+          {
+            "name": "ResetHome",
+            "id": "1",
+            "$t": "Reset home location and let the drone make its own home"
+          },
+          {
+            "name": "SendControllerGPS",
+            "id": "2",
+            "arg": [
+              {
+                "name": "latitude",
+                "type": "double",
+                "$t": "GPS latitude in decimal degrees"
+              },
+              {
+                "name": "longitude",
+                "type": "double",
+                "$t": "GPS longitude in decimal degrees"
+              },
+              {
+                "name": "altitude",
+                "type": "double",
+                "$t": "GPS altitude in meters"
+              },
+              {
+                "name": "horizontalAccuracy",
+                "type": "double",
+                "$t": "Horizontal Accuracy in meter ; equal -1 if no horizontal Accuracy"
+              },
+              {
+                "name": "verticalAccuracy",
+                "type": "double",
+                "$t": "Vertical Accuracy in meter ; equal -1 if no vertical Accuracy"
+              }
+            ]
+          },
+          {
+            "name": "HomeType",
+            "id": "3",
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "TAKEOFF",
+                  "$t": "The drone will try to return to the take off position"
+                },
+                {
+                  "name": "PILOT",
+                  "$t": "The drone will try to return to the pilot position"
+                }
+              ]
+            }
+          },
+          {
+            "name": "ReturnHomeDelay",
+            "id": "4",
+            "arg": {
+              "name": "delay",
+              "type": "u16",
+              "$t": "Delay in second"
+            }
+          }
+        ]
+      },
+      {
+        "name": "GPSSettingsState",
+        "id": "24",
+        "cmd": [
+          {
+            "name": "HomeChanged",
+            "id": "0",
+            "arg": [
+              {
+                "name": "latitude",
+                "type": "double",
+                "$t": "Home latitude in decimal degrees"
+              },
+              {
+                "name": "longitude",
+                "type": "double",
+                "$t": "Home longitude in decimal degrees"
+              },
+              {
+                "name": "altitude",
+                "type": "double",
+                "$t": "Home altitude in meters"
+              }
+            ]
+          },
+          {
+            "name": "ResetHomeChanged",
+            "id": "1",
+            "arg": [
+              {
+                "name": "latitude",
+                "type": "double",
+                "$t": "Home latitude in decimal degrees"
+              },
+              {
+                "name": "longitude",
+                "type": "double",
+                "$t": "Home longitude in decimal degrees"
+              },
+              {
+                "name": "altitude",
+                "type": "double",
+                "$t": "Home altitude in meters"
+              }
+            ]
+          },
+          {
+            "name": "GPSFixStateChanged",
+            "id": "2",
+            "arg": {
+              "name": "fixed",
+              "type": "u8",
+              "$t": "1 if gps on drone is fixed, 0 otherwise"
+            }
+          },
+          {
+            "name": "GPSUpdateStateChanged",
+            "id": "3",
+            "arg": {
+              "name": "state",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "updated",
+                  "$t": "Drone GPS update succeed"
+                },
+                {
+                  "name": "inProgress",
+                  "$t": "Drone GPS update In progress"
+                },
+                {
+                  "name": "failed",
+                  "$t": "Drone GPS update failed"
+                }
+              ]
+            }
+          },
+          {
+            "name": "HomeTypeChanged",
+            "id": "4",
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "TAKEOFF",
+                  "$t": "The drone will try to return to the take off position"
+                },
+                {
+                  "name": "PILOT",
+                  "$t": "The drone will try to return to the pilot position"
+                }
+              ]
+            }
+          },
+          {
+            "name": "ReturnHomeDelayChanged",
+            "id": "5",
+            "arg": {
+              "name": "delay",
+              "type": "u16",
+              "$t": "Delay in second"
+            }
+          }
+        ]
+      },
+      {
+        "name": "CameraState",
+        "id": "25",
+        "cmd": [
+          {
+            "name": "Orientation",
+            "id": "0",
+            "arg": [
+              {
+                "name": "tilt",
+                "type": "i8",
+                "$t": "Tilt camera consign for the drone [-100;100]"
+              },
+              {
+                "name": "pan",
+                "type": "i8",
+                "$t": "Pan camera consign for the drone [-100;100]"
+              }
+            ]
+          },
+          {
+            "name": "defaultCameraOrientation",
+            "id": "1",
+            "arg": [
+              {
+                "name": "tilt",
+                "type": "i8",
+                "$t": "Tilt value &#40;in degree&#41;"
+              },
+              {
+                "name": "pan",
+                "type": "i8",
+                "$t": "Pan value &#40;in degree&#41;"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Antiflickering",
+        "id": "29",
+        "cmd": [
+          {
+            "name": "electricFrequency",
+            "id": "0",
+            "arg": {
+              "name": "frequency",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "fiftyHertz",
+                  "$t": "Electric frequency of the country is 50hz"
+                },
+                {
+                  "name": "sixtyHertz",
+                  "$t": "Electric frequency of the country is 60hz"
+                }
+              ]
+            }
+          },
+          {
+            "name": "setMode",
+            "id": "1",
+            "arg": {
+              "name": "mode",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "auto",
+                  "$t": "Anti flickering based on the electric frequency previously sent"
+                },
+                {
+                  "name": "FixedFiftyHertz",
+                  "$t": "Anti flickering based on a fixed frequency of 50Hz"
+                },
+                {
+                  "name": "FixedSixtyHertz",
+                  "$t": "Anti flickering based on a fixed frequency of 60Hz"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "AntiflickeringState",
+        "id": "30",
+        "cmd": [
+          {
+            "name": "electricFrequencyChanged",
+            "id": "0",
+            "arg": {
+              "name": "frequency",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "fiftyHertz",
+                  "$t": "Electric frequency of the country is 50hz"
+                },
+                {
+                  "name": "sixtyHertz",
+                  "$t": "Electric frequency of the country is 60hz"
+                }
+              ]
+            }
+          },
+          {
+            "name": "modeChanged",
+            "id": "1",
+            "arg": {
+              "name": "mode",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "auto",
+                  "$t": "Anti flickering based on the electric frequency previously sent"
+                },
+                {
+                  "name": "FixedFiftyHertz",
+                  "$t": "Anti flickering based on a fixed frequency of 50Hz"
+                },
+                {
+                  "name": "FixedSixtyHertz",
+                  "$t": "Anti flickering based on a fixed frequency of 60Hz"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "GPSState",
+        "id": "31",
+        "cmd": [
+          {
+            "name": "NumberOfSatelliteChanged",
+            "id": "0",
+            "arg": {
+              "name": "numberOfSatellite",
+              "type": "u8",
+              "$t": "The number of satellite"
+            }
+          },
+          {
+            "name": "HomeTypeAvailabilityChanged",
+            "id": "1",
+            "type": "MAP_ITEM",
+            "arg": [
+              {
+                "name": "type",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "TAKEOFF",
+                    "$t": "The drone will try to return to the take off position"
+                  },
+                  {
+                    "name": "PILOT",
+                    "$t": "The drone will try to return to the pilot position"
+                  },
+                  {
+                    "name": "FIRST_FIX",
+                    "$t": "The drone has not enough information, it will try to return to the first GPS fix"
+                  }
+                ]
+              },
+              {
+                "name": "available",
+                "type": "u8",
+                "$t": "1 if this type is available, 0 otherwise"
+              }
+            ]
+          },
+          {
+            "name": "HomeTypeChosenChanged",
+            "id": "2",
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "TAKEOFF",
+                  "$t": "The drone will try to return to the take off position"
+                },
+                {
+                  "name": "PILOT",
+                  "$t": "The drone will try to return to the pilot position"
+                },
+                {
+                  "name": "FIRST_FIX",
+                  "$t": "The drone has not enough information, it will try to return to the first GPS fix"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "PROState",
+        "id": "32",
+        "cmd": {
+          "name": "Features",
+          "id": "0",
+          "arg": {
+            "name": "features",
+            "type": "u64",
+            "$t": "Bitfield representing enabled features."
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "common",
+    "id": "0",
+    "class": [
+      {
+        "name": "Network",
+        "id": "0",
+        "cmd": {
+          "name": "Disconnect",
+          "id": "0",
+          "$t": "@deprecated\n            Signals the remote that the host will disconnect and close its\n            libARNetwork instance &#40;and all threads that use libARNetwork&#41;"
+        }
+      },
+      {
+        "name": "NetworkEvent",
+        "id": "1",
+        "cmd": {
+          "name": "Disconnection",
+          "id": "0",
+          "notification": "TRUE",
+          "arg": {
+            "name": "cause",
+            "type": "enum",
+            "enum": [
+              {
+                "name": "off_button",
+                "$t": "The button off has been pressed"
+              },
+              {
+                "name": "unknown",
+                "$t": "Unknown generic cause"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Settings",
+        "id": "2",
+        "cmd": [
+          {
+            "name": "AllSettings",
+            "id": "0",
+            "timeout": "RETRY",
+            "$t": "Get all product settings, the product must send all settings"
+          },
+          {
+            "name": "Reset",
+            "id": "1",
+            "$t": "Reset all settings"
+          },
+          {
+            "name": "ProductName",
+            "id": "2",
+            "arg": {
+              "name": "name",
+              "type": "string",
+              "$t": "Product name"
+            }
+          },
+          {
+            "name": "Country",
+            "id": "3",
+            "arg": {
+              "name": "code",
+              "type": "string",
+              "$t": "Country code with ISO 3166 format"
+            }
+          },
+          {
+            "name": "AutoCountry",
+            "id": "4",
+            "arg": {
+              "name": "automatic",
+              "type": "u8",
+              "$t": "Boolean : 0 : Manual / 1 : Auto"
+            }
+          }
+        ]
+      },
+      {
+        "name": "SettingsState",
+        "id": "3",
+        "cmd": [
+          {
+            "name": "AllSettingsChanged",
+            "id": "0",
+            "$t": "State sent when all settings has been sent."
+          },
+          {
+            "name": "ResetChanged",
+            "id": "1",
+            "$t": "State sent when all settings has been resetting."
+          },
+          {
+            "name": "ProductNameChanged",
+            "id": "2",
+            "arg": {
+              "name": "name",
+              "type": "string",
+              "$t": "Product name"
+            }
+          },
+          {
+            "name": "ProductVersionChanged",
+            "id": "3",
+            "arg": [
+              {
+                "name": "software",
+                "type": "string",
+                "$t": "Product software version"
+              },
+              {
+                "name": "hardware",
+                "type": "string",
+                "$t": "Product hardware version"
+              }
+            ]
+          },
+          {
+            "name": "ProductSerialHighChanged",
+            "id": "4",
+            "arg": {
+              "name": "high",
+              "type": "string",
+              "$t": "Serial high number &#40;hexadecimal value&#41;"
+            }
+          },
+          {
+            "name": "ProductSerialLowChanged",
+            "id": "5",
+            "arg": {
+              "name": "low",
+              "type": "string",
+              "$t": "Serial low number &#40;hexadecimal value&#41;"
+            }
+          },
+          {
+            "name": "CountryChanged",
+            "id": "6",
+            "arg": {
+              "name": "code",
+              "type": "string",
+              "$t": "Country code with ISO 3166 format, empty string means unknown country."
+            }
+          },
+          {
+            "name": "AutoCountryChanged",
+            "id": "7",
+            "arg": {
+              "name": "automatic",
+              "type": "u8",
+              "$t": "Boolean : 0 : Manual / 1 : Auto"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Common",
+        "id": "4",
+        "cmd": [
+          {
+            "name": "AllStates",
+            "id": "0",
+            "timeout": "RETRY",
+            "$t": "Get all product states."
+          },
+          {
+            "name": "CurrentDate",
+            "id": "1",
+            "arg": {
+              "name": "date",
+              "type": "string",
+              "$t": "Date with ISO-8601 format"
+            }
+          },
+          {
+            "name": "CurrentTime",
+            "id": "2",
+            "arg": {
+              "name": "time",
+              "type": "string",
+              "$t": "Time with ISO-8601 format"
+            }
+          },
+          {
+            "name": "Reboot",
+            "id": "3",
+            "$t": "Command to ask reboot to product"
+          }
+        ]
+      },
+      {
+        "name": "CommonState",
+        "id": "5",
+        "cmd": [
+          {
+            "name": "AllStatesChanged",
+            "id": "0",
+            "$t": "State sent when all product states has been sent."
+          },
+          {
+            "name": "BatteryStateChanged",
+            "id": "1",
+            "arg": {
+              "name": "percent",
+              "type": "u8",
+              "$t": "Battery percentage"
+            }
+          },
+          {
+            "name": "MassStorageStateListChanged",
+            "id": "2",
+            "type": "MAP_ITEM",
+            "arg": [
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage id &#40;unique&#41;"
+              },
+              {
+                "name": "name",
+                "type": "string",
+                "$t": "Mass storage name"
+              }
+            ]
+          },
+          {
+            "name": "MassStorageInfoStateListChanged",
+            "id": "3",
+            "type": "MAP_ITEM",
+            "arg": [
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage state id &#40;unique&#41;"
+              },
+              {
+                "name": "size",
+                "type": "u32",
+                "$t": "Mass storage size in MBytes"
+              },
+              {
+                "name": "used_size",
+                "type": "u32",
+                "$t": "Mass storage used size in MBytes"
+              },
+              {
+                "name": "plugged",
+                "type": "u8",
+                "$t": "Mass storage plugged &#40;1 if mass storage is plugged, otherwise 0&#41;"
+              },
+              {
+                "name": "full",
+                "type": "u8",
+                "$t": "Mass storage full information state &#40;1 if mass storage full, 0 otherwise&#41;."
+              },
+              {
+                "name": "internal",
+                "type": "u8",
+                "$t": "Mass storage internal type state &#40;1 if mass storage is internal, 0 otherwise&#41;"
+              }
+            ]
+          },
+          {
+            "name": "CurrentDateChanged",
+            "id": "4",
+            "arg": {
+              "name": "date",
+              "type": "string",
+              "$t": "Date with ISO-8601 format"
+            }
+          },
+          {
+            "name": "CurrentTimeChanged",
+            "id": "5",
+            "arg": {
+              "name": "time",
+              "type": "string",
+              "$t": "Time with ISO-8601 format"
+            }
+          },
+          {
+            "name": "MassStorageInfoRemainingListChanged",
+            "id": "6",
+            "type": "LIST_ITEM",
+            "arg": [
+              {
+                "name": "free_space",
+                "type": "u32",
+                "$t": "Mass storage free space in MBytes"
+              },
+              {
+                "name": "rec_time",
+                "type": "u16",
+                "$t": "Mass storage record time reamining in minute"
+              },
+              {
+                "name": "photo_remaining",
+                "type": "u32",
+                "$t": "Mass storage photo remaining"
+              }
+            ]
+          },
+          {
+            "name": "WifiSignalChanged",
+            "id": "7",
+            "arg": {
+              "name": "rssi",
+              "type": "i16",
+              "$t": "RSSI of the signal between controller and the product &#40;in dbm&#41;"
+            }
+          },
+          {
+            "name": "SensorsStatesListChanged",
+            "id": "8",
+            "type": "MAP_ITEM",
+            "arg": [
+              {
+                "name": "sensorName",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "IMU",
+                    "$t": "Inertial Measurement Unit sensor"
+                  },
+                  {
+                    "name": "barometer",
+                    "$t": "Barometer sensor"
+                  },
+                  {
+                    "name": "ultrasound",
+                    "$t": "Ultrasonic sensor"
+                  },
+                  {
+                    "name": "GPS",
+                    "$t": "GPS sensor"
+                  },
+                  {
+                    "name": "magnetometer",
+                    "$t": "Magnetometer sensor"
+                  },
+                  {
+                    "name": "vertical_camera",
+                    "$t": "Vertical Camera sensor"
+                  }
+                ]
+              },
+              {
+                "name": "sensorState",
+                "type": "u8",
+                "$t": "Sensor state &#40;1 if the sensor is OK, 0 if the sensor is NOT OK&#41;"
+              }
+            ]
+          },
+          {
+            "name": "ProductModel",
+            "id": "9",
+            "arg": {
+              "name": "model",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "RS_TRAVIS",
+                  "$t": "Travis &#40;RS taxi&#41; model."
+                },
+                {
+                  "name": "RS_MARS",
+                  "$t": "Mars &#40;RS space&#41; model"
+                },
+                {
+                  "name": "RS_SWAT",
+                  "$t": "SWAT &#40;RS SWAT&#41; model"
+                },
+                {
+                  "name": "RS_MCLANE",
+                  "$t": "Mc Lane &#40;RS police&#41; model"
+                },
+                {
+                  "name": "RS_BLAZE",
+                  "$t": "Blaze &#40;RS fire&#41; model"
+                },
+                {
+                  "name": "RS_ORAK",
+                  "$t": "Orak &#40;RS carbon hydrofoil&#41; model"
+                },
+                {
+                  "name": "RS_NEWZ",
+                  "$t": "New Z &#40;RS wooden hydrofoil&#41; model"
+                },
+                {
+                  "name": "JS_MARSHALL",
+                  "$t": "Marshall &#40;JS fire&#41; model"
+                },
+                {
+                  "name": "JS_DIESEL",
+                  "$t": "Diesel &#40;JS SWAT&#41; model"
+                },
+                {
+                  "name": "JS_BUZZ",
+                  "$t": "Buzz &#40;JS space&#41; model"
+                },
+                {
+                  "name": "JS_MAX",
+                  "$t": "Max &#40;JS F1&#41; model"
+                },
+                {
+                  "name": "JS_JETT",
+                  "$t": "Jett &#40;JS flames&#41; model"
+                },
+                {
+                  "name": "JS_TUKTUK",
+                  "$t": "Tuk-Tuk &#40;JS taxi&#41; model"
+                }
+              ]
+            }
+          },
+          {
+            "name": "CountryListKnown",
+            "id": "10",
+            "type": "LIST_ITEM",
+            "arg": [
+              {
+                "name": "listFlags",
+                "type": "u8",
+                "$t": "List entry attribute Bitfield.\n                0x01: First: indicate it&apos;s the first element of the list. \n                0x02: Last:  indicate it&apos;s the last element of the list.\n                0x04: Empty: indicate the list is empty &#40;implies First/Last&#41;. All other arguments should be ignored."
+              },
+              {
+                "name": "countryCodes",
+                "type": "string",
+                "$t": "Following of country code with ISO 3166 format, separated by &quot;;&quot;. Be careful of the command size allowed by the network used. If necessary, split the list in several commands."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "OverHeat",
+        "id": "6",
+        "cmd": [
+          {
+            "name": "SwitchOff",
+            "id": "0",
+            "$t": "@deprecated\n            Switch off the drone when a overheat appeared"
+          },
+          {
+            "name": "Ventilate",
+            "id": "1",
+            "$t": "@deprecated\n            Ventilate the drone when a overheat appeared"
+          }
+        ]
+      },
+      {
+        "name": "OverHeatState",
+        "id": "7",
+        "cmd": [
+          {
+            "name": "OverHeatChanged",
+            "id": "0",
+            "$t": "@deprecated\n            Overheat temperature reached"
+          },
+          {
+            "name": "OverHeatRegulationChanged",
+            "id": "1",
+            "arg": {
+              "name": "regulationType",
+              "type": "u8",
+              "$t": "Type of overheat regulation : 0 for ventilation, 1 for switch off"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Controller",
+        "id": "8",
+        "cmd": {
+          "name": "isPiloting",
+          "id": "0",
+          "arg": {
+            "name": "piloting",
+            "type": "u8",
+            "$t": "0 when the application is not in the piloting HUD, 1 when it enters the HUD."
+          }
+        }
+      },
+      {
+        "name": "WifiSettings",
+        "id": "9",
+        "cmd": {
+          "name": "OutdoorSetting",
+          "id": "0",
+          "arg": {
+            "name": "outdoor",
+            "type": "u8",
+            "$t": "1 if it should use outdoor wifi settings, 0 otherwise"
+          }
+        }
+      },
+      {
+        "name": "WifiSettingsState",
+        "id": "10",
+        "cmd": {
+          "name": "outdoorSettingsChanged",
+          "id": "0",
+          "arg": {
+            "name": "outdoor",
+            "type": "u8",
+            "$t": "1 if it should use outdoor wifi settings, 0 otherwise"
+          }
+        }
+      },
+      {
+        "name": "Mavlink",
+        "id": "11",
+        "cmd": [
+          {
+            "name": "Start",
+            "id": "0",
+            "arg": [
+              {
+                "name": "filepath",
+                "type": "string",
+                "$t": "flight plan file path from the mavlink ftp root"
+              },
+              {
+                "name": "type",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "flightPlan",
+                    "$t": "Mavlink file for FlightPlan"
+                  },
+                  {
+                    "name": "mapMyHouse",
+                    "$t": "Mavlink file for MapMyHouse"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Pause",
+            "id": "1",
+            "$t": "Pause the flightplan &#40;can be restarted with a start&#41;"
+          },
+          {
+            "name": "Stop",
+            "id": "2",
+            "$t": "Stop the flightplan"
+          }
+        ]
+      },
+      {
+        "name": "MavlinkState",
+        "id": "12",
+        "cmd": [
+          {
+            "name": "MavlinkFilePlayingStateChanged",
+            "id": "0",
+            "arg": [
+              {
+                "name": "state",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "playing",
+                    "$t": "Mavlink file is playing"
+                  },
+                  {
+                    "name": "stopped",
+                    "$t": "Mavlink file is stopped &#40;arg filepath and type are useless in this state&#41;"
+                  },
+                  {
+                    "name": "paused",
+                    "$t": "Mavlink file is paused"
+                  }
+                ]
+              },
+              {
+                "name": "filepath",
+                "type": "string",
+                "$t": "flight plan file path from the mavlink ftp root"
+              },
+              {
+                "name": "type",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "flightPlan",
+                    "$t": "Mavlink file for FlightPlan"
+                  },
+                  {
+                    "name": "mapMyHouse",
+                    "$t": "Mavlink file for MapMyHouse"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "MavlinkPlayErrorStateChanged",
+            "id": "1",
+            "arg": {
+              "name": "error",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "none",
+                  "$t": "There is no error"
+                },
+                {
+                  "name": "notInOutDoorMode",
+                  "$t": "The drone is not in outdoor mode"
+                },
+                {
+                  "name": "gpsNotFixed",
+                  "$t": "The gps is not fixed"
+                },
+                {
+                  "name": "notCalibrated",
+                  "$t": "The magnetometer of the drone is not calibrated"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Calibration",
+        "id": "13",
+        "cmd": {
+          "name": "MagnetoCalibration",
+          "id": "0",
+          "arg": {
+            "name": "calibrate",
+            "type": "u8",
+            "$t": "1 if the calibration should be started, 0 if it should be aborted"
+          }
+        }
+      },
+      {
+        "name": "CalibrationState",
+        "id": "14",
+        "cmd": [
+          {
+            "name": "MagnetoCalibrationStateChanged",
+            "id": "0",
+            "arg": [
+              {
+                "name": "xAxisCalibration",
+                "type": "u8",
+                "$t": "State of the x axis &#40;roll&#41; calibration : 1 if calibration is done, 0 otherwise"
+              },
+              {
+                "name": "yAxisCalibration",
+                "type": "u8",
+                "$t": "State of the y axis &#40;pitch&#41; calibration : 1 if calibration is done, 0 otherwise"
+              },
+              {
+                "name": "zAxisCalibration",
+                "type": "u8",
+                "$t": "State of the z axis &#40;yaw&#41; calibration : 1 if calibration is done, 0 otherwise"
+              },
+              {
+                "name": "calibrationFailed",
+                "type": "u8",
+                "$t": "1 if calibration has failed, 0 otherwise. If this arg is 1, consider all previous arg as 0"
+              }
+            ]
+          },
+          {
+            "name": "MagnetoCalibrationRequiredState",
+            "id": "1",
+            "arg": {
+              "name": "required",
+              "type": "u8",
+              "$t": "1 if calibration is required, 0 if current calibration is still valid"
+            }
+          },
+          {
+            "name": "MagnetoCalibrationAxisToCalibrateChanged",
+            "id": "2",
+            "arg": {
+              "name": "axis",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "xAxis",
+                  "$t": "If the current calibration axis should be the x axis"
+                },
+                {
+                  "name": "yAxis",
+                  "$t": "If the current calibration axis should be the y axis"
+                },
+                {
+                  "name": "zAxis",
+                  "$t": "If the current calibration axis should be the z axis"
+                },
+                {
+                  "name": "none",
+                  "$t": "If none of the axis should be calibrated"
+                }
+              ]
+            }
+          },
+          {
+            "name": "MagnetoCalibrationStartedChanged",
+            "id": "3",
+            "arg": {
+              "name": "started",
+              "type": "u8",
+              "$t": "1 if calibration has started, 0 otherwise"
+            }
+          }
+        ]
+      },
+      {
+        "name": "CameraSettingsState",
+        "id": "15",
+        "cmd": {
+          "name": "CameraSettingsChanged",
+          "id": "0",
+          "arg": [
+            {
+              "name": "fov",
+              "type": "float",
+              "$t": "Value of the camera horizontal fov &#40;in degree&#41;"
+            },
+            {
+              "name": "panMax",
+              "type": "float",
+              "$t": "Value of max pan &#40;right pan&#41; &#40;in degree&#41;"
+            },
+            {
+              "name": "panMin",
+              "type": "float",
+              "$t": "Value of min pan &#40;left pan&#41; &#40;in degree&#41;"
+            },
+            {
+              "name": "tiltMax",
+              "type": "float",
+              "$t": "Value of max tilt &#40;top tilt&#41; &#40;in degree&#41;"
+            },
+            {
+              "name": "tiltMin",
+              "type": "float",
+              "$t": "Value of min tilt &#40;bottom tilt&#41; &#40;in degree&#41;"
+            }
+          ]
+        }
+      },
+      {
+        "name": "GPS",
+        "id": "16",
+        "cmd": {
+          "name": "ControllerPositionForRun",
+          "id": "0",
+          "arg": [
+            {
+              "name": "latitude",
+              "type": "double",
+              "$t": "Controller latitude in decimal degrees"
+            },
+            {
+              "name": "longitude",
+              "type": "double",
+              "$t": "Controller longitude in decimal degrees"
+            }
+          ]
+        }
+      },
+      {
+        "name": "FlightPlanState",
+        "id": "17",
+        "cmd": [
+          {
+            "name": "AvailabilityStateChanged",
+            "id": "0",
+            "arg": {
+              "name": "AvailabilityState",
+              "type": "u8",
+              "$t": "Running a flightPlan file is available &#40;1 running a flightPlan file is available, otherwise 0&#41;"
+            }
+          },
+          {
+            "name": "ComponentStateListChanged",
+            "id": "1",
+            "type": "MAP_ITEM",
+            "arg": [
+              {
+                "name": "component",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "GPS",
+                    "$t": "GPS for Drone FlightPlan"
+                  },
+                  {
+                    "name": "Calibration",
+                    "$t": "Calibration for Drone FlightPlan"
+                  },
+                  {
+                    "name": "Mavlink_File",
+                    "$t": "Mavlink file for Drone FlightPlan"
+                  },
+                  {
+                    "name": "TakeOff",
+                    "$t": "Take off"
+                  }
+                ]
+              },
+              {
+                "name": "State",
+                "type": "u8",
+                "$t": "State of the FlightPlan component &#40;1 FlightPlan component OK, otherwise 0&#41;"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "FlightPlanEvent",
+        "id": "19",
+        "cmd": [
+          {
+            "name": "StartingErrorEvent",
+            "id": "0",
+            "notification": "TRUE",
+            "$t": "Event of flight plan start error"
+          },
+          {
+            "name": "SpeedBridleEvent",
+            "id": "1",
+            "notification": "TRUE",
+            "$t": "Bridle speed of the drone"
+          }
+        ]
+      },
+      {
+        "name": "ARLibsVersionsState",
+        "id": "18",
+        "cmd": [
+          {
+            "name": "ControllerLibARCommandsVersion",
+            "id": "0",
+            "arg": {
+              "name": "version",
+              "type": "string",
+              "$t": "version of libARCommands &#40;&quot;1.2.3.4&quot; format&#41;"
+            }
+          },
+          {
+            "name": "SkyControllerLibARCommandsVersion",
+            "id": "1",
+            "arg": {
+              "name": "version",
+              "type": "string",
+              "$t": "version of libARCommands &#40;&quot;1.2.3.4&quot; format&#41;"
+            }
+          },
+          {
+            "name": "DeviceLibARCommandsVersion",
+            "id": "2",
+            "arg": {
+              "name": "version",
+              "type": "string",
+              "$t": "version of libARCommands &#40;&quot;1.2.3.4&quot; format&#41;"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Audio",
+        "id": "20",
+        "cmd": {
+          "name": "ControllerReadyForStreaming",
+          "id": "0",
+          "arg": {
+            "name": "ready",
+            "type": "u8",
+            "$t": "Bit field for TX and RX ready.\n                bit 0 is 1 if controller is ready and wants to receive sound &#40;Drone TX&#41;\n                bit 1 is 1 if controller is ready and wants to send sound &#40;Drone RX&#41;"
+          }
+        }
+      },
+      {
+        "name": "AudioState",
+        "id": "21",
+        "cmd": {
+          "name": "AudioStreamingRunning",
+          "id": "0",
+          "arg": {
+            "name": "running",
+            "type": "u8",
+            "$t": "Bit field for TX and RX running\n                bit 0 is 1 if Drone TX is running\n                bit 1 is 1 if Drone RX is running"
+          }
+        }
+      },
+      {
+        "name": "Headlights",
+        "id": "22",
+        "cmd": {
+          "name": "intensity",
+          "id": "0",
+          "arg": [
+            {
+              "name": "left",
+              "type": "u8",
+              "$t": "Set the left LED intensity value &#40;0 through 255&#41;."
+            },
+            {
+              "name": "right",
+              "type": "u8",
+              "$t": "Set the right LED intensity value &#40;0 through 255&#41;."
+            }
+          ]
+        }
+      },
+      {
+        "name": "HeadlightsState",
+        "id": "23",
+        "cmd": {
+          "name": "intensityChanged",
+          "id": "0",
+          "arg": [
+            {
+              "name": "left",
+              "type": "u8",
+              "$t": "The intensity value for the left LED &#40;0 through 255&#41;."
+            },
+            {
+              "name": "right",
+              "type": "u8",
+              "$t": "The intensity value for the right LED &#40;0 through 255&#41;."
+            }
+          ]
+        }
+      },
+      {
+        "name": "Animations",
+        "id": "24",
+        "cmd": [
+          {
+            "name": "StartAnimation",
+            "id": "0",
+            "arg": {
+              "name": "anim",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "HEADLIGHTS_FLASH",
+                  "$t": "Flash headlights."
+                },
+                {
+                  "name": "HEADLIGHTS_BLINK",
+                  "$t": "Blink headlights."
+                },
+                {
+                  "name": "HEADLIGHTS_OSCILLATION",
+                  "$t": "Oscillating headlights."
+                },
+                {
+                  "name": "SPIN",
+                  "$t": "Spin animation."
+                },
+                {
+                  "name": "TAP",
+                  "$t": "Tap animation."
+                },
+                {
+                  "name": "SLOW_SHAKE",
+                  "$t": "Slow shake animation."
+                },
+                {
+                  "name": "METRONOME",
+                  "$t": "Metronome animation."
+                },
+                {
+                  "name": "ONDULATION",
+                  "$t": "Standing dance animation."
+                },
+                {
+                  "name": "SPIN_JUMP",
+                  "$t": "Spin jump animation."
+                },
+                {
+                  "name": "SPIN_TO_POSTURE",
+                  "$t": "Spin that end in standing posture, or in jumper if it was standing animation."
+                },
+                {
+                  "name": "SPIRAL",
+                  "$t": "Spiral animation."
+                },
+                {
+                  "name": "SLALOM",
+                  "$t": "Slalom animation."
+                },
+                {
+                  "name": "BOOST",
+                  "$t": "Boost animation."
+                }
+              ]
+            }
+          },
+          {
+            "name": "StopAnimation",
+            "id": "1",
+            "arg": {
+              "name": "anim",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "HEADLIGHTS_FLASH",
+                  "$t": "Flash headlights."
+                },
+                {
+                  "name": "HEADLIGHTS_BLINK",
+                  "$t": "Blink headlights."
+                },
+                {
+                  "name": "HEADLIGHTS_OSCILLATION",
+                  "$t": "Oscillating headlights."
+                },
+                {
+                  "name": "SPIN",
+                  "$t": "Spin animation."
+                },
+                {
+                  "name": "TAP",
+                  "$t": "Tap animation."
+                },
+                {
+                  "name": "SLOW_SHAKE",
+                  "$t": "Slow shake animation."
+                },
+                {
+                  "name": "METRONOME",
+                  "$t": "Metronome animation."
+                },
+                {
+                  "name": "ONDULATION",
+                  "$t": "Standing dance animation."
+                },
+                {
+                  "name": "SPIN_JUMP",
+                  "$t": "Spin jump animation."
+                },
+                {
+                  "name": "SPIN_TO_POSTURE",
+                  "$t": "Spin that end in standing posture, or in jumper if it was standing animation."
+                },
+                {
+                  "name": "SPIRAL",
+                  "$t": "Spiral animation."
+                },
+                {
+                  "name": "SLALOM",
+                  "$t": "Slalom animation."
+                },
+                {
+                  "name": "BOOST",
+                  "$t": "Boost animation."
+                }
+              ]
+            }
+          },
+          {
+            "name": "StopAllAnimations",
+            "id": "2",
+            "$t": "Stop all running animations."
+          }
+        ]
+      },
+      {
+        "name": "AnimationsState",
+        "id": "25",
+        "cmd": {
+          "name": "List",
+          "type": "MAP_ITEM",
+          "id": "0",
+          "arg": [
+            {
+              "name": "anim",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "HEADLIGHTS_FLASH",
+                  "$t": "Flash headlights."
+                },
+                {
+                  "name": "HEADLIGHTS_BLINK",
+                  "$t": "Blink headlights."
+                },
+                {
+                  "name": "HEADLIGHTS_OSCILLATION",
+                  "$t": "Oscillating headlights."
+                },
+                {
+                  "name": "SPIN",
+                  "$t": "Spin animation."
+                },
+                {
+                  "name": "TAP",
+                  "$t": "Tap animation."
+                },
+                {
+                  "name": "SLOW_SHAKE",
+                  "$t": "Slow shake animation."
+                },
+                {
+                  "name": "METRONOME",
+                  "$t": "Metronome animation."
+                },
+                {
+                  "name": "ONDULATION",
+                  "$t": "Standing dance animation."
+                },
+                {
+                  "name": "SPIN_JUMP",
+                  "$t": "Spin jump animation."
+                },
+                {
+                  "name": "SPIN_TO_POSTURE",
+                  "$t": "Spin that end in standing posture, or in jumper if it was standing animation."
+                },
+                {
+                  "name": "SPIRAL",
+                  "$t": "Spiral animation."
+                },
+                {
+                  "name": "SLALOM",
+                  "$t": "Slalom animation."
+                },
+                {
+                  "name": "BOOST",
+                  "$t": "Boost animation."
+                }
+              ]
+            },
+            {
+              "name": "state",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "stopped",
+                  "$t": "animation is stopped"
+                },
+                {
+                  "name": "started",
+                  "$t": "animation is started"
+                },
+                {
+                  "name": "notAvailable",
+                  "$t": "The animation is not available"
+                }
+              ]
+            },
+            {
+              "name": "error",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "ok",
+                  "$t": "No Error"
+                },
+                {
+                  "name": "unknown",
+                  "$t": "Unknown generic error"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "Accessory",
+        "id": "26",
+        "cmd": {
+          "name": "Config",
+          "id": "0",
+          "arg": {
+            "name": "accessory",
+            "type": "enum",
+            "enum": [
+              {
+                "name": "NO_ACCESSORY",
+                "$t": "No accessory."
+              },
+              {
+                "name": "STD_WHEELS",
+                "$t": "Standard wheels"
+              },
+              {
+                "name": "TRUCK_WHEELS",
+                "$t": "Truck wheels"
+              },
+              {
+                "name": "HULL",
+                "$t": "Hull"
+              },
+              {
+                "name": "HYDROFOIL",
+                "$t": "Hydrofoil"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "AccessoryState",
+        "id": "27",
+        "cmd": [
+          {
+            "name": "SupportedAccessoriesListChanged",
+            "id": "0",
+            "type": "MAP_ITEM",
+            "arg": {
+              "name": "accessory",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "NO_ACCESSORY",
+                  "$t": "No accessory."
+                },
+                {
+                  "name": "STD_WHEELS",
+                  "$t": "Standard wheels"
+                },
+                {
+                  "name": "TRUCK_WHEELS",
+                  "$t": "Truck wheels"
+                },
+                {
+                  "name": "HULL",
+                  "$t": "Hull"
+                },
+                {
+                  "name": "HYDROFOIL",
+                  "$t": "Hydrofoil"
+                }
+              ]
+            }
+          },
+          {
+            "name": "AccessoryConfigChanged",
+            "id": "1",
+            "arg": [
+              {
+                "name": "newAccessory",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "UNCONFIGURED",
+                    "$t": "No accessory configuration set. Controller needs to set one."
+                  },
+                  {
+                    "name": "NO_ACCESSORY",
+                    "$t": "No accessory."
+                  },
+                  {
+                    "name": "STD_WHEELS",
+                    "$t": "Standard wheels"
+                  },
+                  {
+                    "name": "TRUCK_WHEELS",
+                    "$t": "Truck wheels"
+                  },
+                  {
+                    "name": "HULL",
+                    "$t": "Hull"
+                  },
+                  {
+                    "name": "HYDROFOIL",
+                    "$t": "Hydrofoil"
+                  }
+                ]
+              },
+              {
+                "name": "error",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "OK",
+                    "$t": "No error. Accessory config change successful."
+                  },
+                  {
+                    "name": "UNKNOWN",
+                    "$t": "Cannot change accessory configuration for some reason."
+                  },
+                  {
+                    "name": "FLYING",
+                    "$t": "Cannot change accessory configuration while flying."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "AccessoryConfigModificationEnabled",
+            "id": "2",
+            "arg": {
+              "name": "enabled",
+              "type": "u8",
+              "$t": "1 if the modification of the accessory Config is enabled, 0 otherwise"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Charger",
+        "id": "28",
+        "cmd": {
+          "name": "SetMaxChargeRate",
+          "id": "0",
+          "arg": {
+            "name": "rate",
+            "type": "enum",
+            "enum": [
+              {
+                "name": "SLOW",
+                "$t": "Fully charge the battery at a slow rate. Typically limit max charge current to 512 mA."
+              },
+              {
+                "name": "MODERATE",
+                "$t": "Almost fully-charge the battery at moderate rate &#40;&gt; 512mA&#41; but slower than the fastest rate."
+              },
+              {
+                "name": "FAST",
+                "$t": "Almost fully-charge the battery at the highest possible rate supported by the charger."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "ChargerState",
+        "id": "29",
+        "cmd": [
+          {
+            "name": "MaxChargeRateChanged",
+            "id": "0",
+            "arg": {
+              "name": "rate",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "SLOW",
+                  "$t": "Fully charge the battery at a slow rate. Typically limit max charge current to 512 mA."
+                },
+                {
+                  "name": "MODERATE",
+                  "$t": "Almost fully-charge the battery at moderate rate &#40;&gt; 512 mA&#41; but slower than the fastest rate."
+                },
+                {
+                  "name": "FAST",
+                  "$t": "Almost fully-charge the battery at the highest possible rate supported by the charger."
+                }
+              ]
+            }
+          },
+          {
+            "name": "CurrentChargeStateChanged",
+            "id": "1",
+            "arg": [
+              {
+                "name": "status",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "DISCHARGING",
+                    "$t": "The battery is discharging."
+                  },
+                  {
+                    "name": "CHARGING_SLOW",
+                    "$t": "The battery is charging at a slow rate about 512 mA."
+                  },
+                  {
+                    "name": "CHARGING_MODERATE",
+                    "$t": "The battery is charging at a moderate rate &#40;&gt; 512 mA&#41; but slower than the fastest rate."
+                  },
+                  {
+                    "name": "CHARGING_FAST",
+                    "$t": "The battery is charging at a the fastest rate."
+                  },
+                  {
+                    "name": "BATTERY_FULL",
+                    "$t": "The charger is plugged and the battery is fully charged."
+                  }
+                ]
+              },
+              {
+                "name": "phase",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "UNKNOWN",
+                    "$t": "The charge phase is unknown or irrelevant."
+                  },
+                  {
+                    "name": "CONSTANT_CURRENT_1",
+                    "$t": "First phase of the charging process. The battery is charging with constant current."
+                  },
+                  {
+                    "name": "CONSTANT_CURRENT_2",
+                    "$t": "Second phase of the charging process. The battery is charging with constant current, with a higher voltage than the first phase."
+                  },
+                  {
+                    "name": "CONSTANT_VOLTAGE",
+                    "$t": "Last part of the charging process. The battery is charging with a constant voltage."
+                  },
+                  {
+                    "name": "CHARGED",
+                    "$t": "The battery is fully charged."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "LastChargeRateChanged",
+            "id": "2",
+            "arg": {
+              "name": "rate",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "UNKNOWN",
+                  "$t": "The last charge rate is not known."
+                },
+                {
+                  "name": "SLOW",
+                  "$t": "Slow charge rate."
+                },
+                {
+                  "name": "MODERATE",
+                  "$t": "Moderate charge rate."
+                },
+                {
+                  "name": "FAST",
+                  "$t": "Fast charge rate."
+                }
+              ]
+            }
+          },
+          {
+            "name": "ChargingInfo",
+            "id": "3",
+            "arg": [
+              {
+                "name": "phase",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "UNKNOWN",
+                    "$t": "The charge phase is unknown or irrelevant."
+                  },
+                  {
+                    "name": "CONSTANT_CURRENT_1",
+                    "$t": "First phase of the charging process. The battery is charging with constant current."
+                  },
+                  {
+                    "name": "CONSTANT_CURRENT_2",
+                    "$t": "Second phase of the charging process. The battery is charging with constant current, with a higher voltage than the first phase."
+                  },
+                  {
+                    "name": "CONSTANT_VOLTAGE",
+                    "$t": "Last part of the charging process. The battery is charging with a constant voltage."
+                  },
+                  {
+                    "name": "CHARGED",
+                    "$t": "The battery is fully charged."
+                  },
+                  {
+                    "name": "DISCHARGING",
+                    "$t": "The battery is discharging; Other arguments refers to the last charge."
+                  }
+                ]
+              },
+              {
+                "name": "rate",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "UNKNOWN",
+                    "$t": "The charge rate is not known."
+                  },
+                  {
+                    "name": "SLOW",
+                    "$t": "Slow charge rate."
+                  },
+                  {
+                    "name": "MODERATE",
+                    "$t": "Moderate charge rate."
+                  },
+                  {
+                    "name": "FAST",
+                    "$t": "Fast charge rate."
+                  }
+                ]
+              },
+              {
+                "name": "intensity",
+                "type": "u8",
+                "$t": "The charging intensity, in dA. &#40;12dA = 1,2A&#41; ; If phase is DISCHARGING, refers to the last charge. Equals to 0 if not known."
+              },
+              {
+                "name": "fullChargingTime",
+                "type": "u8",
+                "$t": "The full charging time estimated, in minute. If phase is DISCHARGING, refers to the last charge. Equals to 0 if not known."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "RunState",
+        "id": "30",
+        "cmd": {
+          "name": "RunIdChanged",
+          "id": "0",
+          "arg": {
+            "name": "runId",
+            "type": "string",
+            "$t": "Id of the run"
+          }
+        }
+      }
+    ]
+  }
+]
