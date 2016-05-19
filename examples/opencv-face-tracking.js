@@ -41,7 +41,7 @@ async.forever(
           for (var i = 0; i < faces.length; i++) {
             var face = faces[i];
             im.rectangle([face.x, face.y],
-              [face.x + face.width, face.y + face.height], [0, 255, 0], 2);
+              [face.width, face.height], [0, 255, 0], 2);
           }
 
           w.show(im);
