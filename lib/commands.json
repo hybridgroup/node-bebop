@@ -10,65 +10,97 @@
           {
             "name": "FlatTrim",
             "id": "0",
-            "$t": "Do a flat trim"
+            "comment": {
+              "title": "Do a flat trim",
+              "desc": "Do a flat trim of the accelerometer/gyro.\\n     Could be useful when the drone is sliding in hover mode.",
+              "support": "0901;090c;090e",
+              "result": "Accelerometer and gyroscope are calibrated then event [FlatTrimChanged](#1-4-0) is triggered."
+            }
           },
           {
             "name": "TakeOff",
             "id": "1",
-            "$t": "Ask the drone to take off"
+            "comment": {
+              "title": "Take off",
+              "desc": "Ask the drone to take off.\\n     On the fixed wings (such as Disco): not used except to cancel a land.",
+              "support": "0901;090c;090e",
+              "result": "On the quadcopters: the drone takes off if its [FlyingState](#1-4-1) was landed.\\n     On the fixed wings, the landing process is aborted if the [FlyingState](#1-4-1) was landing.\\n     Then, event [FlyingState](#1-4-1) is triggered."
+            }
           },
           {
             "name": "PCMD",
             "id": "2",
             "buffer": "NON_ACK",
+            "comment": {
+              "title": "Move the drone",
+              "desc": "Move the drone.\\n     The libARController is sending the command each 50ms.\\n\\n     **Please note that you should call setPilotingPCMD and not sendPilotingPCMD because the libARController is handling the periodicity and the buffer on which it is sent.**",
+              "support": "0901;090c;090e",
+              "result": "The drone moves! Yaaaaay!\\n     Event [SpeedChanged](#1-4-5), [AttitudeChanged](#1-4-6) and [PositionChanged](#1-4-4) (only if gps of the drone has fixed) are triggered."
+            },
             "arg": [
               {
                 "name": "flag",
                 "type": "u8",
-                "$t": "Boolean flag to activate roll/pitch movement"
+                "$t": "Boolean flag: 1 if the roll and pitch values should be taken in consideration. 0 otherwise"
               },
               {
                 "name": "roll",
                 "type": "i8",
-                "$t": "Roll consign for the drone [-100;100]"
+                "$t": "Roll angle as signed percentage.\n\t\t\t\tOn copters:\n\t\t\t\tRoll angle expressed as signed percentage of the max pitch/roll setting, in range [-100, 100]\n\t\t\t\t-100 corresponds to a roll angle of max pitch/roll to the left (drone will fly left)\n\t\t\t\t100 corresponds to a roll angle of max pitch/roll to the right (drone will fly right)\n\t\t\t\tThis value may be clamped if necessary, in order to respect the maximum supported physical tilt of the copter.\n\n\t\t\t\tOn fixed wings:\n\t\t\t\tRoll angle expressed as signed percentage of the physical max roll of the wing, in range [-100, 100]\n\t\t\t\tNegative value makes the plane fly to the left\n\t\t\t\tPositive value makes the plane fly to the right"
               },
               {
                 "name": "pitch",
                 "type": "i8",
-                "$t": "Pitch consign for the drone [-100;100]"
+                "$t": "Pitch angle as signed percentage.\n\t\t\t\tOn copters:\n\t\t\t\tExpressed as signed percentage of the max pitch/roll setting, in range [-100, 100]\n\t\t\t\t-100 corresponds to a pitch angle of max pitch/roll towards sky (drone will fly backward)\n\t\t\t\t100 corresponds to a pitch angle of max pitch/roll towards ground (drone will fly forward)\n\t\t\t\tThis value may be clamped if necessary, in order to respect the maximum supported physical tilt of the copter.\n\n\t\t\t\tOn fixed wings:\n\t\t\t\tExpressed as signed percentage of the physical max pitch of the wing, in range [-100, 100]\n\t\t\t\tNegative value makes the plane fly in direction of the sky\n\t\t\t\tPositive value makes the plane fly in direction of the ground"
               },
               {
                 "name": "yaw",
                 "type": "i8",
-                "$t": "Yaw consign for the drone [-100;100]"
+                "$t": "Yaw rotation speed as signed percentage.\n\t\t\t\tOn copters:\n\t\t\t\tExpressed as signed percentage of the max yaw rotation speed setting, in range [-100, 100].\n\t\t\t\t-100 corresponds to a counter-clockwise rotation of max yaw rotation speed\n\t\t\t\t100 corresponds to a clockwise rotation of max yaw rotation speed\n\t\t\t\tThis value may be clamped if necessary, in order to respect the maximum supported physical tilt of the copter.\n\n\t\t\t\tOn fixed wings:\n\t\t\t\tGiving more than a fixed value (75% for the moment) triggers a circle.\n\t\t\t\tPositive value will trigger a clockwise circling\n\t\t\t\tNegative value will trigger a counter-clockwise circling"
               },
               {
                 "name": "gaz",
                 "type": "i8",
-                "$t": "Gaz consign for the drone [-100;100]"
+                "$t": "Throttle as signed percentage.\n\t\t\t\tOn copters:\n\t\t\t\tExpressed as signed percentage of the max vertical speed setting, in range [-100, 100]\n\t\t\t\t-100 corresponds to a max vertical speed towards ground\n\t\t\t\t100 corresponds to a max vertical speed towards sky\n\t\t\t\tThis value may be clamped if necessary, in order to respect the maximum supported physical tilt of the copter.\n\t\t\t\tDuring the landing phase, putting some positive gaz will cancel the land.\n\n\t\t\t\tOn fixed wings:\n\t\t\t\tExpressed as signed percentage of the physical max throttle, in range [-100, 100]\n\t\t\t\tNegative value makes the plane fly slower\n\t\t\t\tPositive value makes the plane fly faster"
               },
               {
                 "name": "timestampAndSeqNum",
                 "type": "u32",
-                "$t": "Command timestamp in milliseconds &#40;low 24 bits&#41; + command sequence number [0;255] &#40;high 8 bits&#41;."
+                "$t": "Command timestamp in milliseconds (low 24 bits) + command sequence number (high 8 bits) [0;255]."
               }
             ]
           },
           {
             "name": "Landing",
             "id": "3",
-            "$t": "Ask the drone to land"
+            "comment": {
+              "title": "Land",
+              "desc": "Land.\\n     Please note that on copters, if you put some positive gaz (in the [PilotingCommand](#1-0-2)) during the landing, it will cancel it.",
+              "support": "0901;090c;090e",
+              "result": "On the copters, the drone lands if its [FlyingState](#1-4-1) was taking off, hovering or flying.\\n     On the fixed wings, the drone lands if its [FlyingState](#1-4-1) was hovering or flying.\\n     Then, event [FlyingState](#1-4-1) is triggered."
+            }
           },
           {
             "name": "Emergency",
             "id": "4",
             "buffer": "HIGH_PRIO",
             "timeout": "RETRY",
-            "$t": "Put drone in emergency user state"
+            "comment": {
+              "title": "Cut out the motors",
+              "desc": "Cut out the motors.\\n     This cuts immediatly the motors. The drone will fall.\\n     This command is sent on a dedicated high priority buffer which will infinitely retry to send it if the command is not delivered.",
+              "support": "0901;090c;090e",
+              "result": "The drone immediatly cuts off its motors.\\n     Then, event [FlyingState](#1-4-1) is triggered."
+            }
           },
           {
             "name": "NavigateHome",
             "id": "5",
+            "comment": {
+              "title": "Return home",
+              "desc": "Return home.\\n     Ask the drone to fly to its [HomePosition](#1-24-0).\\n     The availability of the return home can be get from [ReturnHomeState](#1-4-3).\\n     Please note that the drone will wait to be hovering to start its return home. This means that it will wait to have a [flag](#1-0-2) set at 0.",
+              "support": "0901;090c;090e",
+              "result": "The drone will fly back to its home position.\\n     Then, event [ReturnHomeState](#1-4-3) is triggered.\\n     You can get a state pending if the drone is not ready to start its return home process but will do it as soon as it is possible."
+            },
             "arg": {
               "name": "start",
               "type": "u8",
@@ -78,15 +110,26 @@
           {
             "name": "AutoTakeOffMode",
             "id": "6",
+            "deprecated": "true",
+            "comment": {
+              "title": "Auto take off mode",
+              "desc": "Auto take off mode."
+            },
             "arg": {
               "name": "state",
               "type": "u8",
-              "$t": "State of automatic take off mode &#40;1 for autotake off enabled&#41;"
+              "$t": "State of automatic take off mode (1 for autotake off enabled)"
             }
           },
           {
             "name": "moveBy",
             "id": "7",
+            "comment": {
+              "title": "Move the drone to a relative position",
+              "desc": "Move the drone to a relative position and rotate heading by a given angle.\\n     Moves are relative to the current drone orientation, (drone's reference).\\n     Also note that the given rotation will not modify the move (i.e. moves are always rectilinear).",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "result": "The drone will move of the given offsets.\\n     Then, event [RelativeMoveEnded](#1-34-0) is triggered.\\n     If you send a second relative move command, the drone will trigger a [RelativeMoveEnded](#1-34-0) with the offsets it managed to do before this new command and the value of error set to interrupted."
+            },
             "arg": [
               {
                 "name": "dX",
@@ -106,22 +149,34 @@
               {
                 "name": "dPsi",
                 "type": "float",
-                "$t": "Wanted rotation of heading  [rad]"
+                "$t": "Wanted rotation of heading [rad]"
               }
             ]
           },
           {
             "name": "UserTakeOff",
             "id": "8",
+            "comment": {
+              "title": "Prepare the drone to take off",
+              "desc": "Prepare the drone to take off.\\n     This is the command that initiates the take off process on the fixed wings.\\n     Setting the state to 0 will cancel the preparation. You can cancel it before that the drone takes off.",
+              "support": "090e",
+              "result": "The drone will arm its motors if not already armed.\\n     Then, event [FlyingState](#1-4-1) is triggered with state set at motor ramping.\\n     Then, event [FlyingState](#1-4-1) is triggered with state set at userTakeOff.\\n     Then user can throw the drone to make it take off."
+            },
             "arg": {
               "name": "state",
               "type": "u8",
-              "$t": "State of user take off mode\n                - 1 to enter in user take off.\n                - 0 to exit from user take off."
+              "$t": "State of user take off mode\n\t\t\t\t- 1 to enter in user take off.\n\t\t\t\t- 0 to exit from user take off."
             }
           },
           {
             "name": "Circle",
             "id": "9",
+            "comment": {
+              "title": "Circle",
+              "desc": "Make the fixed wing circle.\\n     The circle will use the [CirclingAltitude](#1-6-14) and the [CirclingRadius](#1-6-13)",
+              "support": "090e",
+              "result": "The fixed wing will circle in the given direction.\\n     Then, event [FlyingState](#1-4-1) is triggered with state set at hovering."
+            },
             "arg": {
               "name": "direction",
               "type": "enum",
@@ -149,6 +204,12 @@
         "cmd": {
           "name": "Flip",
           "id": "0",
+          "comment": {
+            "title": "Make a flip",
+            "desc": "Make a flip.",
+            "support": "0901;090c",
+            "result": "The drone will make a flip if it has enough battery."
+          },
           "arg": {
             "name": "direction",
             "type": "enum",
@@ -176,22 +237,78 @@
       {
         "name": "Camera",
         "id": "1",
-        "cmd": {
-          "name": "Orientation",
-          "id": "0",
-          "arg": [
-            {
-              "name": "tilt",
-              "type": "i8",
-              "$t": "Tilt camera consign for the drone &#40;in degree&#41;\n                The value is saturated by the drone.\n                Saturation value is sent by thre drone through CameraSettingsChanged command."
+        "cmd": [
+          {
+            "name": "Orientation",
+            "id": "0",
+            "buffer": "NON_ACK",
+            "deprecated": "true",
+            "comment": {
+              "title": "Move the camera",
+              "desc": "Move the camera.\\n     You can get min and max values for tilt and pan using [CameraInfo](#0-15-0).",
+              "support": "0901;090c;090e",
+              "result": "The drone moves its camera.\\n     Then, event [CameraOrientation](#1-25-0) is triggered."
             },
-            {
-              "name": "pan",
-              "type": "i8",
-              "$t": "Pan camera consign for the drone &#40;in degree&#41;\n                The value is saturated by the drone.\n                Saturation value is sent by thre drone through CameraSettingsChanged command."
-            }
-          ]
-        }
+            "arg": [
+              {
+                "name": "tilt",
+                "type": "i8",
+                "$t": "Tilt camera consign for the drone (in degree)\n\t\t\t\tThe value is saturated by the drone.\n\t\t\t\tSaturation value is sent by thre drone through CameraSettingsChanged command."
+              },
+              {
+                "name": "pan",
+                "type": "i8",
+                "$t": "Pan camera consign for the drone (in degree)\n\t\t\t\tThe value is saturated by the drone.\n\t\t\t\tSaturation value is sent by thre drone through CameraSettingsChanged command."
+              }
+            ]
+          },
+          {
+            "name": "OrientationV2",
+            "id": "1",
+            "buffer": "NON_ACK",
+            "comment": {
+              "title": "Move the camera",
+              "desc": "Move the camera.\\n     You can get min and max values for tilt and pan using [CameraInfo](#0-15-0).",
+              "support": "0901;090c;090e",
+              "result": "The drone moves its camera.\\n     Then, event [CameraOrientationV2](#1-25-2) is triggered."
+            },
+            "arg": [
+              {
+                "name": "tilt",
+                "type": "float",
+                "$t": "Tilt camera consign for the drone (in degree)\n\t\t\t\tThe value is saturated by the drone.\n\t\t\t\tSaturation value is sent by thre drone through CameraSettingsChanged command."
+              },
+              {
+                "name": "pan",
+                "type": "float",
+                "$t": "Pan camera consign for the drone (in degree)\n\t\t\t\tThe value is saturated by the drone.\n\t\t\t\tSaturation value is sent by thre drone through CameraSettingsChanged command."
+              }
+            ]
+          },
+          {
+            "name": "Velocity",
+            "id": "2",
+            "buffer": "NON_ACK",
+            "comment": {
+              "title": "Move the camera using velocity",
+              "desc": "Move the camera given velocity consign.\\n     You can get min and max values for tilt and pan using [CameraVelocityRange](#1-25-4).",
+              "support": "0901;090c;090e",
+              "result": "The drone moves its camera.\\n     Then, event [CameraOrientationV2](#1-25-2) is triggered."
+            },
+            "arg": [
+              {
+                "name": "tilt",
+                "type": "float",
+                "$t": "Tilt camera velocity consign [deg/s]\n\t\t\t\tNegative tilt velocity move camera to bottom\n\t\t\t\tPositive tilt velocity move camera to top"
+              },
+              {
+                "name": "pan",
+                "type": "float",
+                "$t": "Pan camera velocity consign [deg/s]\n\t\t\t\tNegative pan velocity move camera to left\n\t\t\t\tPositive pan velocity move camera to right"
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "MediaRecord",
@@ -200,6 +317,11 @@
           {
             "name": "Picture",
             "id": "0",
+            "deprecated": "true",
+            "comment": {
+              "title": "Take a picture",
+              "desc": "Take a picture."
+            },
             "arg": {
               "name": "mass_storage_id",
               "type": "u8",
@@ -209,6 +331,11 @@
           {
             "name": "Video",
             "id": "1",
+            "deprecated": "true",
+            "comment": {
+              "title": "Record a video",
+              "desc": "Record a video."
+            },
             "arg": [
               {
                 "name": "record",
@@ -234,11 +361,22 @@
           {
             "name": "PictureV2",
             "id": "2",
-            "$t": "Take picture"
+            "comment": {
+              "title": "Take a picture",
+              "desc": "Take a picture.\\n     The type of picture taken is related to the picture setting.\\n     You can set the picture format by sending the command [SetPictureFormat](#1-19-0). You can also get the current picture format with [PictureFormat](#1-20-0).\\n     Please note that the time required to take the picture is highly related to this format.\\n\\n     You can check if the picture taking is available with [PictureState](#1-8-2).\\n     Also, please note that if your picture format is different from snapshot, picture taking will stop video recording (it will restart after that the picture has been taken).",
+              "support": "0901:2.0.1;090c;090e",
+              "result": "Event [PictureState](#1-8-2) will be triggered with a state busy.\\n     The drone will take a picture.\\n     Then, when picture has been taken, notification [PictureEvent](#1-3-0) is triggered.\\n     And normally [PictureState](#1-8-2) will be triggered with a state ready."
+            }
           },
           {
             "name": "VideoV2",
             "id": "3",
+            "comment": {
+              "title": "Record a video",
+              "desc": "Record a video (or start timelapse).\\n     You can check if the video recording is available with [VideoState](#1-8-3).\\n     This command can start a video (obvious huh?), but also a timelapse if the timelapse mode is set. You can check if the timelapse mode is set with the event [TimelapseMode](#1-20-4).\\n     Also, please note that if your picture format is different from snapshot, picture taking will stop video recording (it will restart after the picture has been taken).",
+              "support": "0901:2.0.1;090c;090e",
+              "result": "The drone will begin or stop to record the video (or timelapse).\\n     Then, event [VideoState](#1-8-3) will be triggered. Also, notification [VideoEvent](#1-3-1) is triggered."
+            },
             "arg": {
               "name": "record",
               "type": "enum",
@@ -263,6 +401,11 @@
           {
             "name": "PictureStateChanged",
             "id": "0",
+            "deprecated": "true",
+            "comment": {
+              "title": "Picture state",
+              "desc": "Picture state."
+            },
             "arg": [
               {
                 "name": "state",
@@ -279,6 +422,11 @@
           {
             "name": "VideoStateChanged",
             "id": "1",
+            "deprecated": "true",
+            "comment": {
+              "title": "Video record state",
+              "desc": "Picture record state."
+            },
             "arg": [
               {
                 "name": "state",
@@ -312,6 +460,12 @@
           {
             "name": "PictureStateChangedV2",
             "id": "2",
+            "comment": {
+              "title": "Picture state",
+              "desc": "Picture state.",
+              "support": "0901:2.0.1;090c;090e",
+              "triggered": "by [TakePicture](#1-7-2) or by a change in the picture state"
+            },
             "arg": [
               {
                 "name": "state",
@@ -362,6 +516,12 @@
           {
             "name": "VideoStateChangedV2",
             "id": "3",
+            "comment": {
+              "title": "Video record state",
+              "desc": "Video record state.",
+              "support": "0901:2.0.1;090c;090e",
+              "triggered": "by [RecordVideo](#1-7-3) or by a change in the video state"
+            },
             "arg": [
               {
                 "name": "state",
@@ -408,6 +568,63 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "VideoResolutionState",
+            "id": "4",
+            "deprecated": "true",
+            "comment": {
+              "title": "Video resolution",
+              "desc": "Video resolution.\\n     Informs about streaming and recording video resolutions.\\n     Note that this is only an indication about what the resolution should be. To know the real resolution, you should get it from the frame.",
+              "support": "none",
+              "triggered": "when the resolution changes."
+            },
+            "arg": [
+              {
+                "name": "streaming",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "res360p",
+                    "$t": "360p resolution."
+                  },
+                  {
+                    "name": "res480p",
+                    "$t": "480p resolution."
+                  },
+                  {
+                    "name": "res720p",
+                    "$t": "720p resolution."
+                  },
+                  {
+                    "name": "res1080p",
+                    "$t": "1080p resolution."
+                  }
+                ]
+              },
+              {
+                "name": "recording",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "res360p",
+                    "$t": "360p resolution."
+                  },
+                  {
+                    "name": "res480p",
+                    "$t": "480p resolution."
+                  },
+                  {
+                    "name": "res720p",
+                    "$t": "720p resolution."
+                  },
+                  {
+                    "name": "res1080p",
+                    "$t": "1080p resolution."
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -418,7 +635,13 @@
           {
             "name": "PictureEventChanged",
             "id": "0",
-            "notification": "TRUE",
+            "content": "NOTIFICATION",
+            "comment": {
+              "title": "Picture taken",
+              "desc": "Picture taken.\\n\\n     **This event is a notification, you can't retrieve it in the cache of the device controller.**",
+              "support": "0901:2.0.1;090c;090e",
+              "triggered": "after a [TakePicture](#1-7-2), when the picture has been taken (or it has failed)."
+            },
             "arg": [
               {
                 "name": "event",
@@ -469,7 +692,13 @@
           {
             "name": "VideoEventChanged",
             "id": "1",
-            "notification": "TRUE",
+            "content": "NOTIFICATION",
+            "comment": {
+              "title": "Video record notification",
+              "desc": "Video record notification.\\n\\n     **This event is a notification, you can't retrieve it in the cache of the device controller.**",
+              "support": "0901:2.0.1;090c;090e",
+              "triggered": "by [RecordVideo](#1-7-3) or a change in the video state."
+            },
             "arg": [
               {
                 "name": "event",
@@ -534,11 +763,22 @@
           {
             "name": "FlatTrimChanged",
             "id": "0",
-            "$t": "Drone acknowledges that flat trim was correctly processed"
+            "comment": {
+              "title": "Flat trim changed",
+              "desc": "Drone acknowledges that flat trim was correctly processed.",
+              "support": "0901;090c;090e",
+              "triggered": "by [FlatTrim](#1-0-0)."
+            }
           },
           {
             "name": "FlyingStateChanged",
             "id": "1",
+            "comment": {
+              "title": "Flying state",
+              "desc": "Flying state.",
+              "support": "0901;090c;090e",
+              "triggered": "when the flying state changes."
+            },
             "arg": {
               "name": "state",
               "type": "enum",
@@ -553,7 +793,7 @@
                 },
                 {
                   "name": "hovering",
-                  "$t": "Hovering / Circling &#40;for fixed wings&#41; state"
+                  "$t": "Hovering / Circling (for fixed wings) state"
                 },
                 {
                   "name": "flying",
@@ -570,6 +810,14 @@
                 {
                   "name": "usertakeoff",
                   "$t": "User take off state. Waiting for user action to take off."
+                },
+                {
+                  "name": "motor_ramping",
+                  "$t": "Motor ramping state (for fixed wings)."
+                },
+                {
+                  "name": "emergency_landing",
+                  "$t": "Emergency landing state.\n\t\t\t\t\tDrone autopilot has detected defective sensor(s).\n\t\t\t\t\tOnly Yaw argument in PCMD is taken into account.\n\t\t\t\t\tAll others flying commands are ignored."
                 }
               ]
             }
@@ -577,6 +825,12 @@
           {
             "name": "AlertStateChanged",
             "id": "2",
+            "comment": {
+              "title": "Alert state",
+              "desc": "Alert state.",
+              "support": "0901;090c;090e",
+              "triggered": "when an alert happens on the drone."
+            },
             "arg": {
               "name": "state",
               "type": "enum",
@@ -611,6 +865,12 @@
           {
             "name": "NavigateHomeStateChanged",
             "id": "3",
+            "comment": {
+              "title": "Return home state",
+              "desc": "Return home state.\\n     Availability is related to gps fix, magnetometer calibration.",
+              "support": "0901;090c;090e",
+              "triggered": "by [ReturnHome](#1-0-5) or when the state of the return home changes."
+            },
             "arg": [
               {
                 "name": "state",
@@ -640,31 +900,31 @@
                 "enum": [
                   {
                     "name": "userRequest",
-                    "$t": "User requested a navigate home &#40;available-&gt;inProgress&#41;"
+                    "$t": "User requested a navigate home (available->inProgress)"
                   },
                   {
                     "name": "connectionLost",
-                    "$t": "Connection between controller and product lost &#40;available-&gt;inProgress&#41;"
+                    "$t": "Connection between controller and product lost (available->inProgress)"
                   },
                   {
                     "name": "lowBattery",
-                    "$t": "Low battery occurred &#40;available-&gt;inProgress&#41;"
+                    "$t": "Low battery occurred (available->inProgress)"
                   },
                   {
                     "name": "finished",
-                    "$t": "Navigate home is finished &#40;inProgress-&gt;available&#41;"
+                    "$t": "Navigate home is finished (inProgress->available)"
                   },
                   {
                     "name": "stopped",
-                    "$t": "Navigate home has been stopped &#40;inProgress-&gt;available&#41;"
+                    "$t": "Navigate home has been stopped (inProgress->available)"
                   },
                   {
                     "name": "disabled",
-                    "$t": "Navigate home disabled by product &#40;inProgress-&gt;unavailable or available-&gt;unavailable&#41;"
+                    "$t": "Navigate home disabled by product (inProgress->unavailable or available->unavailable)"
                   },
                   {
                     "name": "enabled",
-                    "$t": "Navigate home enabled by product &#40;unavailable-&gt;available&#41;"
+                    "$t": "Navigate home enabled by product (unavailable->available)"
                   }
                 ]
               }
@@ -673,82 +933,196 @@
           {
             "name": "PositionChanged",
             "id": "4",
+            "comment": {
+              "title": "Drone's position changed",
+              "desc": "Drone's position changed.",
+              "support": "0901;090c;090e",
+              "triggered": "regularly."
+            },
             "arg": [
               {
                 "name": "latitude",
                 "type": "double",
-                "$t": "Latitude position in decimal degrees &#40;500.0 if not available&#41;"
+                "$t": "Latitude position in decimal degrees (500.0 if not available)"
               },
               {
                 "name": "longitude",
                 "type": "double",
-                "$t": "Longitude position in decimal degrees &#40;500.0 if not available&#41;"
+                "$t": "Longitude position in decimal degrees (500.0 if not available)"
               },
               {
                 "name": "altitude",
                 "type": "double",
-                "$t": "Altitude in meters &#40;from GPS&#41;"
+                "$t": "Altitude in meters (from GPS)"
               }
             ]
           },
           {
             "name": "SpeedChanged",
             "id": "5",
+            "buffer": "NON_ACK",
+            "comment": {
+              "title": "Drone's speed changed",
+              "desc": "Drone's speed changed.\\n     Expressed in the NED referential (North-East-Down).",
+              "support": "0901;090c;090e",
+              "triggered": "regularly."
+            },
             "arg": [
               {
                 "name": "speedX",
                 "type": "float",
-                "$t": "Speed on the x axis &#40;when drone moves forward, speed is &gt; 0&#41; &#40;in m/s&#41;"
+                "$t": "Speed relative to the North (when drone moves to the north, speed is > 0) (in m/s)"
               },
               {
                 "name": "speedY",
                 "type": "float",
-                "$t": "Speed on the y axis &#40;when drone moves to right, speed is &gt; 0&#41; &#40;in m/s&#41;"
+                "$t": "Speed relative to the East (when drone moves to the east, speed is > 0) (in m/s)"
               },
               {
                 "name": "speedZ",
                 "type": "float",
-                "$t": "Speed on the z axis &#40;when drone moves down, speed is &gt; 0&#41; &#40;in m/s&#41;"
+                "$t": "Speed on the z axis (when drone moves down, speed is > 0) (in m/s)"
               }
             ]
           },
           {
             "name": "AttitudeChanged",
             "id": "6",
+            "buffer": "NON_ACK",
+            "comment": {
+              "title": "Drone's attitude changed",
+              "desc": "Drone's attitude changed.",
+              "support": "0901;090c;090e",
+              "triggered": "regularly."
+            },
             "arg": [
               {
                 "name": "roll",
                 "type": "float",
-                "$t": "roll value &#40;in radian&#41;"
+                "$t": "roll value (in radian)"
               },
               {
                 "name": "pitch",
                 "type": "float",
-                "$t": "Pitch value &#40;in radian&#41;"
+                "$t": "Pitch value (in radian)"
               },
               {
                 "name": "yaw",
                 "type": "float",
-                "$t": "Yaw value &#40;in radian&#41;"
+                "$t": "Yaw value (in radian)"
               }
             ]
           },
           {
             "name": "AutoTakeOffModeChanged",
             "id": "7",
+            "deprecated": "true",
+            "comment": {
+              "title": "Auto takeoff mode",
+              "desc": "Auto takeoff mode"
+            },
             "arg": {
               "name": "state",
               "type": "u8",
-              "$t": "State of automatic take off mode &#40;1 if enabled&#41;"
+              "$t": "State of automatic take off mode (1 if enabled)"
             }
           },
           {
             "name": "AltitudeChanged",
             "id": "8",
+            "buffer": "NON_ACK",
+            "comment": {
+              "title": "Drone's altitude changed",
+              "desc": "Drone's altitude changed.\\n     The altitude reported is the altitude above the take off point.\\n     To get the altitude above sea level, see [PositionChanged](#1-4-4).",
+              "support": "0901;090c;090e",
+              "triggered": "regularly."
+            },
             "arg": {
               "name": "altitude",
               "type": "double",
               "$t": "Altitude in meters"
+            }
+          },
+          {
+            "name": "GpsLocationChanged",
+            "id": "9",
+            "comment": {
+              "title": "Drone's location changed",
+              "desc": "Drone's location changed.\\n     This event is meant to replace [PositionChanged](#1-4-4).",
+              "support": "none",
+              "triggered": "regularly."
+            },
+            "arg": [
+              {
+                "name": "latitude",
+                "type": "double",
+                "$t": "Latitude location in decimal degrees (500.0 if not available)"
+              },
+              {
+                "name": "longitude",
+                "type": "double",
+                "$t": "Longitude location in decimal degrees (500.0 if not available)"
+              },
+              {
+                "name": "altitude",
+                "type": "double",
+                "$t": "Altitude location in meters."
+              },
+              {
+                "name": "latitude_accuracy",
+                "type": "i8",
+                "$t": "Latitude location error in meters (1 sigma/standard deviation)\n\t\t\t\t-1 if not available."
+              },
+              {
+                "name": "longitude_accuracy",
+                "type": "i8",
+                "$t": "Longitude location error in meters (1 sigma/standard deviation)\n\t\t\t\t-1 if not available."
+              },
+              {
+                "name": "altitude_accuracy",
+                "type": "i8",
+                "$t": "Altitude location error in meters (1 sigma/standard deviation)\n\t\t\t\t-1 if not available."
+              }
+            ]
+          },
+          {
+            "name": "LandingStateChanged",
+            "id": "10",
+            "comment": {
+              "title": "Landing state",
+              "desc": "Landing state.\\n     Only available for fixed wings (which have two landing modes).",
+              "support": "090e",
+              "triggered": "when the landing state changes."
+            },
+            "arg": {
+              "name": "state",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "linear",
+                  "$t": "Linear landing"
+                },
+                {
+                  "name": "spiral",
+                  "$t": "Spiral landing"
+                }
+              ]
+            }
+          },
+          {
+            "name": "AirSpeedChanged",
+            "id": "11",
+            "buffer": "NON_ACK",
+            "comment": {
+              "title": "Drone's air speed changed",
+              "desc": "Drone's air speed changed\\n     Expressed in the drone's referential.",
+              "support": "none",
+              "triggered": "regularly."
+            },
+            "arg": {
+              "name": "airSpeed",
+              "type": "float",
+              "$t": "Speed relative to air on x axis\n\t\t\t\t(speed is always > 0) (in m/s)"
             }
           }
         ]
@@ -759,7 +1133,13 @@
         "cmd": {
           "name": "moveByEnd",
           "id": "0",
-          "notification": "TRUE",
+          "content": "NOTIFICATION",
+          "comment": {
+            "title": "Relative move ended",
+            "desc": "Relative move ended.\\n     Informs about the move that the drone managed to do and why it stopped.",
+            "support": "0901:3.3.0;090c:3.3.0",
+            "triggered": "when the landing state changes."
+          },
           "arg": [
             {
               "name": "dX",
@@ -779,7 +1159,7 @@
             {
               "name": "dPsi",
               "type": "float",
-              "$t": "Applied angle on heading  [rad]"
+              "$t": "Applied angle on heading [rad]"
             },
             {
               "name": "error",
@@ -817,6 +1197,12 @@
           {
             "name": "WifiScan",
             "id": "0",
+            "comment": {
+              "title": "Scan wifi network",
+              "desc": "Scan wifi network to get a list of all networks found by the drone",
+              "support": "0901;090c;090e",
+              "result": "Event [WifiScanResults](#1-14-0) is triggered with all networks found.\\n     When all networks have been sent, event [WifiScanEnded](#1-14-1) is triggered."
+            },
             "arg": {
               "name": "band",
               "type": "enum",
@@ -839,7 +1225,12 @@
           {
             "name": "WifiAuthChannel",
             "id": "1",
-            "$t": "Controller inquire the list of authorized wifi channels."
+            "comment": {
+              "title": "Ask for available wifi channels",
+              "desc": "Ask for available wifi channels.\\n     The list of available Wifi channels is related to the country of the drone. You can get this country from the event [CountryChanged](#0-3-6).",
+              "support": "0901;090c;090e",
+              "result": "Event [AvailableWifiChannels](#1-14-2) is triggered with all available channels. When all channels have been sent, event [AvailableWifiChannelsCompleted](#1-14-3) is triggered."
+            }
           }
         ]
       },
@@ -851,6 +1242,12 @@
             "name": "WifiScanListChanged",
             "id": "0",
             "type": "MAP_ITEM",
+            "comment": {
+              "title": "Wifi scan results",
+              "desc": "Wifi scan results.\\n     Please note that the list is not complete until you receive the event [WifiScanEnded](#1-14-1).",
+              "support": "0901;090c;090e",
+              "triggered": "for each wifi network scanned after a [ScanWifi](#1-13-0)"
+            },
             "arg": [
               {
                 "name": "ssid",
@@ -860,7 +1257,7 @@
               {
                 "name": "rssi",
                 "type": "i16",
-                "$t": "RSSI of the AP in dbm &#40;negative value&#41;"
+                "$t": "RSSI of the AP in dbm (negative value)"
               },
               {
                 "name": "band",
@@ -886,12 +1283,23 @@
           {
             "name": "AllWifiScanChanged",
             "id": "1",
-            "$t": "State sent when all scanning result sent"
+            "comment": {
+              "title": "Wifi scan ended",
+              "desc": "Wifi scan ended.\\n     When receiving this event, the list of [WifiScanResults](#1-14-0) is complete.",
+              "support": "0901;090c;090e",
+              "triggered": "after the last [WifiScanResult](#1-14-0) has been sent."
+            }
           },
           {
             "name": "WifiAuthChannelListChanged",
             "id": "2",
             "type": "LIST_ITEM",
+            "comment": {
+              "title": "Available wifi channels",
+              "desc": "Available wifi channels.\\n     Please note that the list is not complete until you receive the event [AvailableWifiChannelsCompleted](#1-14-3).",
+              "support": "0901;090c;090e",
+              "triggered": "for each available channel after a [GetAvailableWifiChannels](#1-13-1)."
+            },
             "arg": [
               {
                 "name": "band",
@@ -915,14 +1323,19 @@
               {
                 "name": "in_or_out",
                 "type": "u8",
-                "$t": "Bit 0 is 1 if channel is authorized outside &#40;0 otherwise&#41; ; Bit 1 is 1 if channel is authorized inside &#40;0 otherwise&#41;"
+                "$t": "Bit 0 is 1 if channel is authorized outside (0 otherwise) ; Bit 1 is 1 if channel is authorized inside (0 otherwise)"
               }
             ]
           },
           {
             "name": "AllWifiAuthChannelChanged",
             "id": "3",
-            "$t": "Notify the end of the list of Authorized wifi Channel."
+            "comment": {
+              "title": "Available wifi channels completed",
+              "desc": "Available wifi channels completed.\\n     When receiving this event, the list of [AvailableWifiChannels](#1-14-2) is complete.",
+              "support": "0901;090c;090e",
+              "triggered": "after the last [AvailableWifiChannel](#1-14-2) has been sent."
+            }
           }
         ]
       },
@@ -933,6 +1346,12 @@
           {
             "name": "MaxAltitude",
             "id": "0",
+            "comment": {
+              "title": "Set max altitude",
+              "desc": "Set max altitude.\\n     The drone will not fly over this max altitude when it is in manual piloting.\\n     Please note that if you set a max altitude which is below the current drone altitude, the drone will not go to given max altitude.\\n     You can get the bounds in the event [MaxAltitude](#1-6-0).",
+              "support": "0901;090c;090e",
+              "result": "The max altitude is set.\\n     Then, event [MaxAltitude](#1-6-0) is triggered."
+            },
             "arg": {
               "name": "current",
               "type": "float",
@@ -942,6 +1361,12 @@
           {
             "name": "MaxTilt",
             "id": "1",
+            "comment": {
+              "title": "Set max pitch/roll",
+              "desc": "Set max pitch/roll.\\n     This represent the max inclination allowed by the drone.\\n     You can get the bounds with the commands [MaxPitchRoll](#1-6-1).",
+              "support": "0901;090c",
+              "result": "The max pitch/roll is set.\\n     Then, event [MaxPitchRoll](#1-6-1) is triggered."
+            },
             "arg": {
               "name": "current",
               "type": "float",
@@ -951,6 +1376,11 @@
           {
             "name": "AbsolutControl",
             "id": "2",
+            "deprecated": "true",
+            "comment": {
+              "title": "Set absolut control",
+              "desc": "Set absolut control."
+            },
             "arg": {
               "name": "on",
               "type": "u8",
@@ -960,6 +1390,12 @@
           {
             "name": "MaxDistance",
             "id": "3",
+            "comment": {
+              "title": "Set max distance",
+              "desc": "Set max distance.\\n     You can get the bounds from the event [MaxDistance](#1-6-3).\\n\\n     If [Geofence](#1-6-4) is activated, the drone won't fly over the given max distance.",
+              "support": "0901;090c;090e",
+              "result": "The max distance is set.\\n     Then, event [MaxDistance](#1-6-3) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "float",
@@ -969,15 +1405,27 @@
           {
             "name": "NoFlyOverMaxDistance",
             "id": "4",
+            "comment": {
+              "title": "Enable geofence",
+              "desc": "Enable geofence.\\n     If geofence is enabled, the drone won't fly over the given max distance.\\n     You can get the max distance from the event [MaxDistance](#1-6-3). \\n     For copters: the distance is computed from the controller position, if this position is not known, it will use the take off.\\n     For fixed wings: the distance is computed from the take off position.",
+              "support": "0901;090c;090e",
+              "result": "Geofencing is enabled or disabled.\\n     Then, event [Geofencing](#1-6-4) is triggered."
+            },
             "arg": {
               "name": "shouldNotFlyOver",
               "type": "u8",
-              "$t": "1 if the drone can&apos;t fly further than max distance, 0 if no limitation on the drone should be done"
+              "$t": "1 if the drone can't fly further than max distance, 0 if no limitation on the drone should be done"
             }
           },
           {
             "name": "setAutonomousFlightMaxHorizontalSpeed",
             "id": "5",
+            "comment": {
+              "title": "Set autonomous flight max horizontal speed",
+              "desc": "Set autonomous flight max horizontal speed.\\n     This will only be used during autonomous flights such as moveBy.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "result": "The max horizontal speed is set.\\n     Then, event [AutonomousFlightMaxHorizontalSpeed](#1-6-5) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "float",
@@ -987,6 +1435,12 @@
           {
             "name": "setAutonomousFlightMaxVerticalSpeed",
             "id": "6",
+            "comment": {
+              "title": "Set autonomous flight max vertical speed",
+              "desc": "Set autonomous flight max vertical speed.\\n     This will only be used during autonomous flights such as moveBy.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "result": "The max vertical speed is set.\\n     Then, event [AutonomousFlightMaxVerticalSpeed](#1-6-6) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "float",
@@ -996,6 +1450,12 @@
           {
             "name": "setAutonomousFlightMaxHorizontalAcceleration",
             "id": "7",
+            "comment": {
+              "title": "Set autonomous flight max horizontal acceleration",
+              "desc": "Set autonomous flight max horizontal acceleration.\\n     This will only be used during autonomous flights such as moveBy.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "result": "The max horizontal acceleration is set.\\n     Then, event [AutonomousFlightMaxHorizontalAcceleration](#1-6-7) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "float",
@@ -1005,6 +1465,12 @@
           {
             "name": "setAutonomousFlightMaxVerticalAcceleration",
             "id": "8",
+            "comment": {
+              "title": "Set autonomous flight max vertical acceleration",
+              "desc": "Set autonomous flight max vertical acceleration.\\n     This will only be used during autonomous flights such as moveBy.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "result": "The max vertical acceleration is set.\\n     Then, event [AutonomousFlightMaxVerticalAcceleration](#1-6-8) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "float",
@@ -1014,15 +1480,27 @@
           {
             "name": "setAutonomousFlightMaxRotationSpeed",
             "id": "9",
+            "comment": {
+              "title": "Set autonomous flight max rotation speed",
+              "desc": "Set autonomous flight max rotation speed.\\n     This will only be used during autonomous flights such as moveBy.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "result": "The max rotation speed is set.\\n     Then, event [AutonomousFlightMaxRotationSpeed](#1-6-9) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "float",
-              "$t": "maximum yaw rotation speed [rad/s]"
+              "$t": "maximum yaw rotation speed [deg/s]"
             }
           },
           {
             "name": "BankedTurn",
             "id": "10",
+            "comment": {
+              "title": "Set banked turn mode",
+              "desc": "Set banked turn mode.\\n     When banked turn mode is enabled, the drone will use yaw values from the piloting command to infer with roll and pitch on the drone when its horizontal speed is not null.",
+              "support": "0901:3.2.0;090c:3.2.0",
+              "result": "The banked turn mode is enabled or disabled.\\n     Then, event [BankedTurnMode](#1-6-10) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "u8",
@@ -1032,6 +1510,12 @@
           {
             "name": "MinAltitude",
             "id": "11",
+            "comment": {
+              "title": "Set minimum altitude",
+              "desc": "Set minimum altitude.\\n     Only available for fixed wings.",
+              "support": "090e",
+              "result": "The minimum altitude is set.\\n     Then, event [MinimumAltitude](#1-6-11) is triggered."
+            },
             "arg": {
               "name": "current",
               "type": "float",
@@ -1041,6 +1525,12 @@
           {
             "name": "CirclingDirection",
             "id": "12",
+            "comment": {
+              "title": "Set default circling direction",
+              "desc": "Set default circling direction. This direction will be used when the drone use an automatic circling or when [CIRCLE](#1-0-9) is sent with direction *default*.\\n     Only available for fixed wings.",
+              "support": "090e",
+              "result": "The circling direction is set.\\n     Then, event [DefaultCirclingDirection](#1-6-12) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "enum",
@@ -1059,6 +1549,12 @@
           {
             "name": "CirclingRadius",
             "id": "13",
+            "comment": {
+              "title": "Set circling radius",
+              "desc": "Set circling radius.\\n     Only available for fixed wings.",
+              "support": "090e",
+              "result": "The circling radius is set.\\n     Then, event [CirclingRadius](#1-6-13) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "u16",
@@ -1068,6 +1564,12 @@
           {
             "name": "CirclingAltitude",
             "id": "14",
+            "comment": {
+              "title": "Set min circling altitude",
+              "desc": "Set min circling altitude (not used during take off).\\n     Only available for fixed wings.",
+              "support": "090e",
+              "result": "The circling altitude is set.\\n     Then, event [CirclingAltitude](#1-6-14) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "u16",
@@ -1077,35 +1579,23 @@
           {
             "name": "PitchMode",
             "id": "15",
+            "comment": {
+              "title": "Set pitch mode",
+              "desc": "Set pitch mode.\\n     Only available for fixed wings.",
+              "support": "090e",
+              "result": "The pitch mode is set.\\n     Then, event [PitchMode](#1-6-15) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "enum",
               "enum": [
                 {
                   "name": "NORMAL",
-                  "$t": "Positive pitch values will make the drone lower its nose.\n                    Negative pitch values will make the drone raise its nose."
+                  "$t": "Positive pitch values will make the drone lower its nose.\n\t\t\t\t\tNegative pitch values will make the drone raise its nose."
                 },
                 {
                   "name": "INVERTED",
-                  "$t": "Pitch commands are inverted.\n                    Positive pitch values will make the drone raise its nose.\n                    Negative pitch values will make the drone lower its nose."
-                }
-              ]
-            }
-          },
-          {
-            "name": "LandingMode",
-            "id": "16",
-            "arg": {
-              "name": "value",
-              "type": "enum",
-              "enum": [
-                {
-                  "name": "LINEAR",
-                  "$t": "Linear landing."
-                },
-                {
-                  "name": "SPIRALE",
-                  "$t": "Spirale landing."
+                  "$t": "Pitch commands are inverted.\n\t\t\t\t\tPositive pitch values will make the drone raise its nose.\n\t\t\t\t\tNegative pitch values will make the drone lower its nose."
                 }
               ]
             }
@@ -1119,6 +1609,12 @@
           {
             "name": "MaxAltitudeChanged",
             "id": "0",
+            "comment": {
+              "title": "Max altitude",
+              "desc": "Max altitude.\\n     The drone will not fly higher than this altitude (above take off point).",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetMaxAltitude](#1-2-0)."
+            },
             "arg": [
               {
                 "name": "current",
@@ -1140,6 +1636,12 @@
           {
             "name": "MaxTiltChanged",
             "id": "1",
+            "comment": {
+              "title": "Max pitch/roll",
+              "desc": "Max pitch/roll.\\n     The drone will not fly higher than this altitude (above take off point).",
+              "support": "0901;090c",
+              "triggered": "by [SetMaxAltitude](#1-2-0)."
+            },
             "arg": [
               {
                 "name": "current",
@@ -1161,6 +1663,11 @@
           {
             "name": "AbsolutControlChanged",
             "id": "2",
+            "deprecated": "true",
+            "comment": {
+              "title": "Absolut control",
+              "desc": "Absolut control."
+            },
             "arg": {
               "name": "on",
               "type": "u8",
@@ -1170,6 +1677,12 @@
           {
             "name": "MaxDistanceChanged",
             "id": "3",
+            "comment": {
+              "title": "Max distance",
+              "desc": "Max distance.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetMaxDistance](#1-2-3)."
+            },
             "arg": [
               {
                 "name": "current",
@@ -1191,15 +1704,27 @@
           {
             "name": "NoFlyOverMaxDistanceChanged",
             "id": "4",
+            "comment": {
+              "title": "Geofencing",
+              "desc": "Geofencing.\\n     If set, the drone won't fly over the [MaxDistance](#1-6-3).",
+              "support": "0901;090c;090e",
+              "triggered": "by [EnableGeofence](#1-2-4)."
+            },
             "arg": {
               "name": "shouldNotFlyOver",
               "type": "u8",
-              "$t": "1 if the drone won&apos;t fly further than max distance, 0 if no limitation on the drone will be done"
+              "$t": "1 if the drone won't fly further than max distance, 0 if no limitation on the drone will be done"
             }
           },
           {
             "name": "AutonomousFlightMaxHorizontalSpeed",
             "id": "5",
+            "comment": {
+              "title": "Autonomous flight max horizontal speed",
+              "desc": "Autonomous flight max horizontal speed.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "triggered": "by [SetAutonomousFlightMaxHorizontalSpeed](#1-2-5)."
+            },
             "arg": {
               "name": "value",
               "type": "float",
@@ -1209,6 +1734,12 @@
           {
             "name": "AutonomousFlightMaxVerticalSpeed",
             "id": "6",
+            "comment": {
+              "title": "Autonomous flight max vertical speed",
+              "desc": "Autonomous flight max vertical speed.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "triggered": "by [SetAutonomousFlightMaxVerticalSpeed](#1-2-6)."
+            },
             "arg": {
               "name": "value",
               "type": "float",
@@ -1218,6 +1749,12 @@
           {
             "name": "AutonomousFlightMaxHorizontalAcceleration",
             "id": "7",
+            "comment": {
+              "title": "Autonomous flight max horizontal acceleration",
+              "desc": "Autonomous flight max horizontal acceleration.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "triggered": "by [SetAutonomousFlightMaxHorizontalAcceleration](#1-2-7)."
+            },
             "arg": {
               "name": "value",
               "type": "float",
@@ -1227,6 +1764,12 @@
           {
             "name": "AutonomousFlightMaxVerticalAcceleration",
             "id": "8",
+            "comment": {
+              "title": "Autonomous flight max vertical acceleration",
+              "desc": "Autonomous flight max vertical acceleration.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "triggered": "by [SetAutonomousFlightMaxVerticalAcceleration](#1-2-8)."
+            },
             "arg": {
               "name": "value",
               "type": "float",
@@ -1236,15 +1779,27 @@
           {
             "name": "AutonomousFlightMaxRotationSpeed",
             "id": "9",
+            "comment": {
+              "title": "Autonomous flight max rotation speed",
+              "desc": "Autonomous flight max rotation speed.",
+              "support": "0901:3.3.0;090c:3.3.0",
+              "triggered": "by [SetAutonomousFlightMaxRotationSpeed](#1-2-9)."
+            },
             "arg": {
               "name": "value",
               "type": "float",
-              "$t": "maximum yaw rotation speed [rad/s]"
+              "$t": "maximum yaw rotation speed [deg/s]"
             }
           },
           {
             "name": "BankedTurnChanged",
             "id": "10",
+            "comment": {
+              "title": "Banked Turn mode",
+              "desc": "Banked Turn mode.\\n     If banked turn mode is enabled, the drone will use yaw values from the piloting command to infer with roll and pitch on the drone when its horizontal speed is not null.",
+              "support": "0901:3.2.0;090c:3.2.0",
+              "triggered": "by [SetBankedTurnMode](#1-2-10)."
+            },
             "arg": {
               "name": "state",
               "type": "u8",
@@ -1254,6 +1809,12 @@
           {
             "name": "MinAltitudeChanged",
             "id": "11",
+            "comment": {
+              "title": "Min altitude",
+              "desc": "Min altitude.\\n     Only sent by fixed wings.",
+              "support": "090e",
+              "triggered": "by [SetMinAltitude](#1-2-11)."
+            },
             "arg": [
               {
                 "name": "current",
@@ -1275,6 +1836,12 @@
           {
             "name": "CirclingDirectionChanged",
             "id": "12",
+            "comment": {
+              "title": "Circling direction",
+              "desc": "Circling direction.\\n     Only sent by fixed wings.",
+              "support": "090e",
+              "triggered": "by [SetCirclingDirection](#1-2-12)."
+            },
             "arg": {
               "name": "value",
               "type": "enum",
@@ -1293,6 +1860,12 @@
           {
             "name": "CirclingRadiusChanged",
             "id": "13",
+            "comment": {
+              "title": "Circling radius",
+              "desc": "Circling radius.\\n     Only sent by fixed wings.",
+              "support": "090e",
+              "triggered": "by [SetCirclingRadius](#1-2-13)."
+            },
             "arg": [
               {
                 "name": "current",
@@ -1314,6 +1887,12 @@
           {
             "name": "CirclingAltitudeChanged",
             "id": "14",
+            "comment": {
+              "title": "Circling altitude",
+              "desc": "Circling altitude.\\n     Bounds will be automatically adjusted according to the [MaxAltitude](#1-6-0).\\n     Only sent by fixed wings.",
+              "support": "090e",
+              "triggered": "by [SetCirclingRadius](#1-2-14) or when bounds change due to [SetMaxAltitude](#1-2-0)."
+            },
             "arg": [
               {
                 "name": "current",
@@ -1335,35 +1914,23 @@
           {
             "name": "PitchModeChanged",
             "id": "15",
+            "comment": {
+              "title": "Pitch mode",
+              "desc": "Pitch mode.",
+              "support": "090e",
+              "triggered": "by [SetPitchMode](#1-2-15)."
+            },
             "arg": {
               "name": "value",
               "type": "enum",
               "enum": [
                 {
                   "name": "NORMAL",
-                  "$t": "Positive pitch values will make the drone lower its nose.\n                   Negative pitch values will make the drone raise its nose."
+                  "$t": "Positive pitch values will make the drone lower its nose.\n\t\t\t\t\tNegative pitch values will make the drone raise its nose."
                 },
                 {
                   "name": "INVERTED",
-                  "$t": "Pitch commands are inverted.\n                   Positive pitch values will make the drone raise its nose.\n                   Negative pitch values will make the drone lower its nose."
-                }
-              ]
-            }
-          },
-          {
-            "name": "LandingModeChanged",
-            "id": "16",
-            "arg": {
-              "name": "value",
-              "type": "enum",
-              "enum": [
-                {
-                  "name": "LINEAR",
-                  "$t": "Linear landing."
-                },
-                {
-                  "name": "SPIRALE",
-                  "$t": "Spirale landing."
+                  "$t": "Pitch commands are inverted.\n\t\t\t\t\tPositive pitch values will make the drone raise its nose.\n\t\t\t\t\tNegative pitch values will make the drone lower its nose."
                 }
               ]
             }
@@ -1377,6 +1944,12 @@
           {
             "name": "MaxVerticalSpeed",
             "id": "0",
+            "comment": {
+              "title": "Set max vertical speed",
+              "desc": "Set max vertical speed.",
+              "support": "0901;090c",
+              "result": "The max vertical speed is set.\\n     Then, event [MaxVerticalSpeed](#1-12-0) is triggered."
+            },
             "arg": {
               "name": "current",
               "type": "float",
@@ -1386,6 +1959,12 @@
           {
             "name": "MaxRotationSpeed",
             "id": "1",
+            "comment": {
+              "title": "Set max rotation speed",
+              "desc": "Set max rotation speed.",
+              "support": "0901;090c",
+              "result": "The max rotation speed is set.\\n     Then, event [MaxRotationSpeed](#1-12-1) is triggered."
+            },
             "arg": {
               "name": "current",
               "type": "float",
@@ -1395,6 +1974,12 @@
           {
             "name": "HullProtection",
             "id": "2",
+            "comment": {
+              "title": "Set the presence of hull protection",
+              "desc": "Set the presence of hull protection.",
+              "support": "0901;090c",
+              "result": "The drone knows that it has a hull protection.\\n     Then, event [HullProtection](#1-12-2) is triggered."
+            },
             "arg": {
               "name": "present",
               "type": "u8",
@@ -1404,6 +1989,11 @@
           {
             "name": "Outdoor",
             "id": "3",
+            "deprecated": "true",
+            "comment": {
+              "title": "Set outdoor mode",
+              "desc": "Set outdoor mode."
+            },
             "arg": {
               "name": "outdoor",
               "type": "u8",
@@ -1413,6 +2003,12 @@
           {
             "name": "MaxPitchRollRotationSpeed",
             "id": "4",
+            "comment": {
+              "title": "Set max pitch/roll rotation speed",
+              "desc": "Set max pitch/roll rotation speed.",
+              "support": "0901;090c",
+              "result": "The max pitch/roll rotation speed is set.\\n     Then, event [MaxPitchRollRotationSpeed](#1-12-4) is triggered."
+            },
             "arg": {
               "name": "current",
               "type": "float",
@@ -1428,6 +2024,12 @@
           {
             "name": "MaxVerticalSpeedChanged",
             "id": "0",
+            "comment": {
+              "title": "Max vertical speed",
+              "desc": "Max vertical speed.",
+              "support": "0901;090c",
+              "triggered": "by [SetMaxVerticalSpeed](#1-11-0)."
+            },
             "arg": [
               {
                 "name": "current",
@@ -1449,6 +2051,12 @@
           {
             "name": "MaxRotationSpeedChanged",
             "id": "1",
+            "comment": {
+              "title": "Max rotation speed",
+              "desc": "Max rotation speed.",
+              "support": "0901;090c",
+              "triggered": "by [SetMaxRotationSpeed](#1-11-1)."
+            },
             "arg": [
               {
                 "name": "current",
@@ -1470,6 +2078,12 @@
           {
             "name": "HullProtectionChanged",
             "id": "2",
+            "comment": {
+              "title": "Presence of hull protection",
+              "desc": "Presence of hull protection.",
+              "support": "0901;090c",
+              "triggered": "by [SetHullProtectionPresence](#1-11-2)."
+            },
             "arg": {
               "name": "present",
               "type": "u8",
@@ -1479,6 +2093,11 @@
           {
             "name": "OutdoorChanged",
             "id": "3",
+            "deprecated": "true",
+            "comment": {
+              "title": "Outdoor mode",
+              "desc": "Outdoor mode."
+            },
             "arg": {
               "name": "outdoor",
               "type": "u8",
@@ -1488,6 +2107,12 @@
           {
             "name": "MaxPitchRollRotationSpeedChanged",
             "id": "4",
+            "comment": {
+              "title": "Max pitch/roll rotation speed",
+              "desc": "Max pitch/roll rotation speed.",
+              "support": "0901;090c",
+              "triggered": "by [SetMaxPitchRollRotationSpeed](#1-11-4)."
+            },
             "arg": [
               {
                 "name": "current",
@@ -1515,6 +2140,12 @@
           {
             "name": "WifiSelection",
             "id": "0",
+            "comment": {
+              "title": "Select Wifi",
+              "desc": "Select or auto-select channel of choosen band.",
+              "support": "0901;090c;090e",
+              "result": "The wifi channel changes according to given parameters. Watch out, a disconnection might appear.\\n     Then, event [WifiSelection](#1-10-0) is triggered."
+            },
             "arg": [
               {
                 "name": "type",
@@ -1551,13 +2182,19 @@
               {
                 "name": "channel",
                 "type": "u8",
-                "$t": "The channel &#40;not used in auto mode&#41;"
+                "$t": "The channel (not used in auto mode)"
               }
             ]
           },
           {
             "name": "wifiSecurity",
             "id": "1",
+            "comment": {
+              "title": "Set wifi security type",
+              "desc": "Set wifi security type.\\n     The security will be changed on the next restart",
+              "support": "0901;090c;090e",
+              "result": "The wifi security is set (but not applied until next restart).\\n     Then, event [WifiSecurityType](#1-10-2) is triggered."
+            },
             "arg": [
               {
                 "name": "type",
@@ -1565,7 +2202,7 @@
                 "enum": [
                   {
                     "name": "open",
-                    "$t": "Wifi is not protected by any security &#40;default&#41;"
+                    "$t": "Wifi is not protected by any security (default)"
                   },
                   {
                     "name": "wpa2",
@@ -1576,7 +2213,7 @@
               {
                 "name": "key",
                 "type": "string",
-                "$t": "The key to secure the network &#40;empty if type is open&#41;"
+                "$t": "The key to secure the network (empty if type is open)"
               },
               {
                 "name": "keyType",
@@ -1597,6 +2234,12 @@
           {
             "name": "WifiSelectionChanged",
             "id": "0",
+            "comment": {
+              "title": "Wifi selection",
+              "desc": "Wifi selection.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SelectWifi](#1-9-0)."
+            },
             "arg": [
               {
                 "name": "type",
@@ -1641,20 +2284,25 @@
               {
                 "name": "channel",
                 "type": "u8",
-                "$t": "The channel &#40;depends of the band&#41;"
+                "$t": "The channel (depends of the band)"
               }
             ]
           },
           {
             "name": "wifiSecurityChanged",
             "id": "1",
+            "deprecated": "true",
+            "comment": {
+              "title": "Wifi security type",
+              "desc": "Wifi security type."
+            },
             "arg": {
               "name": "type",
               "type": "enum",
               "enum": [
                 {
                   "name": "open",
-                  "$t": "Wifi is not protected by any security &#40;default&#41;"
+                  "$t": "Wifi is not protected by any security (default)"
                 },
                 {
                   "name": "wpa2",
@@ -1666,6 +2314,12 @@
           {
             "name": "wifiSecurity",
             "id": "2",
+            "comment": {
+              "title": "Wifi security type",
+              "desc": "Wifi security type.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetWifiSecurityType](#1-9-1)."
+            },
             "arg": [
               {
                 "name": "type",
@@ -1673,7 +2327,7 @@
                 "enum": [
                   {
                     "name": "open",
-                    "$t": "Wifi is not protected by any security &#40;default&#41;"
+                    "$t": "Wifi is not protected by any security (default)"
                   },
                   {
                     "name": "wpa2",
@@ -1684,7 +2338,7 @@
               {
                 "name": "key",
                 "type": "string",
-                "$t": "The key used to secure the network &#40;empty if type is open&#41;"
+                "$t": "The key used to secure the network (empty if type is open)"
               },
               {
                 "name": "keyType",
@@ -1706,6 +2360,11 @@
             "name": "ProductMotorVersionListChanged",
             "id": "0",
             "type": "MAP_ITEM",
+            "deprecated": "true",
+            "comment": {
+              "title": "Motor version",
+              "desc": "Motor version."
+            },
             "arg": [
               {
                 "name": "motor_number",
@@ -1732,6 +2391,12 @@
           {
             "name": "ProductGPSVersionChanged",
             "id": "1",
+            "comment": {
+              "title": "GPS version",
+              "desc": "GPS version.",
+              "support": "0901;090c;090e",
+              "triggered": "at connection."
+            },
             "arg": [
               {
                 "name": "software",
@@ -1748,11 +2413,17 @@
           {
             "name": "MotorErrorStateChanged",
             "id": "2",
+            "comment": {
+              "title": "Motor error",
+              "desc": "Motor error.\\n     This event is sent back to *noError* as soon as the motor error disappear. To get the last motor error, see [LastMotorError](#1-16-5)",
+              "support": "0901;090c;090e",
+              "triggered": "when a motor error occurs."
+            },
             "arg": [
               {
                 "name": "motorIds",
                 "type": "u8",
-                "$t": "Bit field for concerned motor. If bit 0 = 1, motor 1 is affected by this error. Same with bit 1, 2 and 3."
+                "$t": "Bit field for concerned motor. If bit 0 = 1, motor 1 is affected by this error. Same with bit 1, 2 and 3.\n\t\t\t\tMotor 1: front left\n\t\t\t\tMotor 2: front right\n\t\t\t\tMotor 3: back right\n\t\t\t\tMotor 4: back left"
               },
               {
                 "name": "motorError",
@@ -1812,7 +2483,7 @@
                   },
                   {
                     "name": "errorAssert",
-                    "$t": "Error Made by BLDC_ASSERT&#40;&#41;"
+                    "$t": "Error Made by BLDC_ASSERT()"
                   }
                 ]
               }
@@ -1821,15 +2492,26 @@
           {
             "name": "MotorSoftwareVersionChanged",
             "id": "3",
+            "deprecated": "true",
+            "comment": {
+              "title": "Motor version",
+              "desc": "Motor version."
+            },
             "arg": {
               "name": "version",
               "type": "string",
-              "$t": "name of the version : dot separated fields &#40;major version - minor version - firmware type - nb motors handled&#41;. Firmware types : Release, Debug, Alpha, Test-bench"
+              "$t": "name of the version : dot separated fields (major version - minor version - firmware type - nb motors handled). Firmware types : Release, Debug, Alpha, Test-bench"
             }
           },
           {
             "name": "MotorFlightsStatusChanged",
             "id": "4",
+            "comment": {
+              "title": "Motor flight status",
+              "desc": "Motor flight status.",
+              "support": "0901;090c;090e",
+              "triggered": "at connection."
+            },
             "arg": [
               {
                 "name": "nbFlights",
@@ -1839,18 +2521,24 @@
               {
                 "name": "lastFlightDuration",
                 "type": "u16",
-                "$t": "Duration of the last flight &#40;in seconds&#41;"
+                "$t": "Duration of the last flight (in seconds)"
               },
               {
                 "name": "totalFlightDuration",
                 "type": "u32",
-                "$t": "Duration of all flights &#40;in seconds&#41;"
+                "$t": "Duration of all flights (in seconds)"
               }
             ]
           },
           {
             "name": "MotorErrorLastErrorChanged",
             "id": "5",
+            "comment": {
+              "title": "Last motor error",
+              "desc": "Last motor error.\\n     This is a reminder of the last error. To know if a motor error is currently happening, see [MotorError](#1-16-2).",
+              "support": "0901;090c;090e",
+              "triggered": "at connection and when an error occurs."
+            },
             "arg": {
               "name": "motorError",
               "type": "enum",
@@ -1909,7 +2597,7 @@
                 },
                 {
                   "name": "errorAssert",
-                  "$t": "Error Made by BLDC_ASSERT&#40;&#41;"
+                  "$t": "Error Made by BLDC_ASSERT()"
                 }
               ]
             }
@@ -1917,10 +2605,24 @@
           {
             "name": "P7ID",
             "id": "6",
+            "deprecated": "true",
+            "comment": {
+              "title": "P7ID",
+              "desc": "P7ID."
+            },
             "arg": {
               "name": "serialID",
               "type": "string",
               "$t": "Product P7ID"
+            }
+          },
+          {
+            "name": "CPUID",
+            "id": "7",
+            "arg": {
+              "name": "id",
+              "type": "string",
+              "$t": "Product main cpu id"
             }
           }
         ]
@@ -1932,6 +2634,12 @@
           {
             "name": "PictureFormatSelection",
             "id": "0",
+            "comment": {
+              "title": "Set picture format",
+              "desc": "Set picture format.\\n     Please note that the time required to take the picture is highly related to this format.\\n     Also, please note that if your picture format is different from snapshot, picture taking will stop video recording (it will restart after the picture has been taken).",
+              "support": "0901;090c;090e",
+              "result": "The picture format is set.\\n     Then, event [PictureFormat](#1-20-0) is triggered."
+            },
             "arg": {
               "name": "type",
               "type": "enum",
@@ -1958,6 +2666,12 @@
           {
             "name": "AutoWhiteBalanceSelection",
             "id": "1",
+            "comment": {
+              "title": "Set White Balance mode",
+              "desc": "Set White Balance mode.",
+              "support": "0901;090c;090e",
+              "result": "The white balance mode is set.\\n     Then, event [WhiteBalanceMode](#1-20-1) is triggered."
+            },
             "arg": {
               "name": "type",
               "type": "enum",
@@ -1988,24 +2702,42 @@
           {
             "name": "ExpositionSelection",
             "id": "2",
+            "comment": {
+              "title": "Set image exposure",
+              "desc": "Set image exposure.",
+              "support": "0901;090c;090e",
+              "result": "The exposure is set.\\n     Then, event [ImageExposure](#1-20-2) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "float",
-              "$t": "Exposition value &#40;bounds given by ExpositionChanged arg min and max, by default [-3:3]&#41;"
+              "$t": "Exposition value (bounds given by ExpositionChanged arg min and max, by default [-3:3])"
             }
           },
           {
             "name": "SaturationSelection",
             "id": "3",
+            "comment": {
+              "title": "Set image saturation",
+              "desc": "Set image saturation.",
+              "support": "0901;090c;090e",
+              "result": "The saturation is set.\\n     Then, event [ImageSaturation](#1-20-3) is triggered."
+            },
             "arg": {
               "name": "value",
               "type": "float",
-              "$t": "Saturation value &#40;bounds given by SaturationChanged arg min and max, by default [-100:100]&#41;"
+              "$t": "Saturation value (bounds given by SaturationChanged arg min and max, by default [-100:100])"
             }
           },
           {
             "name": "TimelapseSelection",
             "id": "4",
+            "comment": {
+              "title": "Set timelapse mode",
+              "desc": "Set timelapse mode.\\n     If timelapse mode is set, instead of taking a video, the drone will take picture regularly.\\n     Watch out, this command only configure the timelapse mode. Once it is configured, you can start/stop the timelapse with the [RecordVideo](#1-7-3) command.",
+              "support": "0901;090c;090e",
+              "result": "The timelapse mode is set (but not started).\\n     Then, event [TimelapseMode](#1-20-4) is triggered."
+            },
             "arg": [
               {
                 "name": "enabled",
@@ -2022,6 +2754,12 @@
           {
             "name": "VideoAutorecordSelection",
             "id": "5",
+            "comment": {
+              "title": "Set video autorecord mode",
+              "desc": "Set video autorecord mode.\\n     If autorecord is set, video record will be automatically started when the drone takes off and stopped slightly after landing.",
+              "support": "0901;090c;090e",
+              "result": "The autorecord mode is set.\\n     Then, event [AutorecordMode](#1-20-5) is triggered."
+            },
             "arg": [
               {
                 "name": "enabled",
@@ -2038,6 +2776,12 @@
           {
             "name": "VideoStabilizationMode",
             "id": "6",
+            "comment": {
+              "title": "Set video stabilization mode",
+              "desc": "Set video stabilization mode.",
+              "support": "0901:3.4.0;090c:3.4.0;090e",
+              "result": "The video stabilization mode is set.\\n     Then, event [VideoStabilizationMode](#1-20-6) is triggered."
+            },
             "arg": {
               "name": "mode",
               "type": "enum",
@@ -2060,6 +2804,82 @@
                 }
               ]
             }
+          },
+          {
+            "name": "VideoRecordingMode",
+            "id": "7",
+            "comment": {
+              "title": "Set video recording mode",
+              "desc": "Set video recording mode.",
+              "support": "0901:3.4.0;090c:3.4.0;090e",
+              "result": "The video recording mode is set.\\n     Then, event [VideoRecordingMode](#1-20-7) is triggered."
+            },
+            "arg": {
+              "name": "mode",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "quality",
+                  "$t": "Maximize recording quality."
+                },
+                {
+                  "name": "time",
+                  "$t": "Maximize recording time."
+                }
+              ]
+            }
+          },
+          {
+            "name": "VideoFramerate",
+            "id": "8",
+            "comment": {
+              "title": "Set video framerate",
+              "desc": "Set video framerate.",
+              "support": "0901:3.4.0;090c:3.4.0;090e",
+              "result": "The video framerate is set.\\n     Then, event [VideoFramerate](#1-20-8) is triggered."
+            },
+            "arg": {
+              "name": "framerate",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "24_FPS",
+                  "$t": "23.976 frames per second."
+                },
+                {
+                  "name": "25_FPS",
+                  "$t": "25 frames per second."
+                },
+                {
+                  "name": "30_FPS",
+                  "$t": "29.97 frames per second."
+                }
+              ]
+            }
+          },
+          {
+            "name": "VideoResolutions",
+            "id": "9",
+            "comment": {
+              "title": "Set video resolutions",
+              "desc": "Set video streaming and recording resolutions.",
+              "support": "0901:3.4.0;090c:3.4.0;090e",
+              "result": "The video resolutions is set.\\n     Then, event [VideoResolutions](#1-20-9) is triggered."
+            },
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "rec1080_stream480",
+                  "$t": "1080p recording, 480p streaming."
+                },
+                {
+                  "name": "rec720_stream720",
+                  "$t": "720p recording, 720p streaming."
+                }
+              ]
+            }
           }
         ]
       },
@@ -2070,6 +2890,12 @@
           {
             "name": "PictureFormatChanged",
             "id": "0",
+            "comment": {
+              "title": "Picture format",
+              "desc": "Picture format.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetPictureFormat](#1-19-0)."
+            },
             "arg": {
               "name": "type",
               "type": "enum",
@@ -2096,6 +2922,12 @@
           {
             "name": "AutoWhiteBalanceChanged",
             "id": "1",
+            "comment": {
+              "title": "White balance mode",
+              "desc": "White balance mode.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetWhiteBalanceMode](#1-19-1)."
+            },
             "arg": {
               "name": "type",
               "type": "enum",
@@ -2126,27 +2958,39 @@
           {
             "name": "ExpositionChanged",
             "id": "2",
+            "comment": {
+              "title": "Image exposure",
+              "desc": "Image exposure.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetImageExposure](#1-19-2)."
+            },
             "arg": [
               {
                 "name": "value",
                 "type": "float",
-                "$t": "Exposition value"
+                "$t": "Exposure value"
               },
               {
                 "name": "min",
                 "type": "float",
-                "$t": "Min exposition value"
+                "$t": "Min exposure value"
               },
               {
                 "name": "max",
                 "type": "float",
-                "$t": "Max exposition value"
+                "$t": "Max exposure value"
               }
             ]
           },
           {
             "name": "SaturationChanged",
             "id": "3",
+            "comment": {
+              "title": "Image saturation",
+              "desc": "Image saturation.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetImageSaturation](#1-19-3)."
+            },
             "arg": [
               {
                 "name": "value",
@@ -2168,6 +3012,12 @@
           {
             "name": "TimelapseChanged",
             "id": "4",
+            "comment": {
+              "title": "Timelapse mode",
+              "desc": "Timelapse mode.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetTimelapseMode](#1-19-4)."
+            },
             "arg": [
               {
                 "name": "enabled",
@@ -2194,6 +3044,12 @@
           {
             "name": "VideoAutorecordChanged",
             "id": "5",
+            "comment": {
+              "title": "Video Autorecord mode",
+              "desc": "Video Autorecord mode.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetVideoAutorecordMode](#1-19-5)."
+            },
             "arg": [
               {
                 "name": "enabled",
@@ -2210,6 +3066,12 @@
           {
             "name": "VideoStabilizationModeChanged",
             "id": "6",
+            "comment": {
+              "title": "Video stabilization mode",
+              "desc": "Video stabilization mode.",
+              "support": "0901:3.4.0;090c:3.4.0;090e",
+              "triggered": "by [SetVideoStabilizationMode](#1-19-6)."
+            },
             "arg": {
               "name": "mode",
               "type": "enum",
@@ -2232,47 +3094,183 @@
                 }
               ]
             }
+          },
+          {
+            "name": "VideoRecordingModeChanged",
+            "id": "7",
+            "comment": {
+              "title": "Video recording mode",
+              "desc": "Video recording mode.",
+              "support": "0901:3.4.0;090c:3.4.0;090e",
+              "triggered": "by [SetVideoRecordingMode](#1-19-7)."
+            },
+            "arg": {
+              "name": "mode",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "quality",
+                  "$t": "Maximize recording quality."
+                },
+                {
+                  "name": "time",
+                  "$t": "Maximize recording time."
+                }
+              ]
+            }
+          },
+          {
+            "name": "VideoFramerateChanged",
+            "id": "8",
+            "comment": {
+              "title": "Video framerate",
+              "desc": "Video framerate.",
+              "support": "0901:3.4.0;090c:3.4.0;090e",
+              "triggered": "by [SetVideoFramerateMode](#1-19-8)."
+            },
+            "arg": {
+              "name": "framerate",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "24_FPS",
+                  "$t": "23.976 frames per second."
+                },
+                {
+                  "name": "25_FPS",
+                  "$t": "25 frames per second."
+                },
+                {
+                  "name": "30_FPS",
+                  "$t": "29.97 frames per second."
+                }
+              ]
+            }
+          },
+          {
+            "name": "VideoResolutionsChanged",
+            "id": "9",
+            "comment": {
+              "title": "Video resolutions",
+              "desc": "Video resolutions.\\n     This event informs about the recording AND streaming resolutions.",
+              "support": "0901:3.4.0;090c:3.4.0;090e",
+              "triggered": "by [SetVideResolutions](#1-19-9)."
+            },
+            "arg": {
+              "name": "type",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "rec1080_stream480",
+                  "$t": "1080p recording, 480p streaming."
+                },
+                {
+                  "name": "rec720_stream720",
+                  "$t": "720p recording, 720p streaming."
+                }
+              ]
+            }
           }
         ]
       },
       {
         "name": "MediaStreaming",
         "id": "21",
-        "cmd": {
-          "name": "VideoEnable",
-          "id": "0",
-          "arg": {
-            "name": "enable",
-            "type": "u8",
-            "$t": "1 to enable, 0 to disable."
+        "cmd": [
+          {
+            "name": "VideoEnable",
+            "id": "0",
+            "comment": {
+              "title": "Enable/disable video streaming",
+              "desc": "Enable/disable video streaming.",
+              "support": "0901;090c;090e",
+              "result": "The video stream is started or stopped.\\n     Then, event [VideoStreamState](#1-22-0) is triggered."
+            },
+            "arg": {
+              "name": "enable",
+              "type": "u8",
+              "$t": "1 to enable, 0 to disable."
+            }
+          },
+          {
+            "name": "VideoStreamMode",
+            "id": "1",
+            "arg": {
+              "name": "mode",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "low_latency",
+                  "$t": "Minimize latency with average reliability (best for piloting)."
+                },
+                {
+                  "name": "high_reliability",
+                  "$t": "Maximize the reliability with an average latency (best when streaming quality is important but not the latency)."
+                },
+                {
+                  "name": "high_reliability_low_framerate",
+                  "$t": "Maximize the reliability using a framerate decimation with an average latency (best when streaming quality is important but not the latency)."
+                }
+              ]
+            }
           }
-        }
+        ]
       },
       {
         "name": "MediaStreamingState",
         "id": "22",
-        "cmd": {
-          "name": "VideoEnableChanged",
-          "id": "0",
-          "arg": {
-            "name": "enabled",
-            "type": "enum",
-            "enum": [
-              {
-                "name": "enabled",
-                "$t": "Video streaming is enabled."
-              },
-              {
-                "name": "disabled",
-                "$t": "Video streaming is disabled."
-              },
-              {
-                "name": "error",
-                "$t": "Video streaming failed to start."
-              }
-            ]
+        "cmd": [
+          {
+            "name": "VideoEnableChanged",
+            "id": "0",
+            "comment": {
+              "title": "Video stream state",
+              "desc": "Video stream state.",
+              "support": "0901;090c;090e",
+              "triggered": "by [EnableOrDisableVideoStream](#1-21-0)."
+            },
+            "arg": {
+              "name": "enabled",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "enabled",
+                  "$t": "Video streaming is enabled."
+                },
+                {
+                  "name": "disabled",
+                  "$t": "Video streaming is disabled."
+                },
+                {
+                  "name": "error",
+                  "$t": "Video streaming failed to start."
+                }
+              ]
+            }
+          },
+          {
+            "name": "VideoStreamModeChanged",
+            "id": "1",
+            "arg": {
+              "name": "mode",
+              "type": "enum",
+              "enum": [
+                {
+                  "name": "low_latency",
+                  "$t": "Minimize latency with average reliability (best for piloting)."
+                },
+                {
+                  "name": "high_reliability",
+                  "$t": "Maximize the reliability with an average latency (best when streaming quality is important but not the latency)."
+                },
+                {
+                  "name": "high_reliability_low_framerate",
+                  "$t": "Maximize the reliability using a framerate decimation with an average latency (best when streaming quality is important but not the latency)."
+                }
+              ]
+            }
           }
-        }
+        ]
       },
       {
         "name": "GPSSettings",
@@ -2281,6 +3279,11 @@
           {
             "name": "SetHome",
             "id": "0",
+            "deprecated": "true",
+            "comment": {
+              "title": "Set home position",
+              "desc": "Set home position."
+            },
             "arg": [
               {
                 "name": "latitude",
@@ -2302,11 +3305,22 @@
           {
             "name": "ResetHome",
             "id": "1",
-            "$t": "Reset home location and let the drone make its own home"
+            "comment": {
+              "title": "Reset home position",
+              "desc": "Reset home position.",
+              "support": "0901;090c;090e",
+              "result": "The home position is reset.\\n     Then, event [HomeLocationReset](#1-24-1) is triggered."
+            }
           },
           {
             "name": "SendControllerGPS",
             "id": "2",
+            "comment": {
+              "title": "Set controller gps location",
+              "desc": "Set controller gps location.\\n     The user location might be used in case of return home, according to the home type and the accuracy of the given position. You can get the current home type with the event [HomeType](#1-24-4).",
+              "support": "0901;090c;090e",
+              "result": "The controller position is known by the drone.\\n     Then, event [HomeLocation](#1-24-2) is triggered."
+            },
             "arg": [
               {
                 "name": "latitude",
@@ -2338,6 +3352,12 @@
           {
             "name": "HomeType",
             "id": "3",
+            "comment": {
+              "title": "Set the preferred home type",
+              "desc": "Set the preferred home type.\\n     Please note that this is only a preference. The actual type chosen is given by the event [HomeType](#1-31-2).\\n     You can get the currently available types with the event [HomeTypeAvailability](#1-31-1).",
+              "support": "0901;090c;090e",
+              "result": "The user choice is known by the drone.\\n     Then, event [PreferredHomeType](#1-24-4) is triggered."
+            },
             "arg": {
               "name": "type",
               "type": "enum",
@@ -2349,6 +3369,10 @@
                 {
                   "name": "PILOT",
                   "$t": "The drone will try to return to the pilot position"
+                },
+                {
+                  "name": "FOLLOWEE",
+                  "$t": "The drone will try to return to the target of the current (or last) follow me"
                 }
               ]
             }
@@ -2356,6 +3380,12 @@
           {
             "name": "ReturnHomeDelay",
             "id": "4",
+            "comment": {
+              "title": "Set the return home delay",
+              "desc": "Set the delay after which the drone will automatically try to return home after a disconnection.",
+              "support": "0901;090c;090e",
+              "result": "The delay of the return home is set.\\n     Then, event [ReturnHomeDelay](#1-24-5) is triggered."
+            },
             "arg": {
               "name": "delay",
               "type": "u16",
@@ -2371,6 +3401,12 @@
           {
             "name": "HomeChanged",
             "id": "0",
+            "comment": {
+              "title": "Home location",
+              "desc": "Home location.",
+              "support": "0901;090c;090e",
+              "triggered": "when [HomeType](#1-31-2) changes.     Or by [SetHomeLocation](#1-23-2) when [HomeType](#1-31-2) is Pilot.     Or regularly after [SetControllerGPS](#140-1) when [HomeType](#1-31-2) is FollowMeTarget.     Or at take off [HomeType](#1-31-2) is Takeoff.     Or when the first fix occurs and the [HomeType](#1-31-2) is FirstFix."
+            },
             "arg": [
               {
                 "name": "latitude",
@@ -2392,6 +3428,12 @@
           {
             "name": "ResetHomeChanged",
             "id": "1",
+            "comment": {
+              "title": "Home location has been reset",
+              "desc": "Home location has been reset.",
+              "support": "0901;090c;090e",
+              "triggered": "by [ResetHomeLocation](#1-23-1)."
+            },
             "arg": [
               {
                 "name": "latitude",
@@ -2413,6 +3455,12 @@
           {
             "name": "GPSFixStateChanged",
             "id": "2",
+            "comment": {
+              "title": "Gps fix info",
+              "desc": "Gps fix info.",
+              "support": "0901;090c;090e",
+              "triggered": "on change."
+            },
             "arg": {
               "name": "fixed",
               "type": "u8",
@@ -2422,6 +3470,12 @@
           {
             "name": "GPSUpdateStateChanged",
             "id": "3",
+            "comment": {
+              "title": "Gps update state",
+              "desc": "Gps update state.",
+              "support": "0901;090c;090e",
+              "triggered": "on change."
+            },
             "arg": {
               "name": "state",
               "type": "enum",
@@ -2444,6 +3498,12 @@
           {
             "name": "HomeTypeChanged",
             "id": "4",
+            "comment": {
+              "title": "Preferred home type",
+              "desc": "User preference for the home type.\\n     See [HomeType](#1-31-2) to get the drone actual home type.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetPreferredHomeType](#1-23-3)."
+            },
             "arg": {
               "name": "type",
               "type": "enum",
@@ -2455,6 +3515,10 @@
                 {
                   "name": "PILOT",
                   "$t": "The drone will try to return to the pilot position"
+                },
+                {
+                  "name": "FOLLOWEE",
+                  "$t": "The drone will try to return to the target of the current (or last) follow me"
                 }
               ]
             }
@@ -2462,6 +3526,12 @@
           {
             "name": "ReturnHomeDelayChanged",
             "id": "5",
+            "comment": {
+              "title": "Return home delay",
+              "desc": "Return home trigger delay. This delay represents the time after which the return home is automatically triggered after a disconnection.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetReturnHomeDelay](#1-23-4)."
+            },
             "arg": {
               "name": "delay",
               "type": "u16",
@@ -2477,6 +3547,14 @@
           {
             "name": "Orientation",
             "id": "0",
+            "buffer": "NON_ACK",
+            "deprecated": "true",
+            "comment": {
+              "title": "Camera orientation",
+              "desc": "Camera orientation.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetCameraOrientation](#1-1-0)."
+            },
             "arg": [
               {
                 "name": "tilt",
@@ -2493,16 +3571,90 @@
           {
             "name": "defaultCameraOrientation",
             "id": "1",
+            "deprecated": "true",
+            "comment": {
+              "title": "Orientation of the camera center",
+              "desc": "Orientation of the center of the camera.\\n     This is the value to send when you want to center the camera.",
+              "support": "0901;090c;090e",
+              "triggered": "at connection."
+            },
             "arg": [
               {
                 "name": "tilt",
                 "type": "i8",
-                "$t": "Tilt value &#40;in degree&#41;"
+                "$t": "Tilt value (in degree)"
               },
               {
                 "name": "pan",
                 "type": "i8",
-                "$t": "Pan value &#40;in degree&#41;"
+                "$t": "Pan value (in degree)"
+              }
+            ]
+          },
+          {
+            "name": "OrientationV2",
+            "buffer": "NON_ACK",
+            "id": "2",
+            "comment": {
+              "title": "Camera orientation",
+              "desc": "Camera orientation with float arguments.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetCameraOrientationV2](#1-1-1)"
+            },
+            "arg": [
+              {
+                "name": "tilt",
+                "type": "float",
+                "$t": "Tilt camera consign for the drone [deg]"
+              },
+              {
+                "name": "pan",
+                "type": "float",
+                "$t": "Pan camera consign for the drone [deg]"
+              }
+            ]
+          },
+          {
+            "name": "defaultCameraOrientationV2",
+            "id": "3",
+            "comment": {
+              "title": "Orientation of the camera center",
+              "desc": "Orientation of the center of the camera.\\n     This is the value to send when you want to center the camera.",
+              "support": "0901;090c;090e",
+              "triggered": "at connection."
+            },
+            "arg": [
+              {
+                "name": "tilt",
+                "type": "float",
+                "$t": "Tilt value [deg]"
+              },
+              {
+                "name": "pan",
+                "type": "float",
+                "$t": "Pan value [deg]"
+              }
+            ]
+          },
+          {
+            "name": "VelocityRange",
+            "id": "4",
+            "comment": {
+              "title": "Camera velocity range",
+              "desc": "Camera Orientation velocity limits.",
+              "support": "0901;090c;090e",
+              "triggered": "at connection."
+            },
+            "arg": [
+              {
+                "name": "max_tilt",
+                "type": "float",
+                "$t": "Absolute max tilt velocity [deg/s]"
+              },
+              {
+                "name": "max_pan",
+                "type": "float",
+                "$t": "Absolute max pan velocity [deg/s]"
               }
             ]
           }
@@ -2515,6 +3667,12 @@
           {
             "name": "electricFrequency",
             "id": "0",
+            "comment": {
+              "title": "Set the electric frequency",
+              "desc": "Set the electric frequency of the surrounding lights.\\n     This is used to avoid the video flickering in auto mode. You can get the current antiflickering mode with the event [AntiflickeringModeChanged](#1-30-1).",
+              "support": "0901;090c;090e",
+              "result": "The electric frequency is set.\\n     Then, event [ElectricFrequency](#1-30-0) is triggered."
+            },
             "arg": {
               "name": "frequency",
               "type": "enum",
@@ -2533,6 +3691,12 @@
           {
             "name": "setMode",
             "id": "1",
+            "comment": {
+              "title": "Set the antiflickering mode",
+              "desc": "Set the antiflickering mode.\\n     If auto, the drone will detect when flickers appears on the video and trigger the antiflickering.\\n     In this case, this electric frequency it will use will be the one specified in the event [ElectricFrequency](#1-29-0).\\n     Forcing the antiflickering (FixedFiftyHertz or FixedFiftyHertz) can reduce luminosity of the video.",
+              "support": "0901;090c;090e",
+              "result": "The antiflickering mode is set.\\n     Then, event [AntiflickeringMode](#1-30-1) is triggered."
+            },
             "arg": {
               "name": "mode",
               "type": "enum",
@@ -2561,6 +3725,12 @@
           {
             "name": "electricFrequencyChanged",
             "id": "0",
+            "comment": {
+              "title": "Electric frequency",
+              "desc": "Electric frequency.\\n     This piece of information is used for the antiflickering when the [AntiflickeringMode](#1-30-1) is set to *auto*.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetElectricFrequency](#1-29-0)."
+            },
             "arg": {
               "name": "frequency",
               "type": "enum",
@@ -2579,6 +3749,12 @@
           {
             "name": "modeChanged",
             "id": "1",
+            "comment": {
+              "title": "Antiflickering mode",
+              "desc": "Antiflickering mode.",
+              "support": "0901;090c;090e",
+              "triggered": "by [SetAntiflickeringMode](#1-29-1)."
+            },
             "arg": {
               "name": "mode",
               "type": "enum",
@@ -2607,6 +3783,12 @@
           {
             "name": "NumberOfSatelliteChanged",
             "id": "0",
+            "comment": {
+              "title": "Number of GPS satellites",
+              "desc": "Number of GPS satellites.",
+              "support": "0901;090c;090e",
+              "triggered": "on change."
+            },
             "arg": {
               "name": "numberOfSatellite",
               "type": "u8",
@@ -2617,6 +3799,12 @@
             "name": "HomeTypeAvailabilityChanged",
             "id": "1",
             "type": "MAP_ITEM",
+            "comment": {
+              "title": "Home type availability",
+              "desc": "Home type availability.",
+              "support": "0901;090c;090e",
+              "triggered": "when the availability of, at least, one type changes.\\n     This might be due to controller position availability, gps fix before take off or other reason."
+            },
             "arg": [
               {
                 "name": "type",
@@ -2624,15 +3812,19 @@
                 "enum": [
                   {
                     "name": "TAKEOFF",
-                    "$t": "The drone will try to return to the take off position"
+                    "$t": "The drone has enough information to return to the take off position"
                   },
                   {
                     "name": "PILOT",
-                    "$t": "The drone will try to return to the pilot position"
+                    "$t": "The drone has enough information to return to the pilot position"
                   },
                   {
                     "name": "FIRST_FIX",
-                    "$t": "The drone has not enough information, it will try to return to the first GPS fix"
+                    "$t": "The drone has not enough information, it will return to the first GPS fix"
+                  },
+                  {
+                    "name": "FOLLOWEE",
+                    "$t": "The drone has enough information to return to the target of the current (or last) follow me"
                   }
                 ]
               },
@@ -2646,21 +3838,31 @@
           {
             "name": "HomeTypeChosenChanged",
             "id": "2",
+            "comment": {
+              "title": "Home type",
+              "desc": "Home type.\\n     This choice is made by the drone, according to the [PreferredHomeType](#1-24-4) and the [HomeTypeAvailability](#1-31-1). The drone will choose the type matching with the user preference only if this type is available. If not, it will chose a type in this order:\\n     FOLLOWEE ; TAKEOFF ; PILOT ; FIRST_FIX",
+              "support": "0901;090c;090e",
+              "triggered": "when the return home type chosen by the drone changes.\\n     This might be produced by a user preference triggered by [SetPreferedHomeType](#1-23-3) or by a change in the [HomeTypesAvailabilityChanged](#1-31-1)."
+            },
             "arg": {
               "name": "type",
               "type": "enum",
               "enum": [
                 {
                   "name": "TAKEOFF",
-                  "$t": "The drone will try to return to the take off position"
+                  "$t": "The drone will return to the take off position"
                 },
                 {
                   "name": "PILOT",
-                  "$t": "The drone will try to return to the pilot position"
+                  "$t": "The drone will return to the pilot position\n\t\t\t\t\tIn this case, the drone will use the position given by ARDrone3-SendControllerGPS"
                 },
                 {
                   "name": "FIRST_FIX",
-                  "$t": "The drone has not enough information, it will try to return to the first GPS fix"
+                  "$t": "The drone has not enough information, it will return to the first GPS fix"
+                },
+                {
+                  "name": "FOLLOWEE",
+                  "$t": "The drone will return to the target of the current (or last) follow me\n\t\t\t\t\tIn this case, the drone will use the position of the target of the followMe (given by ControllerInfo-GPS)"
                 }
               ]
             }
@@ -2673,6 +3875,11 @@
         "cmd": {
           "name": "Features",
           "id": "0",
+          "deprecated": "true",
+          "comment": {
+            "title": "Pro features",
+            "desc": "Pro features."
+          },
           "arg": {
             "name": "features",
             "type": "u64",
@@ -2692,7 +3899,13 @@
         "cmd": {
           "name": "Disconnect",
           "id": "0",
-          "$t": "@deprecated\n            Signals the remote that the host will disconnect and close its\n            libARNetwork instance &#40;and all threads that use libARNetwork&#41;"
+          "deprecated": "true",
+          "comment": {
+            "title": "Signals the remote that the host will disconnect",
+            "desc": "Signals the remote that the host will disconnect.\\n",
+            "support": "none",
+            "result": "None"
+          }
         }
       },
       {
@@ -2701,7 +3914,13 @@
         "cmd": {
           "name": "Disconnection",
           "id": "0",
-          "notification": "TRUE",
+          "content": "NOTIFICATION",
+          "comment": {
+            "title": "Drone will disconnect",
+            "desc": "Drone will disconnect.\\n     This event is mainly triggered when the user presses on the power button of the product.\\n\\n     **This event is a notification, you can't retrieve it in the cache of the device controller.**",
+            "support": "0901;090c",
+            "triggered": "mainly when the user presses the power button of the drone."
+          },
           "arg": {
             "name": "cause",
             "type": "enum",
@@ -2726,16 +3945,32 @@
             "name": "AllSettings",
             "id": "0",
             "timeout": "RETRY",
-            "$t": "Get all product settings, the product must send all settings"
+            "comment": {
+              "title": "Ask for all settings",
+              "desc": "Ask for all settings.\\n\\n     **Please note that you should not send this command if you are using the\\n     libARController API as this library is handling the connection process for you.**",
+              "support": "drones",
+              "result": "The product will trigger all settings events (such as [CameraSettings](#0-15-0), or product specific settings as the [MaxAltitude](#1-6-0) for the Bebop).\\n     Then, it will trigger [AllSettingsEnd](#0-3-0)."
+            }
           },
           {
             "name": "Reset",
             "id": "1",
-            "$t": "Reset all settings"
+            "comment": {
+              "title": "Reset all settings",
+              "desc": "Reset all settings.",
+              "support": "drones",
+              "result": "It will trigger [ResetChanged](#0-3-1).\\n     Then, the product will trigger all settings events (such as [CameraSettings](#0-15-0), or product specific settings as the [MaxAltitude](#1-6-0) for the Bebop) with factory values."
+            }
           },
           {
             "name": "ProductName",
             "id": "2",
+            "comment": {
+              "title": "Set product name",
+              "desc": "Set the product name.\\n     It also sets the name of the SSID for Wifi products and advertisement name for BLE products (changed after a reboot of the product).",
+              "support": "drones",
+              "result": "Name is changed.\\n     Then, it will trigger [NameChanged](#0-3-2)."
+            },
             "arg": {
               "name": "name",
               "type": "string",
@@ -2745,6 +3980,12 @@
           {
             "name": "Country",
             "id": "3",
+            "comment": {
+              "title": "Set the country",
+              "desc": "Set the country for Wifi products.\\n     This can modify Wifi band and/or channel.\\n     **Please note that you might be disconnected from the product after changing the country as it changes Wifi parameters.**",
+              "support": "0901;0902;0905;0906;090c;090e",
+              "result": "The country is set.\\n     Then, it will trigger [CountryChanged](#0-3-6)."
+            },
             "arg": {
               "name": "code",
               "type": "string",
@@ -2754,6 +3995,12 @@
           {
             "name": "AutoCountry",
             "id": "4",
+            "comment": {
+              "title": "Enable auto-country",
+              "desc": "Enable auto-country.\\n     If auto-country is set, the drone will guess its Wifi country by itself by checking other Wifi country around it.\\n     **Please note that you might be disconnected from the product after changing the country as it changes Wifi parameters.**",
+              "support": "0901;0902;0905;0906;090c;090e",
+              "result": "The auto-country of the product is changed.\\n     Then, it will trigger [AutoCountryChanged](#0-3-7) and [CountryChanged](#0-3-6)."
+            },
             "arg": {
               "name": "automatic",
               "type": "u8",
@@ -2769,16 +4016,33 @@
           {
             "name": "AllSettingsChanged",
             "id": "0",
-            "$t": "State sent when all settings has been sent."
+            "timeout": "RETRY",
+            "comment": {
+              "title": "All settings have been sent",
+              "desc": "All settings have been sent.\\n\\n     **Please note that you should not care about this event if you are using the libARController API as this library is handling the connection process for you.**",
+              "support": "drones",
+              "triggered": "when all settings values have been sent."
+            }
           },
           {
             "name": "ResetChanged",
             "id": "1",
-            "$t": "State sent when all settings has been resetting."
+            "comment": {
+              "title": "All settings have been reset",
+              "desc": "All settings have been reset.",
+              "support": "drones",
+              "triggered": "by [ResetSettings](#0-2-1)."
+            }
           },
           {
             "name": "ProductNameChanged",
             "id": "2",
+            "comment": {
+              "title": "Product name changed",
+              "desc": "Product name changed.",
+              "support": "drones",
+              "triggered": "by [SetProductName](#0-2-2)."
+            },
             "arg": {
               "name": "name",
               "type": "string",
@@ -2788,6 +4052,12 @@
           {
             "name": "ProductVersionChanged",
             "id": "3",
+            "comment": {
+              "title": "Product version",
+              "desc": "Product version.",
+              "support": "drones",
+              "triggered": "during the connection process."
+            },
             "arg": [
               {
                 "name": "software",
@@ -2804,24 +4074,43 @@
           {
             "name": "ProductSerialHighChanged",
             "id": "4",
+            "comment": {
+              "title": "Product serial (1st part)",
+              "desc": "Product serial (1st part).",
+              "support": "drones",
+              "triggered": "during the connection process."
+            },
             "arg": {
               "name": "high",
               "type": "string",
-              "$t": "Serial high number &#40;hexadecimal value&#41;"
+              "$t": "Serial high number (hexadecimal value)"
             }
           },
           {
             "name": "ProductSerialLowChanged",
             "id": "5",
+            "comment": {
+              "title": "Product serial (2nd part)",
+              "desc": "Product serial (2nd part).",
+              "support": "drones",
+              "triggered": "during the connection process."
+            },
             "arg": {
               "name": "low",
               "type": "string",
-              "$t": "Serial low number &#40;hexadecimal value&#41;"
+              "$t": "Serial low number (hexadecimal value)"
             }
           },
           {
             "name": "CountryChanged",
             "id": "6",
+            "timeout": "RETRY",
+            "comment": {
+              "title": "Country changed",
+              "desc": "Country changed.",
+              "support": "drones",
+              "triggered": "by [SetCountry](#0-2-3)."
+            },
             "arg": {
               "name": "code",
               "type": "string",
@@ -2831,6 +4120,12 @@
           {
             "name": "AutoCountryChanged",
             "id": "7",
+            "comment": {
+              "title": "Auto-country changed",
+              "desc": "Auto-country changed.",
+              "support": "drones",
+              "triggered": "by [SetAutoCountry](#0-2-4)."
+            },
             "arg": {
               "name": "automatic",
               "type": "u8",
@@ -2847,11 +4142,22 @@
             "name": "AllStates",
             "id": "0",
             "timeout": "RETRY",
-            "$t": "Get all product states."
+            "comment": {
+              "title": "Ask for all states",
+              "desc": "Ask for all states.\\n\\n     **Please note that you should not send this command if you are using the\\n     libARController API as this library is handling the connection process for you.**",
+              "support": "drones",
+              "result": "The product will trigger all states events (such as [FlyingState](#1-4-1) for the Bebop).\\n     Then, it will trigger [AllStatesEnd](#0-5-0)."
+            }
           },
           {
             "name": "CurrentDate",
             "id": "1",
+            "comment": {
+              "title": "Set the date",
+              "desc": "Set the date.\\n     This date is taken by the drone as its own date.\\n     So medias and other files will be dated from this date\\n\\n     **Please note that you should not send this command if you are using the\\n     libARController API as this library is handling the connection process for you.**",
+              "support": "drones",
+              "result": "The date of the product is set.\\n     Then, it will trigger [DateChanged](#0-5-4)."
+            },
             "arg": {
               "name": "date",
               "type": "string",
@@ -2861,6 +4167,12 @@
           {
             "name": "CurrentTime",
             "id": "2",
+            "comment": {
+              "title": "Set the time",
+              "desc": "Set the time.\\n     This time is taken by the drone as its own time.\\n     So medias and other files will be dated from this time\\n\\n     **Please note that you should not send this command if you are using the\\n     libARController API as this library is handling the connection process for you.**",
+              "support": "drones",
+              "result": "The time of the product is set.\\n     Then, it will trigger [TimeChanged](#0-5-5)."
+            },
             "arg": {
               "name": "time",
               "type": "string",
@@ -2870,7 +4182,12 @@
           {
             "name": "Reboot",
             "id": "3",
-            "$t": "Command to ask reboot to product"
+            "comment": {
+              "title": "Reboot",
+              "desc": "Reboot the product.\\n     The product will accept this command only if is not flying.",
+              "support": "drones",
+              "result": "The product will reboot if it can."
+            }
           }
         ]
       },
@@ -2881,11 +4198,24 @@
           {
             "name": "AllStatesChanged",
             "id": "0",
-            "$t": "State sent when all product states has been sent."
+            "timeout": "RETRY",
+            "comment": {
+              "title": "All states have been sent",
+              "desc": "All states have been sent.\\n\\n     **Please note that you should not care about this event if you are using the libARController API as this library is handling the connection process for you.**",
+              "support": "drones",
+              "triggered": "when all states values have been sent."
+            }
           },
           {
             "name": "BatteryStateChanged",
             "id": "1",
+            "buffer": "NON_ACK",
+            "comment": {
+              "title": "Battery state",
+              "desc": "Battery state.",
+              "support": "drones",
+              "triggered": "when the battery level changes."
+            },
             "arg": {
               "name": "percent",
               "type": "u8",
@@ -2896,11 +4226,17 @@
             "name": "MassStorageStateListChanged",
             "id": "2",
             "type": "MAP_ITEM",
+            "comment": {
+              "title": "Mass storage state list",
+              "desc": "Mass storage state list.",
+              "support": "drones",
+              "triggered": "when a mass storage is inserted or ejected."
+            },
             "arg": [
               {
                 "name": "mass_storage_id",
                 "type": "u8",
-                "$t": "Mass storage id &#40;unique&#41;"
+                "$t": "Mass storage id (unique)"
               },
               {
                 "name": "name",
@@ -2913,11 +4249,17 @@
             "name": "MassStorageInfoStateListChanged",
             "id": "3",
             "type": "MAP_ITEM",
+            "comment": {
+              "title": "Mass storage info state list",
+              "desc": "Mass storage info state list.",
+              "support": "drones",
+              "triggered": "when a mass storage info changes."
+            },
             "arg": [
               {
                 "name": "mass_storage_id",
                 "type": "u8",
-                "$t": "Mass storage state id &#40;unique&#41;"
+                "$t": "Mass storage state id (unique)"
               },
               {
                 "name": "size",
@@ -2932,23 +4274,29 @@
               {
                 "name": "plugged",
                 "type": "u8",
-                "$t": "Mass storage plugged &#40;1 if mass storage is plugged, otherwise 0&#41;"
+                "$t": "Mass storage plugged (1 if mass storage is plugged, otherwise 0)"
               },
               {
                 "name": "full",
                 "type": "u8",
-                "$t": "Mass storage full information state &#40;1 if mass storage full, 0 otherwise&#41;."
+                "$t": "Mass storage full information state (1 if mass storage full, 0 otherwise)."
               },
               {
                 "name": "internal",
                 "type": "u8",
-                "$t": "Mass storage internal type state &#40;1 if mass storage is internal, 0 otherwise&#41;"
+                "$t": "Mass storage internal type state (1 if mass storage is internal, 0 otherwise)"
               }
             ]
           },
           {
             "name": "CurrentDateChanged",
             "id": "4",
+            "comment": {
+              "title": "Date changed",
+              "desc": "Date changed.\\n     Corresponds to the latest date set on the drone.\\n\\n     **Please note that you should not care about this event if you are using the libARController API as this library is handling the connection process for you.**",
+              "support": "drones",
+              "triggered": "by [SetDate](#0-4-1)."
+            },
             "arg": {
               "name": "date",
               "type": "string",
@@ -2958,6 +4306,12 @@
           {
             "name": "CurrentTimeChanged",
             "id": "5",
+            "comment": {
+              "title": "Time changed",
+              "desc": "Time changed.\\n     Corresponds to the latest time set on the drone.\\n\\n     **Please note that you should not care about this event if you are using the libARController API as this library is handling the connection process for you.**",
+              "support": "drones",
+              "triggered": "by [SetTime](#0-4-2)."
+            },
             "arg": {
               "name": "time",
               "type": "string",
@@ -2968,6 +4322,11 @@
             "name": "MassStorageInfoRemainingListChanged",
             "id": "6",
             "type": "LIST_ITEM",
+            "deprecated": "true",
+            "comment": {
+              "title": "Mass storage remaining data list",
+              "desc": "Mass storage remaining data list."
+            },
             "arg": [
               {
                 "name": "free_space",
@@ -2989,16 +4348,29 @@
           {
             "name": "WifiSignalChanged",
             "id": "7",
+            "buffer": "NON_ACK",
+            "comment": {
+              "title": "Rssi changed",
+              "desc": "Rssi (Wifi Signal between controller and product) changed.",
+              "support": "0901;0902;0905;0906;090c;090e",
+              "triggered": "regularly."
+            },
             "arg": {
               "name": "rssi",
               "type": "i16",
-              "$t": "RSSI of the signal between controller and the product &#40;in dbm&#41;"
+              "$t": "RSSI of the signal between controller and the product (in dbm)"
             }
           },
           {
             "name": "SensorsStatesListChanged",
             "id": "8",
             "type": "MAP_ITEM",
+            "comment": {
+              "title": "Sensors state list",
+              "desc": "Sensors state list.",
+              "support": "0901:2.0.3;0902;0905;0906;0907;0909;090a;090c;090e",
+              "triggered": "at connection and when a sensor state changes."
+            },
             "arg": [
               {
                 "name": "sensorName",
@@ -3033,68 +4405,82 @@
               {
                 "name": "sensorState",
                 "type": "u8",
-                "$t": "Sensor state &#40;1 if the sensor is OK, 0 if the sensor is NOT OK&#41;"
+                "$t": "Sensor state (1 if the sensor is OK, 0 if the sensor is NOT OK)"
               }
             ]
           },
           {
             "name": "ProductModel",
             "id": "9",
+            "comment": {
+              "title": "Product sub-model",
+              "desc": "Product sub-model.\\n     This can be used to customize the UI depending on the product.",
+              "support": "0905;0906;0907;0909",
+              "triggered": "at connection."
+            },
             "arg": {
               "name": "model",
               "type": "enum",
               "enum": [
                 {
                   "name": "RS_TRAVIS",
-                  "$t": "Travis &#40;RS taxi&#41; model."
+                  "$t": "Travis (RS taxi) model."
                 },
                 {
                   "name": "RS_MARS",
-                  "$t": "Mars &#40;RS space&#41; model"
+                  "$t": "Mars (RS space) model"
                 },
                 {
                   "name": "RS_SWAT",
-                  "$t": "SWAT &#40;RS SWAT&#41; model"
+                  "$t": "SWAT (RS SWAT) model"
                 },
                 {
                   "name": "RS_MCLANE",
-                  "$t": "Mc Lane &#40;RS police&#41; model"
+                  "$t": "Mc Lane (RS police) model"
                 },
                 {
                   "name": "RS_BLAZE",
-                  "$t": "Blaze &#40;RS fire&#41; model"
+                  "$t": "Blaze (RS fire) model"
                 },
                 {
                   "name": "RS_ORAK",
-                  "$t": "Orak &#40;RS carbon hydrofoil&#41; model"
+                  "$t": "Orak (RS carbon hydrofoil) model"
                 },
                 {
                   "name": "RS_NEWZ",
-                  "$t": "New Z &#40;RS wooden hydrofoil&#41; model"
+                  "$t": "New Z (RS wooden hydrofoil) model"
                 },
                 {
                   "name": "JS_MARSHALL",
-                  "$t": "Marshall &#40;JS fire&#41; model"
+                  "$t": "Marshall (JS fire) model"
                 },
                 {
                   "name": "JS_DIESEL",
-                  "$t": "Diesel &#40;JS SWAT&#41; model"
+                  "$t": "Diesel (JS SWAT) model"
                 },
                 {
                   "name": "JS_BUZZ",
-                  "$t": "Buzz &#40;JS space&#41; model"
+                  "$t": "Buzz (JS space) model"
                 },
                 {
                   "name": "JS_MAX",
-                  "$t": "Max &#40;JS F1&#41; model"
+                  "$t": "Max (JS F1) model"
                 },
                 {
                   "name": "JS_JETT",
-                  "$t": "Jett &#40;JS flames&#41; model"
+                  "$t": "Jett (JS flames) model"
                 },
                 {
                   "name": "JS_TUKTUK",
-                  "$t": "Tuk-Tuk &#40;JS taxi&#41; model"
+                  "$t": "Tuk-Tuk (JS taxi) model"
+                },
+                {
+                  "name": "SW_BLACK",
+                  "$t": "Swing black model"
+                },
+                {
+                  "name": "SW_WHITE",
+                  "$t": "Swing white model"
                 }
               ]
             }
@@ -3103,16 +4489,155 @@
             "name": "CountryListKnown",
             "id": "10",
             "type": "LIST_ITEM",
+            "deprecated": "true",
+            "comment": {
+              "title": "Country list",
+              "desc": "List of countries known by the drone."
+            },
             "arg": [
               {
                 "name": "listFlags",
                 "type": "u8",
-                "$t": "List entry attribute Bitfield.\n                0x01: First: indicate it&apos;s the first element of the list. \n                0x02: Last:  indicate it&apos;s the last element of the list.\n                0x04: Empty: indicate the list is empty &#40;implies First/Last&#41;. All other arguments should be ignored."
+                "$t": "List entry attribute Bitfield.\n\t\t\t\t0x01: First: indicate it's the first element of the list.\n\t\t\t\t0x02: Last: indicate it's the last element of the list.\n\t\t\t\t0x04: Empty: indicate the list is empty (implies First/Last). All other arguments should be ignored."
               },
               {
                 "name": "countryCodes",
                 "type": "string",
-                "$t": "Following of country code with ISO 3166 format, separated by &quot;;&quot;. Be careful of the command size allowed by the network used. If necessary, split the list in several commands."
+                "$t": "Following of country code with ISO 3166 format, separated by \";\". Be careful of the command size allowed by the network used. If necessary, split the list in several commands."
+              }
+            ]
+          },
+          {
+            "name": "DeprecatedMassStorageContentChanged",
+            "id": "11",
+            "type": "MAP_ITEM",
+            "deprecated": "true",
+            "comment": {
+              "title": "Mass storage content changed",
+              "desc": "Mass storage content changed."
+            },
+            "arg": [
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage id (unique)"
+              },
+              {
+                "name": "nbPhotos",
+                "type": "u16",
+                "$t": "Number of photos (does not include raw photos)"
+              },
+              {
+                "name": "nbVideos",
+                "type": "u16",
+                "$t": "Number of videos"
+              },
+              {
+                "name": "nbPuds",
+                "type": "u16",
+                "$t": "Number of puds"
+              },
+              {
+                "name": "nbCrashLogs",
+                "type": "u16",
+                "$t": "Number of crash logs"
+              }
+            ]
+          },
+          {
+            "name": "MassStorageContent",
+            "id": "12",
+            "type": "MAP_ITEM",
+            "comment": {
+              "title": "Mass storage content",
+              "desc": "Mass storage content.",
+              "support": "090c:4.0.0;090e:4.0.0",
+              "triggered": "when the content of the mass storage changes."
+            },
+            "arg": [
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage id (unique)"
+              },
+              {
+                "name": "nbPhotos",
+                "type": "u16",
+                "$t": "Number of photos (does not include raw photos)"
+              },
+              {
+                "name": "nbVideos",
+                "type": "u16",
+                "$t": "Number of videos"
+              },
+              {
+                "name": "nbPuds",
+                "type": "u16",
+                "$t": "Number of puds"
+              },
+              {
+                "name": "nbCrashLogs",
+                "type": "u16",
+                "$t": "Number of crash logs"
+              },
+              {
+                "name": "nbRawPhotos",
+                "type": "u16",
+                "$t": "Number of raw photos"
+              }
+            ]
+          },
+          {
+            "name": "MassStorageContentForCurrentRun",
+            "id": "13",
+            "type": "MAP_ITEM",
+            "comment": {
+              "title": "Mass storage content for current run",
+              "desc": "Mass storage content for current run.\\n     Only counts the files related to the current run (see [RunId](#0-30-0))",
+              "support": "090c:4.0.0;090e:4.0.0",
+              "triggered": "when the content of the mass storage changes and this content is related to the current run."
+            },
+            "arg": [
+              {
+                "name": "mass_storage_id",
+                "type": "u8",
+                "$t": "Mass storage id (unique)"
+              },
+              {
+                "name": "nbPhotos",
+                "type": "u16",
+                "$t": "Number of photos (does not include raw photos)"
+              },
+              {
+                "name": "nbVideos",
+                "type": "u16",
+                "$t": "Number of videos"
+              },
+              {
+                "name": "nbRawPhotos",
+                "type": "u16",
+                "$t": "Number of raw photos"
+              }
+            ]
+          },
+          {
+            "name": "VideoRecordingTimestamp",
+            "id": "14",
+            "comment": {
+              "title": "Video recording timestamp",
+              "desc": "Current or last video recording timestamp.\\n     Timestamp in milliseconds since 00:00:00 UTC on 1 January 1970.\\n     **Please note that values don't persist after drone reboot**",
+              "triggered": "on video recording start and video recording stop or \\n     after that the date/time of the drone changed."
+            },
+            "arg": [
+              {
+                "name": "startTimestamp",
+                "type": "u64",
+                "$t": "Timestamp in milliseconds since 00:00:00 UTC on 1 January 1970."
+              },
+              {
+                "name": "stopTimestamp",
+                "type": "u64",
+                "$t": "Timestamp in milliseconds since 00:00:00 UTC on 1 January 1970. 0 mean that video is still recording."
               }
             ]
           }
@@ -3125,12 +4650,24 @@
           {
             "name": "SwitchOff",
             "id": "0",
-            "$t": "@deprecated\n            Switch off the drone when a overheat appeared"
+            "deprecated": "true",
+            "comment": {
+              "title": "Switch off after an overheat",
+              "desc": "Switch off after an overheat.",
+              "support": "none",
+              "result": "None"
+            }
           },
           {
             "name": "Ventilate",
             "id": "1",
-            "$t": "@deprecated\n            Ventilate the drone when a overheat appeared"
+            "deprecated": "true",
+            "comment": {
+              "title": "Ventilate after an overheat",
+              "desc": "Ventilate after an overheat.",
+              "support": "none",
+              "result": "None"
+            }
           }
         ]
       },
@@ -3141,11 +4678,19 @@
           {
             "name": "OverHeatChanged",
             "id": "0",
-            "$t": "@deprecated\n            Overheat temperature reached"
+            "deprecated": "true",
+            "comment": {
+              "title": "Overheat",
+              "desc": "Overheat temperature reached."
+            }
           },
           {
             "name": "OverHeatRegulationChanged",
             "id": "1",
+            "comment": {
+              "title": "Overheat regulation type",
+              "desc": "Overheat regulation type."
+            },
             "arg": {
               "name": "regulationType",
               "type": "u8",
@@ -3160,6 +4705,12 @@
         "cmd": {
           "name": "isPiloting",
           "id": "0",
+          "comment": {
+            "title": "Inform about hud entering",
+            "desc": "Inform about hud entering.\\n     Tell the drone that the controller enters/leaves the piloting hud.\\n     On a non-flying products it is used to know when a run begins.",
+            "support": "drones",
+            "result": "If yes, the product will begin a new session (so it should send a new [runId](#0-30-0)).\\n     Also, on the JumpingSumos, if the video is in autorecord mode, it will start recording."
+          },
           "arg": {
             "name": "piloting",
             "type": "u8",
@@ -3173,6 +4724,12 @@
         "cmd": {
           "name": "OutdoorSetting",
           "id": "0",
+          "comment": {
+            "title": "Set wifi outdoor mode",
+            "desc": "Set wifi indoor/outdoor mode.\\n     **Please note that you might be disconnected from the product after changing the indoor/outdoor setting as it changes Wifi parameters.**",
+            "support": "0901;0902;0905;0906;090c;090e",
+            "result": "The product change its indoor/outdoor wifi settings.\\n     Then, it will trigger [WifiOutdoorMode](#0-10-0)."
+          },
           "arg": {
             "name": "outdoor",
             "type": "u8",
@@ -3186,6 +4743,12 @@
         "cmd": {
           "name": "outdoorSettingsChanged",
           "id": "0",
+          "comment": {
+            "title": "Wifi outdoor mode",
+            "desc": "Wifi outdoor mode.",
+            "support": "0901;0902;0905;0906;090c;090e",
+            "triggered": "by [SetWifiOutdoorMode](#0-9-0)."
+          },
           "arg": {
             "name": "outdoor",
             "type": "u8",
@@ -3200,6 +4763,12 @@
           {
             "name": "Start",
             "id": "0",
+            "comment": {
+              "title": "Start a FlightPlan",
+              "desc": "Start a FlightPlan based on a mavlink file existing on the drone.\\n\\n     Requirements are:\\n     * Product is calibrated\\n     * Product should be in outdoor mode\\n     * Product has fixed its GPS\\n",
+              "support": "0901:2.0.29;090c;090e",
+              "result": "If the FlightPlan has been started, event [FlightPlanPlayingStateChanged](#0-12-0) is triggered with param state set to *playing*.\\n     Otherwise, event [FlightPlanPlayingStateChanged](#0-12-0) is triggered with param state set to stopped and event [MavlinkPlayErrorStateChanged](#0-12-1) is triggered with an explanation of the error."
+            },
             "arg": [
               {
                 "name": "filepath",
@@ -3225,12 +4794,22 @@
           {
             "name": "Pause",
             "id": "1",
-            "$t": "Pause the flightplan &#40;can be restarted with a start&#41;"
+            "comment": {
+              "title": "Pause a FlightPlan",
+              "desc": "Pause a FlightPlan that was playing.\\n     To unpause a FlightPlan, see [StartFlightPlan](#0-11-0)\\n",
+              "support": "0901:2.0.29;090c;090e",
+              "result": "The currently playing FlightPlan will be paused. Then, event [FlightPlanPlayingStateChanged](#0-12-0) is triggered with param state set to the current state of the FlightPlan (should be *paused* if everything went well)."
+            }
           },
           {
             "name": "Stop",
             "id": "2",
-            "$t": "Stop the flightplan"
+            "comment": {
+              "title": "Stop a FlightPlan",
+              "desc": "Stop a FlightPlan that was playing.\\n",
+              "support": "0901:2.0.29;090c;090e",
+              "result": "The currently playing FlightPlan will be stopped. Then, event [FlightPlanPlayingStateChanged](#0-12-0) is triggered with param state set to the current state of the FlightPlan (should be *stopped* if everything went well)."
+            }
           }
         ]
       },
@@ -3241,6 +4820,12 @@
           {
             "name": "MavlinkFilePlayingStateChanged",
             "id": "0",
+            "comment": {
+              "title": "Playing state of a FlightPlan",
+              "desc": "Playing state of a FlightPlan.",
+              "support": "0901:2.0.29;090c;090e",
+              "triggered": "by [StartFlightPlan](#0-11-0), [PauseFlightPlan](#0-11-1) or [StopFlightPlan](#0-11-2)."
+            },
             "arg": [
               {
                 "name": "state",
@@ -3252,11 +4837,15 @@
                   },
                   {
                     "name": "stopped",
-                    "$t": "Mavlink file is stopped &#40;arg filepath and type are useless in this state&#41;"
+                    "$t": "Mavlink file is stopped (arg filepath and type are useless in this state)"
                   },
                   {
                     "name": "paused",
                     "$t": "Mavlink file is paused"
+                  },
+                  {
+                    "name": "loaded",
+                    "$t": "Mavlink file is loaded (it will be played at take-off)"
                   }
                 ]
               },
@@ -3284,6 +4873,12 @@
           {
             "name": "MavlinkPlayErrorStateChanged",
             "id": "1",
+            "comment": {
+              "title": "FlightPlan error",
+              "desc": "FlightPlan error.",
+              "support": "0901:2.0.29;090c;090e",
+              "triggered": "by [StartFlightPlan](#0-11-0) if an error occurs."
+            },
             "arg": {
               "name": "error",
               "type": "enum",
@@ -3306,21 +4901,54 @@
                 }
               ]
             }
+          },
+          {
+            "name": "MissonItemExecuted",
+            "id": "2",
+            "content": "NOTIFICATION",
+            "comment": {
+              "title": "Mission item executed",
+              "desc": "Mission item has been executed.",
+              "support": "none",
+              "triggered": "when a mission item has been executed during a flight plan."
+            },
+            "arg": {
+              "name": "idx",
+              "type": "u32",
+              "$t": "Index of the mission item. This is the place of the mission item in the list of the items of the mission.\n\t\t\t\tBegins at 0."
+            }
           }
         ]
       },
       {
         "name": "Calibration",
         "id": "13",
-        "cmd": {
-          "name": "MagnetoCalibration",
-          "id": "0",
-          "arg": {
-            "name": "calibrate",
-            "type": "u8",
-            "$t": "1 if the calibration should be started, 0 if it should be aborted"
+        "cmd": [
+          {
+            "name": "MagnetoCalibration",
+            "id": "0",
+            "comment": {
+              "title": "Start/Abort magnetometer calibration",
+              "desc": "Start or abort magnetometer calibration process.\\n",
+              "support": "0901;090c;090e",
+              "result": "The magnetometer calibration process is started or aborted. Then, event [MagnetoCalibrationStartedChanged](#0-14-3) is triggered.\\n     If started, event [MagnetoCalibrationStateChanged](#0-14-3) is triggered with the current calibration state: a list of all axis and their calibration states.\\n     It will also trigger [MagnetoCalibrationAxisToCalibrateChanged](#0-14-2), that will inform the controller about the current axis to calibrate."
+            },
+            "arg": {
+              "name": "calibrate",
+              "type": "u8",
+              "$t": "1 if the calibration should be started, 0 if it should be aborted"
+            }
+          },
+          {
+            "name": "PitotCalibration",
+            "id": "1",
+            "arg": {
+              "name": "calibrate",
+              "type": "u8",
+              "$t": "1 if the calibration should be started, 0 if it should be aborted"
+            }
           }
-        }
+        ]
       },
       {
         "name": "CalibrationState",
@@ -3329,21 +4957,27 @@
           {
             "name": "MagnetoCalibrationStateChanged",
             "id": "0",
+            "comment": {
+              "title": "Magneto calib process axis state",
+              "desc": "Magneto calib process axis state.",
+              "support": "0901;090c;090e",
+              "triggered": "when the calibration process is started with [StartOrAbortMagnetoCalib](#0-13-0) and each time an axis calibration state changes."
+            },
             "arg": [
               {
                 "name": "xAxisCalibration",
                 "type": "u8",
-                "$t": "State of the x axis &#40;roll&#41; calibration : 1 if calibration is done, 0 otherwise"
+                "$t": "State of the x axis (roll) calibration : 1 if calibration is done, 0 otherwise"
               },
               {
                 "name": "yAxisCalibration",
                 "type": "u8",
-                "$t": "State of the y axis &#40;pitch&#41; calibration : 1 if calibration is done, 0 otherwise"
+                "$t": "State of the y axis (pitch) calibration : 1 if calibration is done, 0 otherwise"
               },
               {
                 "name": "zAxisCalibration",
                 "type": "u8",
-                "$t": "State of the z axis &#40;yaw&#41; calibration : 1 if calibration is done, 0 otherwise"
+                "$t": "State of the z axis (yaw) calibration : 1 if calibration is done, 0 otherwise"
               },
               {
                 "name": "calibrationFailed",
@@ -3355,6 +4989,12 @@
           {
             "name": "MagnetoCalibrationRequiredState",
             "id": "1",
+            "comment": {
+              "title": "Calibration required",
+              "desc": "Calibration required.",
+              "support": "0901;090c;090e",
+              "triggered": "when the calibration requirement changes."
+            },
             "arg": {
               "name": "required",
               "type": "u8",
@@ -3364,6 +5004,12 @@
           {
             "name": "MagnetoCalibrationAxisToCalibrateChanged",
             "id": "2",
+            "comment": {
+              "title": "Axis to calibrate during calibration process",
+              "desc": "Axis to calibrate during calibration process.",
+              "support": "0901;090c;090e",
+              "triggered": "during the calibration process when the axis to calibrate changes."
+            },
             "arg": {
               "name": "axis",
               "type": "enum",
@@ -3390,11 +5036,50 @@
           {
             "name": "MagnetoCalibrationStartedChanged",
             "id": "3",
+            "comment": {
+              "title": "Calibration process state",
+              "desc": "Calibration process state.",
+              "support": "0901;090c;090e",
+              "triggered": "by [StartOrAbortMagnetoCalib](#0-13-0) or when the process ends because it succeeded."
+            },
             "arg": {
               "name": "started",
               "type": "u8",
               "$t": "1 if calibration has started, 0 otherwise"
             }
+          },
+          {
+            "name": "PitotCalibrationStateChanged",
+            "id": "4",
+            "arg": [
+              {
+                "name": "state",
+                "type": "enum",
+                "enum": [
+                  {
+                    "name": "done",
+                    "$t": "Calibration is ok"
+                  },
+                  {
+                    "name": "ready",
+                    "$t": "Calibration is started, waiting user action"
+                  },
+                  {
+                    "name": "in_progress",
+                    "$t": "Calibration is in progress"
+                  },
+                  {
+                    "name": "required",
+                    "$t": "Calibration is required"
+                  }
+                ]
+              },
+              {
+                "name": "lastError",
+                "type": "u8",
+                "$t": "lastError : 1 if an error occured and 0 if not"
+              }
+            ]
           }
         ]
       },
@@ -3404,31 +5089,37 @@
         "cmd": {
           "name": "CameraSettingsChanged",
           "id": "0",
+          "comment": {
+            "title": "Camera info",
+            "desc": "Camera info.",
+            "support": "0901;090c;090e",
+            "triggered": "at connection."
+          },
           "arg": [
             {
               "name": "fov",
               "type": "float",
-              "$t": "Value of the camera horizontal fov &#40;in degree&#41;"
+              "$t": "Value of the camera horizontal fov (in degree)"
             },
             {
               "name": "panMax",
               "type": "float",
-              "$t": "Value of max pan &#40;right pan&#41; &#40;in degree&#41;"
+              "$t": "Value of max pan (right pan) (in degree)"
             },
             {
               "name": "panMin",
               "type": "float",
-              "$t": "Value of min pan &#40;left pan&#41; &#40;in degree&#41;"
+              "$t": "Value of min pan (left pan) (in degree)"
             },
             {
               "name": "tiltMax",
               "type": "float",
-              "$t": "Value of max tilt &#40;top tilt&#41; &#40;in degree&#41;"
+              "$t": "Value of max tilt (top tilt) (in degree)"
             },
             {
               "name": "tiltMin",
               "type": "float",
-              "$t": "Value of min tilt &#40;bottom tilt&#41; &#40;in degree&#41;"
+              "$t": "Value of min tilt (bottom tilt) (in degree)"
             }
           ]
         }
@@ -3439,6 +5130,12 @@
         "cmd": {
           "name": "ControllerPositionForRun",
           "id": "0",
+          "comment": {
+            "title": "Set the position of a run",
+            "desc": "Set the position of a run.\\n     This will let the product know the controller location for the flight/run. The location is typically used to geotag medias.\\n     Only used on products that have no gps.\\n     Watch out, this command is not used by BLE products.",
+            "support": "0902;0905;0906",
+            "result": "The position is set."
+          },
           "arg": [
             {
               "name": "latitude",
@@ -3460,16 +5157,28 @@
           {
             "name": "AvailabilityStateChanged",
             "id": "0",
+            "comment": {
+              "title": "FlightPlan availability",
+              "desc": "FlightPlan availability.\\n     Availability is linked to GPS fix, magnetometer calibration, sensor states...",
+              "support": "0901:2.0.29;090c;090e",
+              "triggered": "on change."
+            },
             "arg": {
               "name": "AvailabilityState",
               "type": "u8",
-              "$t": "Running a flightPlan file is available &#40;1 running a flightPlan file is available, otherwise 0&#41;"
+              "$t": "Running a flightPlan file is available (1 running a flightPlan file is available, otherwise 0)"
             }
           },
           {
             "name": "ComponentStateListChanged",
             "id": "1",
             "type": "MAP_ITEM",
+            "comment": {
+              "title": "FlightPlan components state list",
+              "desc": "FlightPlan components state list.",
+              "support": "0901:2.0.29;090c;090e",
+              "triggered": "when the state of required components changes."
+            },
             "arg": [
               {
                 "name": "component",
@@ -3496,9 +5205,24 @@
               {
                 "name": "State",
                 "type": "u8",
-                "$t": "State of the FlightPlan component &#40;1 FlightPlan component OK, otherwise 0&#41;"
+                "$t": "State of the FlightPlan component (1 FlightPlan component OK, otherwise 0)"
               }
             ]
+          },
+          {
+            "name": "LockStateChanged",
+            "id": "2",
+            "comment": {
+              "title": "FlightPlan lock state",
+              "desc": "FlightPlan lock state.\\n     Represents the fact that the controller is able or not to stop or pause a playing FlightPlan",
+              "support": "0901:2.0.29;090c;090e",
+              "triggered": "when the lock changes."
+            },
+            "arg": {
+              "name": "LockState",
+              "type": "u8",
+              "$t": "1 if FlightPlan is locked: can't pause or stop FlightPlan.\n\t\t\t\t0 if FlightPlan is unlocked: pause or stop available."
+            }
           }
         ]
       },
@@ -3509,14 +5233,24 @@
           {
             "name": "StartingErrorEvent",
             "id": "0",
-            "notification": "TRUE",
-            "$t": "Event of flight plan start error"
+            "content": "NOTIFICATION",
+            "comment": {
+              "title": "FlightPlan start error",
+              "desc": "FlightPlan start error.\\n\\n     **This event is a notification, you can't retrieve it in the cache of the device controller.**",
+              "support": "0901:2.0.29;090c;090e",
+              "triggered": "on an error after a [StartFlightPlan](#0-11-0)."
+            }
           },
           {
             "name": "SpeedBridleEvent",
             "id": "1",
-            "notification": "TRUE",
-            "$t": "Bridle speed of the drone"
+            "content": "NOTIFICATION",
+            "comment": {
+              "title": "FlightPlan speed clamping",
+              "desc": "FlightPlan speed clamping.\\n     Sent when a speed specified in the FlightPlan file is considered too high by the drone.\\n\\n     **This event is a notification, you can't retrieve it in the cache of the device controller.**",
+              "support": "0901:2.0.29;090c;090e",
+              "triggered": "on an speed related clamping after a [StartFlightPlan](#0-11-0)."
+            }
           }
         ]
       },
@@ -3530,7 +5264,7 @@
             "arg": {
               "name": "version",
               "type": "string",
-              "$t": "version of libARCommands &#40;&quot;1.2.3.4&quot; format&#41;"
+              "$t": "version of libARCommands (\"1.2.3.4\" format)"
             }
           },
           {
@@ -3539,7 +5273,7 @@
             "arg": {
               "name": "version",
               "type": "string",
-              "$t": "version of libARCommands &#40;&quot;1.2.3.4&quot; format&#41;"
+              "$t": "version of libARCommands (\"1.2.3.4\" format)"
             }
           },
           {
@@ -3548,7 +5282,7 @@
             "arg": {
               "name": "version",
               "type": "string",
-              "$t": "version of libARCommands &#40;&quot;1.2.3.4&quot; format&#41;"
+              "$t": "version of libARCommands (\"1.2.3.4\" format)"
             }
           }
         ]
@@ -3559,10 +5293,16 @@
         "cmd": {
           "name": "ControllerReadyForStreaming",
           "id": "0",
+          "comment": {
+            "title": "Set audio stream direction",
+            "desc": "Set audio stream direction.",
+            "support": "0905;0906",
+            "result": "The audio stream direction is set.\\n     Then, event [AudioStreamDirection](#0-21-0) is triggered."
+          },
           "arg": {
             "name": "ready",
             "type": "u8",
-            "$t": "Bit field for TX and RX ready.\n                bit 0 is 1 if controller is ready and wants to receive sound &#40;Drone TX&#41;\n                bit 1 is 1 if controller is ready and wants to send sound &#40;Drone RX&#41;"
+            "$t": "Bit field for TX and RX ready.\n\t\t\t\tbit 0 is 1 if controller is ready and wants to receive sound (Drone TX)\n\t\t\t\tbit 1 is 1 if controller is ready and wants to send sound (Drone RX)"
           }
         }
       },
@@ -3572,10 +5312,16 @@
         "cmd": {
           "name": "AudioStreamingRunning",
           "id": "0",
+          "comment": {
+            "title": "Audio stream direction",
+            "desc": "Audio stream direction.",
+            "support": "0905;0906",
+            "triggered": "by [SetAudioStreamDirection](#0-20-0)."
+          },
           "arg": {
             "name": "running",
             "type": "u8",
-            "$t": "Bit field for TX and RX running\n                bit 0 is 1 if Drone TX is running\n                bit 1 is 1 if Drone RX is running"
+            "$t": "Bit field for TX and RX running\n\t\t\t\tbit 0 is 1 if Drone TX is running\n\t\t\t\tbit 1 is 1 if Drone RX is running"
           }
         }
       },
@@ -3585,16 +5331,22 @@
         "cmd": {
           "name": "intensity",
           "id": "0",
+          "comment": {
+            "title": "Set LEDs intensity",
+            "desc": "Set lighting LEDs intensity.",
+            "support": "0905;0906;0907",
+            "result": "The intensity of the LEDs is changed.\\n     Then, event [LedIntensity](#0-23-0) is triggered."
+          },
           "arg": [
             {
               "name": "left",
               "type": "u8",
-              "$t": "Set the left LED intensity value &#40;0 through 255&#41;."
+              "$t": "Set the left LED intensity value (0 through 255)."
             },
             {
               "name": "right",
               "type": "u8",
-              "$t": "Set the right LED intensity value &#40;0 through 255&#41;."
+              "$t": "Set the right LED intensity value (0 through 255)."
             }
           ]
         }
@@ -3605,16 +5357,22 @@
         "cmd": {
           "name": "intensityChanged",
           "id": "0",
+          "comment": {
+            "title": "LEDs intensity",
+            "desc": "Lighting LEDs intensity.",
+            "support": "0905;0906;0907",
+            "triggered": "by [SetLedsIntensity](#0-22-0)."
+          },
           "arg": [
             {
               "name": "left",
               "type": "u8",
-              "$t": "The intensity value for the left LED &#40;0 through 255&#41;."
+              "$t": "The intensity value for the left LED (0 through 255)."
             },
             {
               "name": "right",
               "type": "u8",
-              "$t": "The intensity value for the right LED &#40;0 through 255&#41;."
+              "$t": "The intensity value for the right LED (0 through 255)."
             }
           ]
         }
@@ -3626,6 +5384,12 @@
           {
             "name": "StartAnimation",
             "id": "0",
+            "comment": {
+              "title": "Start an animation",
+              "desc": "Start a paramaterless animation.\\n     List of available animations can be retrieved from [AnimationsStateList](#0-25-0).",
+              "support": "0902;0905;0906;0907;0909",
+              "result": "If possible, the product starts the requested animation. Then, event [AnimationsStateList](#0-25-0) is triggered."
+            },
             "arg": {
               "name": "anim",
               "type": "enum",
@@ -3681,6 +5445,22 @@
                 {
                   "name": "BOOST",
                   "$t": "Boost animation."
+                },
+                {
+                  "name": "LOOPING",
+                  "$t": "Make a looping. (Only for WingX)"
+                },
+                {
+                  "name": "BARREL_ROLL_180_RIGHT",
+                  "$t": "Make a barrel roll of 180 degree turning on right. (Only for WingX)"
+                },
+                {
+                  "name": "BARREL_ROLL_180_LEFT",
+                  "$t": "Make a barrel roll of 180 degree turning on left. (Only for WingX)"
+                },
+                {
+                  "name": "BACKSWAP",
+                  "$t": "Put the drone upside down. (Only for WingX)"
                 }
               ]
             }
@@ -3688,6 +5468,12 @@
           {
             "name": "StopAnimation",
             "id": "1",
+            "comment": {
+              "title": "Stop an animation",
+              "desc": "Stop a paramaterless animation.\\n     List of running animations can be retrieved from [AnimationsStateList](#0-25-0).",
+              "support": "0902;0905;0906;0907;0909",
+              "result": "If the requested animation was running, it will be stopped.\\n     Then, event [AnimationsStateList](#0-25-0) is triggered."
+            },
             "arg": {
               "name": "anim",
               "type": "enum",
@@ -3743,6 +5529,22 @@
                 {
                   "name": "BOOST",
                   "$t": "Boost animation."
+                },
+                {
+                  "name": "LOOPING",
+                  "$t": "Make a looping. (Only for WingX)"
+                },
+                {
+                  "name": "BARREL_ROLL_180_RIGHT",
+                  "$t": "Make a barrel roll of 180 degree turning on right. (Only for WingX)"
+                },
+                {
+                  "name": "BARREL_ROLL_180_LEFT",
+                  "$t": "Make a barrel roll of 180 degree turning on left. (Only for WingX)"
+                },
+                {
+                  "name": "BACKSWAP",
+                  "$t": "Put the drone upside down. (Only for WingX)"
                 }
               ]
             }
@@ -3750,7 +5552,12 @@
           {
             "name": "StopAllAnimations",
             "id": "2",
-            "$t": "Stop all running animations."
+            "comment": {
+              "title": "Stop all animations",
+              "desc": "Stop all running paramaterless animations.\\n     List of running animations can be retrieved from [AnimationsStateList](#0-25-0).",
+              "support": "0902;0905;0906;0907;0909",
+              "result": "All running animations are stopped.\\n     Then, event [AnimationsStateList](#0-25-0) is triggered."
+            }
           }
         ]
       },
@@ -3761,6 +5568,12 @@
           "name": "List",
           "type": "MAP_ITEM",
           "id": "0",
+          "comment": {
+            "title": "Animation state list",
+            "desc": "Paramaterless animations state list.",
+            "support": "0902;0905;0906;0907;0909",
+            "triggered": "when the list of available animations changes and also when an animation state changes (can be triggered by [StartAnim](#0-24-0), [StopAnim](#0-24-1) or [StopAllAnims](#0-24-2)."
+          },
           "arg": [
             {
               "name": "anim",
@@ -3817,6 +5630,22 @@
                 {
                   "name": "BOOST",
                   "$t": "Boost animation."
+                },
+                {
+                  "name": "LOOPING",
+                  "$t": "Make a looping. (Only for WingX)"
+                },
+                {
+                  "name": "BARREL_ROLL_180_RIGHT",
+                  "$t": "Make a barrel roll of 180 degree turning on right. (Only for WingX)"
+                },
+                {
+                  "name": "BARREL_ROLL_180_LEFT",
+                  "$t": "Make a barrel roll of 180 degree turning on left. (Only for WingX)"
+                },
+                {
+                  "name": "BACKSWAP",
+                  "$t": "Put the drone upside down. (Only for WingX)"
                 }
               ]
             },
@@ -3861,6 +5690,12 @@
         "cmd": {
           "name": "Config",
           "id": "0",
+          "comment": {
+            "title": "Declare an accessory",
+            "desc": "Declare an accessory.\\n     You can choose the accessory between all accessible for this product.\\n     You can get this list through event [SupportedAccessories](#0-27-0).\\n\\n     You can only set the accessory when the modification is enabled.\\n     You can know if it possible with the event [AccessoryDeclarationAvailability](#0-27-2).",
+            "support": "0902;0905;0906;0907;0909;090a",
+            "result": "The product knows which accessory it is wearing.\\n     Then, event [AccessoryConfigChanged](#0-27-1) is triggered."
+          },
           "arg": {
             "name": "accessory",
             "type": "enum",
@@ -3897,6 +5732,12 @@
             "name": "SupportedAccessoriesListChanged",
             "id": "0",
             "type": "MAP_ITEM",
+            "comment": {
+              "title": "Supported accessories list",
+              "desc": "Supported accessories list.",
+              "support": "0902;0905;0906;0907;0909;090a",
+              "triggered": "at connection."
+            },
             "arg": {
               "name": "accessory",
               "type": "enum",
@@ -3927,6 +5768,12 @@
           {
             "name": "AccessoryConfigChanged",
             "id": "1",
+            "comment": {
+              "title": "Accessory config",
+              "desc": "Accessory config.",
+              "support": "0902;0905;0906;0907;0909;090a",
+              "triggered": "by [DeclareAccessory](#0-26-0)."
+            },
             "arg": [
               {
                 "name": "newAccessory",
@@ -3955,6 +5802,10 @@
                   {
                     "name": "HYDROFOIL",
                     "$t": "Hydrofoil"
+                  },
+                  {
+                    "name": "IN_PROGRESS",
+                    "$t": "Configuration in progress."
                   }
                 ]
               },
@@ -3981,6 +5832,12 @@
           {
             "name": "AccessoryConfigModificationEnabled",
             "id": "2",
+            "comment": {
+              "title": "Accessory declaration availability",
+              "desc": "Availability to declare or not an accessory.",
+              "support": "0902;0905;0906;0907;0909;090a",
+              "triggered": "when the availability changes."
+            },
             "arg": {
               "name": "enabled",
               "type": "u8",
@@ -3995,6 +5852,13 @@
         "cmd": {
           "name": "SetMaxChargeRate",
           "id": "0",
+          "deprecated": "true",
+          "comment": {
+            "title": "Set max charge rate",
+            "desc": "The product will inform itself the controller about its charging type (see [ChargingInfoChanged](#0-29-3)).",
+            "support": "none",
+            "result": "None."
+          },
           "arg": {
             "name": "rate",
             "type": "enum",
@@ -4005,7 +5869,7 @@
               },
               {
                 "name": "MODERATE",
-                "$t": "Almost fully-charge the battery at moderate rate &#40;&gt; 512mA&#41; but slower than the fastest rate."
+                "$t": "Almost fully-charge the battery at moderate rate (> 512mA) but slower than the fastest rate."
               },
               {
                 "name": "FAST",
@@ -4022,6 +5886,11 @@
           {
             "name": "MaxChargeRateChanged",
             "id": "0",
+            "deprecated": "true",
+            "comment": {
+              "title": "Max charge rate",
+              "desc": "Max charge rate."
+            },
             "arg": {
               "name": "rate",
               "type": "enum",
@@ -4032,7 +5901,7 @@
                 },
                 {
                   "name": "MODERATE",
-                  "$t": "Almost fully-charge the battery at moderate rate &#40;&gt; 512 mA&#41; but slower than the fastest rate."
+                  "$t": "Almost fully-charge the battery at moderate rate (> 512 mA) but slower than the fastest rate."
                 },
                 {
                   "name": "FAST",
@@ -4044,6 +5913,11 @@
           {
             "name": "CurrentChargeStateChanged",
             "id": "1",
+            "deprecated": "true",
+            "comment": {
+              "title": "Current charge state",
+              "desc": "Current charge state."
+            },
             "arg": [
               {
                 "name": "status",
@@ -4059,7 +5933,7 @@
                   },
                   {
                     "name": "CHARGING_MODERATE",
-                    "$t": "The battery is charging at a moderate rate &#40;&gt; 512 mA&#41; but slower than the fastest rate."
+                    "$t": "The battery is charging at a moderate rate (> 512 mA) but slower than the fastest rate."
                   },
                   {
                     "name": "CHARGING_FAST",
@@ -4102,6 +5976,11 @@
           {
             "name": "LastChargeRateChanged",
             "id": "2",
+            "deprecated": "true",
+            "comment": {
+              "title": "Last charge rate",
+              "desc": "Last charge rate."
+            },
             "arg": {
               "name": "rate",
               "type": "enum",
@@ -4128,6 +6007,12 @@
           {
             "name": "ChargingInfo",
             "id": "3",
+            "comment": {
+              "title": "Charging information",
+              "desc": "Charging information.",
+              "support": "0905;0906;0907;0909;090a",
+              "triggered": "when the product is charging or when the charging state changes."
+            },
             "arg": [
               {
                 "name": "phase",
@@ -4184,7 +6069,7 @@
               {
                 "name": "intensity",
                 "type": "u8",
-                "$t": "The charging intensity, in dA. &#40;12dA = 1,2A&#41; ; If phase is DISCHARGING, refers to the last charge. Equals to 0 if not known."
+                "$t": "The charging intensity, in dA. (12dA = 1,2A) ; If phase is DISCHARGING, refers to the last charge. Equals to 0 if not known."
               },
               {
                 "name": "fullChargingTime",
@@ -4201,6 +6086,12 @@
         "cmd": {
           "name": "RunIdChanged",
           "id": "0",
+          "comment": {
+            "title": "Current run id",
+            "desc": "Current run id.\\n     A run id is uniquely identifying a run or a flight.\\n     For each run is generated on the drone a file which can be used by Academy to sum up the run.\\n     Also, each medias taken during a run has a filename containing the run id.",
+            "support": "0901:3:0:1;090c;090e",
+            "triggered": "when the drone generates a new run id (generally right after a take off)."
+          },
           "arg": {
             "name": "runId",
             "type": "string",
