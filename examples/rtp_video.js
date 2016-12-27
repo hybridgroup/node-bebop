@@ -1,5 +1,5 @@
 /*
-This example enables streamed RTC video data from the drone
+This example enables streamed RTP video data from the drone
 
 Run this example, then in a separate console, you can open a playback window
 using mplayer (part of ffmpeg):
